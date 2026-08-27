@@ -26,7 +26,7 @@ const Explore = () => {
           recipes.map(recipe => (
             <Link to={`/recipes/${recipe._id}`} key={recipe._id} className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition flex flex-col">
               <h3 className="text-xl font-semibold mb-2">{recipe.title}</h3>
-              <p className="text-gray-600 flex-1">{recipe.description?.slice(0, 100)}...</p>
+              <p className="text-gray-600 flex-1">{recipe.instructions?.slice(0, 100)}...</p>
             </Link>
           ))
         ) : null}

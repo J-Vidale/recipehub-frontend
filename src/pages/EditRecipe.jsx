@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import API from "../services/api";
+import IngredientFields from "../components/IngredientFields";
 
 const EditRecipe = () => {
   const { id } = useParams();
   const [recipe, setRecipe] = useState(null);
   const [form, setForm] = useState({ title: "", instructions: "", category: "" });
+  const [ingredients, setIngredients] = useState([]);
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
@@ -18,6 +20,7 @@ const EditRecipe = () => {
         instructions: res.data.instructions,
         category: res.data.category,
       });
+      setIngredients(res.data.ingredients || []);
     };
     fetchRecipe();
   }, [id]);
@@ -30,7 +33,10 @@ const EditRecipe = () => {
     e.preventDefault();
     setSubmitting(true);
     try {
-      await API.put(`/recipes/${id}`, form);
+      await API.put(`/recipes/${id}`, {
+        ...form,
+        ingredients: ingredients.filter((i) => i.name.trim() && i.amount.trim()),
+      });
       navigate("/profile");
     } catch (err) {
       console.error("Failed to update recipe:", err);
@@ -65,6 +71,7 @@ const EditRecipe = () => {
         placeholder="Category"
         required
       />
+      <IngredientFields ingredients={ingredients} setIngredients={setIngredients} />
       <button type="submit" disabled={submitting}>
         {submitting ? "Saving..." : "Save Changes"}
       </button>

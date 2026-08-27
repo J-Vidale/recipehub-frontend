@@ -70,7 +70,7 @@ const YourRecipes = () => {
                 return (
                   <li key={recipe._id} className="p-4 bg-white shadow rounded">
                     <h2 className="text-xl font-semibold">{recipe.title}</h2>
-                    <p>{recipe.description}</p>
+                    <p>{recipe.instructions}</p>
                     <button
                       onClick={() => handleSave(recipe._id, isSaved)}
                       disabled={savingId === recipe._id}

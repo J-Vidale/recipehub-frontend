@@ -54,7 +54,7 @@ const RecipeDetail = () => {
         <h1 className="text-3xl font-bold text-green-700 mb-4">
           <Link to={`/recipes/${recipe._id}`}>{recipe.title}</Link>
         </h1>
-        <p className="text-gray-700 mb-4">{recipe.description}</p>
+        <p className="text-gray-700 mb-4">{recipe.instructions}</p>
         <div>
           <h2 className="font-semibold text-lg">Ingredients:</h2>
           <ul className="list-disc list-inside">

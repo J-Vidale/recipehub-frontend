@@ -1,20 +1,18 @@
-import { useState } from "react";
-
 function IngredientFields({ ingredients, setIngredients }) {
   const handleChange = (index, field, value) => {
-    const updated = [...ingredients];
-    updated[index][field] = value;
-    setIngredients(updated);
+    setIngredients(
+      ingredients.map((ingredient, i) =>
+        i === index ? { ...ingredient, [field]: value } : ingredient
+      )
+    );
   };
 
   const handleAdd = () => {
-    setIngredients([...ingredients, { name: "", quantity: "" }]);
+    setIngredients([...ingredients, { name: "", amount: "" }]);
   };
 
   const handleRemove = (index) => {
-    const updated = [...ingredients];
-    updated.splice(index, 1);
-    setIngredients(updated);
+    setIngredients(ingredients.filter((_, i) => i !== index));
   };
 
   return (
@@ -31,9 +29,9 @@ function IngredientFields({ ingredients, setIngredients }) {
           />
           <input
             type="text"
-            placeholder="Quantity"
-            value={ingredient.quantity}
-            onChange={(e) => handleChange(index, "quantity", e.target.value)}
+            placeholder="Amount"
+            value={ingredient.amount}
+            onChange={(e) => handleChange(index, "amount", e.target.value)}
             className="border p-2 w-1/3"
           />
           <button

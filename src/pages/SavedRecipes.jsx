@@ -39,7 +39,7 @@ const SavedRecipes = () => {
                     {recipe.title}
                   </h2>
                   <p className="text-gray-700 text-sm mb-2">
-                    {recipe.description}
+                    {recipe.instructions}
                   </p>
                   <p className="text-xs text-gray-500">
                     Saved on:{" "}
