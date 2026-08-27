@@ -7,6 +7,7 @@ function Login() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -17,12 +18,15 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
     try {
       await contextLogin(formData.username, formData.password);
       await fetchUserData(); // <-- Add this line!
       navigate("/profile");
-    } catch (err) {
+    } catch {
       setError("Invalid credentials");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -52,53 +56,12 @@ function Login() {
           onChange={handleChange}
           required
         />
-        <button type="submit" className="w-full mt-2">
-          Log In
+        <button type="submit" disabled={submitting} className="w-full mt-2">
+          {submitting ? "Logging in..." : "Log In"}
         </button>
       </form>
     </div>
   );
 }
-
-const Profile = () => {
-  const { user } = useAuth();
-
-  if (user === null) return <div>Not logged in</div>;
-  if (!user) return <div>Loading profile...</div>;
-
-  return (
-    <div>
-      <h1>Welcome, {user.username}!</h1>
-      <p>Email: {user.email}</p>
-    </div>
-  );
-};
-
-const fetchUserData = async () => {
-  const token = localStorage.getItem("token");
-
-  if (!token) {
-    setUser(null);
-    return;
-  }
-
-  try {
-    const response = await fetch(`${apiUrl}/users/me`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    const data = await response.json();
-    console.log("fetchUserData response:", response.status, data);
-
-    if (!response.ok) throw new Error(data.message || "Failed to fetch user data");
-
-    setUser(data);
-  } catch (error) {
-    console.error("fetchUserData error:", error);
-    setUser(null);
-  }
-};
 
 export default Login;

@@ -1,20 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import API from "../services/api";
 
 const EditRecipe = () => {
   const { id } = useParams();
   const [recipe, setRecipe] = useState(null);
   const [form, setForm] = useState({ title: "", instructions: "", category: "" });
-  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchRecipe = async () => {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(`${apiUrl}/recipes/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await API.get(`/recipes/${id}`);
       setRecipe(res.data);
       setForm({
         title: res.data.title,
@@ -23,7 +20,7 @@ const EditRecipe = () => {
       });
     };
     fetchRecipe();
-  }, [id, apiUrl]);
+  }, [id]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -31,11 +28,15 @@ const EditRecipe = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem("token");
-    await axios.put(`${apiUrl}/recipes/${id}`, form, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    navigate("/profile");
+    setSubmitting(true);
+    try {
+      await API.put(`/recipes/${id}`, form);
+      navigate("/profile");
+    } catch (err) {
+      console.error("Failed to update recipe:", err);
+      alert("Failed to save changes.");
+      setSubmitting(false);
+    }
   };
 
   if (!recipe) return <div>Loading...</div>;
@@ -64,7 +65,9 @@ const EditRecipe = () => {
         placeholder="Category"
         required
       />
-      <button type="submit">Save Changes</button>
+      <button type="submit" disabled={submitting}>
+        {submitting ? "Saving..." : "Save Changes"}
+      </button>
     </form>
   );
 };

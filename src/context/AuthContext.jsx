@@ -1,4 +1,5 @@
 import { createContext, useState, useContext } from "react";
+import API from "../services/api";
 
 export const AuthContext = createContext();
 
@@ -13,43 +14,25 @@ export const AuthProvider = ({ children }) => {
     }
   });
 
-  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
-
   const login = async (username, password) => {
     try {
-      const response = await fetch(`${apiUrl}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) throw new Error(data.message || "Login failed");
-
-      localStorage.setItem("user", JSON.stringify(data.user));
-      localStorage.setItem("token", data.token);
-      setUser(data.user);
+      const response = await API.post("/auth/login", { username, password });
+      // Backend returns a flat { _id, username, email, token } object.
+      const { token, ...userData } = response.data;
+      localStorage.setItem("user", JSON.stringify(userData));
+      localStorage.setItem("token", token);
+      setUser(userData);
     } catch (error) {
-      throw error;
+      throw new Error(error.response?.data?.message || "Login failed");
     }
   };
 
   const register = async (username, email, password) => {
     try {
-      const response = await fetch(`${apiUrl}/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) throw new Error(data.message || "Registration failed");
-
-      return data;
+      const response = await API.post("/auth/register", { username, email, password });
+      return response.data;
     } catch (error) {
-      throw error;
+      throw new Error(error.response?.data?.message || "Registration failed");
     }
   };
 
@@ -68,17 +51,8 @@ export const AuthProvider = ({ children }) => {
     }
 
     try {
-      const response = await fetch(`${apiUrl}/users/me`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) throw new Error(data.message || "Failed to fetch user data");
-
-      setUser(data);
+      const response = await API.get("/users/me");
+      setUser(response.data);
     } catch (error) {
       console.error(error);
       setUser(null);

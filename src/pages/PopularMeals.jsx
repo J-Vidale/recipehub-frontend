@@ -24,7 +24,7 @@ const PopularMeals = () => {
         {Array.isArray(meals) ? meals.map(meal => (
           <div key={meal.idMeal} className="meal-card">
             <h3>{meal.strMeal}</h3>
-            <img src={meal.strMealThumb} alt={meal.strMeal} />
+            <img src={meal.strMealThumb} alt={meal.strMeal} loading="lazy" />
           </div>
         )) : null}
       </div>

@@ -3,12 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
 function Register() {
-  const { login } = useContext(AuthContext);
+  const { login, register } = useContext(AuthContext);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ username: "", email: "", password: "" });
   const [error, setError] = useState("");
-
-  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -20,32 +19,16 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(""); // clear previous error
+    setSubmitting(true);
     try {
-      const res = await fetch(`${apiUrl}/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      let data = {};
-      try {
-        data = await res.json();
-      } catch {
-        // If response is not JSON, fallback to generic error
-        setError("Registration failed");
-        return;
-      }
-
-      if (!res.ok) {
-        setError(data.message || "Registration failed");
-        return; // Don't navigate away!
-      }
-
+      await register(formData.username, formData.email, formData.password);
       // After successful registration, log in the user
       await login(formData.username, formData.password); // Use username, not email
       navigate("/profile");
     } catch (err) {
-      setError("Registration failed");
+      setError(err.message || "Registration failed");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -78,7 +61,9 @@ function Register() {
           onChange={handleChange}
           required
         />
-        <button type="submit">Register</button>
+        <button type="submit" disabled={submitting}>
+          {submitting ? "Registering..." : "Register"}
+        </button>
       </form>
     </div>
   );

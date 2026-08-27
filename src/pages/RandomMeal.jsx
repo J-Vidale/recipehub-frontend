@@ -21,7 +21,7 @@ const RandomMeal = () => {
   return (
     <div className="random-meal">
       <h2>{meal.strMeal}</h2>
-      <img src={meal.strMealThumb} alt={meal.strMeal} />
+      <img src={meal.strMealThumb} alt={meal.strMeal} loading="lazy" />
       <p><strong>Category:</strong> {meal.strCategory}</p>
       <p><strong>Area:</strong> {meal.strArea}</p>
       <p>{meal.strInstructions}</p>

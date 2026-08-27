@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../services/api";
 
 const SavedRecipes = () => {
   const [savedRecipes, setSavedRecipes] = useState([]);
@@ -8,10 +8,7 @@ const SavedRecipes = () => {
   useEffect(() => {
     const fetchSavedRecipes = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get("/api/recipes/saved", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await API.get("/recipes/saved");
         setSavedRecipes(res.data);
       } catch (err) {
         console.error("Failed to fetch saved recipes:", err);

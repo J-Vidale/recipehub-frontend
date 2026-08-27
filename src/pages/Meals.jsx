@@ -33,7 +33,7 @@ const Meals = () => {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {meals.map((meal) => (
           <div key={meal.idMeal} className="border p-4 rounded shadow">
-            <img src={meal.strMealThumb} alt={meal.strMeal} className="w-full h-32 object-cover rounded mb-2" />
+            <img src={meal.strMealThumb} alt={meal.strMeal} loading="lazy" className="w-full h-32 object-cover rounded mb-2" />
             <h3 className="font-semibold text-center">{meal.strMeal}</h3>
           </div>
         ))}

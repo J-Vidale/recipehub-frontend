@@ -1,23 +1,25 @@
 import React, { useState } from "react";
-import axios from "axios";
+import API from "../services/api";
 
 const CreateRecipe = () => {
   const [formData, setFormData] = useState({ title: "", description: "" });
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem("token");
+    setSubmitting(true);
     try {
-      await axios.post("/api/recipes", formData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await API.post("/recipes", formData);
       setFormData({ title: "", description: "" });
       alert("Recipe created!");
     } catch (error) {
       console.error("Create recipe error:", error.message);
+      alert("Failed to create recipe.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -42,7 +44,13 @@ const CreateRecipe = () => {
           className="w-full p-2 border"
           required
         />
-        <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded">Submit</button>
+        <button
+          type="submit"
+          disabled={submitting}
+          className="px-4 py-2 bg-green-600 text-white rounded disabled:opacity-60"
+        >
+          {submitting ? "Submitting..." : "Submit"}
+        </button>
       </form>
     </div>
   );

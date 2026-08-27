@@ -19,7 +19,7 @@ function MealDetail() {
         } else {
           setError("Meal not found.");
         }
-      } catch (err) {
+      } catch {
         setError("Failed to fetch meal.");
       } finally {
         setLoading(false);
@@ -38,6 +38,7 @@ function MealDetail() {
       <img
         src={meal.strMealThumb}
         alt={meal.strMeal}
+        loading="lazy"
         style={{ maxWidth: "300px", borderRadius: "10px" }}
       />
       <p><strong>Category:</strong> {meal.strCategory}</p>

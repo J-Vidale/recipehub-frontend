@@ -24,7 +24,7 @@ const Categories = () => {
         {Array.isArray(categories) ? (
           categories.map((cat) => (
             <div key={cat.idCategory} className="border p-4 rounded shadow hover:shadow-lg transition">
-              <img src={cat.strCategoryThumb} alt={cat.strCategory} className="w-full h-32 object-cover rounded mb-2" />
+              <img src={cat.strCategoryThumb} alt={cat.strCategory} loading="lazy" className="w-full h-32 object-cover rounded mb-2" />
               <h3 className="font-semibold text-lg">{cat.strCategory}</h3>
               <p className="text-sm text-gray-600">{cat.strCategoryDescription.slice(0, 100)}...</p>
             </div>

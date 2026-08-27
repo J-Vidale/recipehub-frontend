@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../services/api";
 
 const YourRecipes = () => {
   const [recipes, setRecipes] = useState([]);
   const [savedIds, setSavedIds] = useState([]);
+  const [savingId, setSavingId] = useState(null);
 
   useEffect(() => {
     const fetchRecipes = async () => {
-      const token = localStorage.getItem("token");
       try {
-        const res = await axios.get("/api/recipes/mine", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await API.get("/recipes/mine");
         setRecipes(res.data);
       } catch (error) {
         console.error("Error fetching recipes:", error.message);
@@ -19,13 +17,10 @@ const YourRecipes = () => {
     };
 
     const fetchSaved = async () => {
-      const token = localStorage.getItem("token");
       try {
-        const res = await axios.get("/api/recipes/saved", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await API.get("/recipes/saved");
         setSavedIds(res.data.map((r) => r._id));
-      } catch (error) {
+      } catch {
         setSavedIds([]);
       }
     };
@@ -35,25 +30,30 @@ const YourRecipes = () => {
   }, []);
 
   const handleSave = async (recipeId, currentlySaved) => {
-    const token = localStorage.getItem("token");
+    // Optimistic: flip the UI immediately, revert if the request fails.
+    setSavingId(recipeId);
+    if (currentlySaved) {
+      setSavedIds((prev) => prev.filter((id) => id !== recipeId));
+    } else {
+      setSavedIds((prev) => [...prev, recipeId]);
+    }
+
     try {
       if (currentlySaved) {
-        await axios.delete(`/api/recipes/unsave/${recipeId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setSavedIds((prev) => prev.filter((id) => id !== recipeId));
+        await API.delete(`/recipes/unsave/${recipeId}`);
       } else {
-        await axios.post(
-          `/api/recipes/save/${recipeId}`,
-          {},
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        setSavedIds((prev) => [...prev, recipeId]);
+        await API.post(`/recipes/save/${recipeId}`, {});
       }
-    } catch (err) {
+    } catch {
+      // Revert on failure
+      if (currentlySaved) {
+        setSavedIds((prev) => [...prev, recipeId]);
+      } else {
+        setSavedIds((prev) => prev.filter((id) => id !== recipeId));
+      }
       alert("Failed to update saved recipes.");
+    } finally {
+      setSavingId(null);
     }
   };
 
@@ -73,7 +73,8 @@ const YourRecipes = () => {
                     <p>{recipe.description}</p>
                     <button
                       onClick={() => handleSave(recipe._id, isSaved)}
-                      className={`px-4 py-2 rounded ${
+                      disabled={savingId === recipe._id}
+                      className={`px-4 py-2 rounded disabled:opacity-60 ${
                         isSaved
                           ? "bg-red-500 text-white"
                           : "bg-green-500 text-white"

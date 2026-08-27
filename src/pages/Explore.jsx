@@ -1,6 +1,7 @@
 // src/pages/Explore.jsx
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import API from '../services/api';
 
 const Explore = () => {
   const [recipes, setRecipes] = useState([]);
@@ -8,9 +9,8 @@ const Explore = () => {
   useEffect(() => {
     const fetchAllRecipes = async () => {
       try {
-        const res = await fetch('/api/recipes');
-        const data = await res.json();
-        setRecipes(data);
+        const res = await API.get('/recipes');
+        setRecipes(res.data);
       } catch (err) {
         console.error('Error fetching recipes:', err);
       }

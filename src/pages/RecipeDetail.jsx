@@ -1,19 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import axios from "axios";
+import API from "../services/api";
 
 const RecipeDetail = () => {
   const { id } = useParams();
   const [recipe, setRecipe] = useState(null);
   const [isSaved, setIsSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     const fetchRecipe = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get(`/api/recipes/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await API.get(`/recipes/${id}`);
         setRecipe(response.data);
       } catch (error) {
         console.error("Error fetching recipe:", error);
@@ -24,36 +22,27 @@ const RecipeDetail = () => {
 
   useEffect(() => {
     if (!recipe) return; // Don't run if recipe is not loaded yet
-    const token = localStorage.getItem("token");
-    axios
-      .get("/api/recipes/saved", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => {
-        setIsSaved(res.data.some((r) => r._id === recipe._id));
-      });
+    API.get("/recipes/saved").then((res) => {
+      setIsSaved(res.data.some((r) => r._id === recipe._id));
+    });
   }, [recipe?._id, recipe]);
 
   const handleSave = async () => {
-    const token = localStorage.getItem("token");
+    const previouslySaved = isSaved;
+    // Optimistic: flip the UI immediately, revert if the request fails.
+    setIsSaved(!previouslySaved);
+    setSaving(true);
     try {
-      if (isSaved) {
-        await axios.delete(`/api/recipes/unsave/${recipe._id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setIsSaved(false);
+      if (previouslySaved) {
+        await API.delete(`/recipes/unsave/${recipe._id}`);
       } else {
-        await axios.post(
-          `/api/recipes/save/${recipe._id}`,
-          {},
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        setIsSaved(true);
+        await API.post(`/recipes/save/${recipe._id}`, {});
       }
-    } catch (err) {
+    } catch {
+      setIsSaved(previouslySaved);
       alert("Failed to update saved recipes.");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -78,7 +67,8 @@ const RecipeDetail = () => {
         </div>
         <button
           onClick={handleSave}
-          className={`px-4 py-2 rounded ${
+          disabled={saving}
+          className={`px-4 py-2 rounded disabled:opacity-60 ${
             isSaved ? "bg-red-500 text-white" : "bg-green-500 text-white"
           }`}
         >

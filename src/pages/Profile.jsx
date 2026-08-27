@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
@@ -7,7 +7,7 @@ const Profile = () => {
   const { user: authUser } = useAuth();
   const [user, setUser] = useState(null);
   const [recipes, setRecipes] = useState([]);
-  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+  const [deletingId, setDeletingId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,9 +17,7 @@ const Profile = () => {
           // Fetch user info if needed
           setUser(authUser);
           // Fetch recipes using full API URL
-          const recipesRes = await axios.get(
-            `${apiUrl}/recipes/user/${authUser._id}`
-          );
+          const recipesRes = await API.get(`/recipes/user/${authUser._id}`);
           setRecipes(Array.isArray(recipesRes.data) ? recipesRes.data : []);
         } else {
           setRecipes([]);
@@ -33,23 +31,24 @@ const Profile = () => {
     if (authUser && authUser._id) {
       fetchUserProfile();
     }
-  }, [authUser, apiUrl]);
+  }, [authUser]);
 
   const handleEdit = (recipeId) => {
     navigate(`/edit/${recipeId}`);
   };
 
   const handleDelete = async (recipeId) => {
+    setDeletingId(recipeId);
     try {
-      const token = localStorage.getItem("token");
-      await axios.delete(`${apiUrl}/recipes/${recipeId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await API.delete(`/recipes/${recipeId}`);
       setRecipes((prevRecipes) =>
         prevRecipes.filter((recipe) => recipe._id !== recipeId)
       );
     } catch (err) {
       console.error("Failed to delete recipe:", err);
+      alert("Failed to delete recipe.");
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -74,7 +73,12 @@ const Profile = () => {
               {/* Edit Button */}
               <button onClick={() => handleEdit(recipe._id)}>Edit</button>
               {/* Delete Button */}
-              <button onClick={() => handleDelete(recipe._id)}>Delete</button>
+              <button
+                onClick={() => handleDelete(recipe._id)}
+                disabled={deletingId === recipe._id}
+              >
+                {deletingId === recipe._id ? "Deleting..." : "Delete"}
+              </button>
             </li>
           ))}
         </ul>
