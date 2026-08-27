@@ -10,7 +10,7 @@ const Explore = () => {
     const fetchAllRecipes = async () => {
       try {
         const res = await API.get('/recipes');
-        setRecipes(res.data);
+        setRecipes(res.data.recipes);
       } catch (err) {
         console.error('Error fetching recipes:', err);
       }
