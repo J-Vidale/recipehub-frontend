@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import API from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import LikeButton from "../components/LikeButton";
+import ShareButton from "../components/ShareButton";
 import CommentSection from "../components/CommentSection";
 
 const RecipeDetail = () => {
@@ -87,6 +88,11 @@ const RecipeDetail = () => {
             recipeId={recipe._id}
             initialLikeCount={recipe.likeCount || 0}
             initialLikedByMe={false}
+          />
+          <ShareButton
+            recipeId={recipe._id}
+            initialShareCount={recipe.shareCount || 0}
+            initialSharedByMe={false}
           />
           {user ? (
             <button

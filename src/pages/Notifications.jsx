@@ -14,6 +14,8 @@ const describeNotification = (n) => {
       return `${actorName} commented on your recipe${recipeTitle ? ` "${recipeTitle}"` : ""}`;
     case "reply":
       return `${actorName} replied to your comment${recipeTitle ? ` on "${recipeTitle}"` : ""}`;
+    case "share":
+      return `${actorName} shared your recipe${recipeTitle ? ` "${recipeTitle}"` : ""}`;
     default:
       return `${actorName} interacted with your content`;
   }
