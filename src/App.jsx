@@ -6,6 +6,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 
 import Home from "./pages/Home";
 import Explore from "./pages/Explore";
+import Feed from "./pages/Feed";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
@@ -28,6 +29,14 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/explore" element={<Explore />} />
+          <Route
+            path="/feed"
+            element={
+              <ProtectedRoute>
+                <Feed />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route

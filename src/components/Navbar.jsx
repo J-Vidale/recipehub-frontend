@@ -24,6 +24,7 @@ function Navbar() {
       <div className="flex items-center gap-4">
         {user ? (
           <>
+            <Link to="/feed">Feed</Link>
             <Link to="/profile">Profile</Link>
             <Link to="/your-recipes">Your Recipes</Link>
             <Link to="/create">Create</Link>
