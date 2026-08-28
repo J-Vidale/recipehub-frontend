@@ -14,6 +14,8 @@ const Feed = lazy(() => import("./pages/Feed"));
 const Notifications = lazy(() => import("./pages/Notifications"));
 const SearchResults = lazy(() => import("./pages/SearchResults"));
 const TagPage = lazy(() => import("./pages/TagPage"));
+const Messages = lazy(() => import("./pages/Messages"));
+const ConversationView = lazy(() => import("./pages/ConversationView"));
 const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
 const Profile = lazy(() => import("./pages/Profile"));
@@ -43,6 +45,22 @@ function App() {
             <Route path="/explore" element={<Explore />} />
             <Route path="/search" element={<SearchResults />} />
             <Route path="/tag/:tag" element={<TagPage />} />
+            <Route
+              path="/messages"
+              element={
+                <ProtectedRoute>
+                  <Messages />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/messages/:id"
+              element={
+                <ProtectedRoute>
+                  <ConversationView />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/feed"
               element={

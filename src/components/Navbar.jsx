@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import NotificationBell from "./NotificationBell";
+import MessageBadge from "./MessageBadge";
 import SearchBar from "./SearchBar";
 
 function Navbar() {
@@ -29,6 +30,7 @@ function Navbar() {
           <>
             <Link to="/feed">Feed</Link>
             <NotificationBell />
+            <MessageBadge />
             <Link to="/profile">Profile</Link>
             <Link to="/your-recipes">Your Recipes</Link>
             <Link to="/create">Create</Link>

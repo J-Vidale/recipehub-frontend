@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import API from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import FollowButton from "../components/FollowButton";
@@ -9,6 +9,8 @@ import ReportButton from "../components/ReportButton";
 const UserProfile = () => {
   const { id } = useParams();
   const { user: authUser } = useAuth();
+  const navigate = useNavigate();
+  const [startingConversation, setStartingConversation] = useState(false);
   const [profile, setProfile] = useState(null);
   const [recipes, setRecipes] = useState([]);
   const [page, setPage] = useState(1);
@@ -66,6 +68,18 @@ const UserProfile = () => {
     setProfile((prev) => (prev ? { ...prev, followerCount: prev.followerCount + delta } : prev));
   };
 
+  const handleMessage = async () => {
+    setStartingConversation(true);
+    try {
+      const res = await API.post("/conversations", { userId: profile._id });
+      navigate(`/messages/${res.data._id}`);
+    } catch (err) {
+      alert(err.response?.data?.message || "Failed to start conversation.");
+    } finally {
+      setStartingConversation(false);
+    }
+  };
+
   if (loading) return <div className="p-8 text-center text-gray-600">Loading profile...</div>;
   if (error) return <div className="p-8 text-center text-red-600">{error}</div>;
   if (!profile) return null;
@@ -90,11 +104,20 @@ const UserProfile = () => {
             </Link>
           ) : (
             <div className="flex flex-col items-end gap-2">
-              <FollowButton
-                userId={profile._id}
-                initialFollowingByMe={profile.followingByMe}
-                onFollowerCountChange={handleFollowerCountChange}
-              />
+              <div className="flex gap-2">
+                <FollowButton
+                  userId={profile._id}
+                  initialFollowingByMe={profile.followingByMe}
+                  onFollowerCountChange={handleFollowerCountChange}
+                />
+                <button
+                  onClick={handleMessage}
+                  disabled={startingConversation}
+                  className="px-4 py-1.5 rounded bg-gray-200 text-gray-800 hover:bg-gray-300 disabled:opacity-60"
+                >
+                  {startingConversation ? "..." : "Message"}
+                </button>
+              </div>
               <div className="flex gap-3">
                 <BlockButton userId={profile._id} />
                 <ReportButton targetType="user" targetId={profile._id} />
