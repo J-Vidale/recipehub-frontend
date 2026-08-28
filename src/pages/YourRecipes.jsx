@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import API from "../services/api";
+import RecipeCard from "../components/RecipeCard";
 
 const YourRecipes = () => {
   const [recipes, setRecipes] = useState([]);
@@ -64,8 +65,8 @@ const YourRecipes = () => {
   };
 
   return (
-    <div className="page-container max-w-2xl">
-      <h1 className="text-2xl font-bold text-green-700 mb-6">Your Recipes</h1>
+    <div className="page-container max-w-6xl">
+      <h1 className="text-3xl font-bold text-green-700 mb-6">Your Recipes</h1>
       {loading ? (
         <p className="text-gray-600">Loading...</p>
       ) : error ? (
@@ -73,31 +74,31 @@ const YourRecipes = () => {
       ) : recipes.length === 0 ? (
         <p className="text-gray-600">No recipes found. Add some!</p>
       ) : (
-        <ul className="space-y-4">
-          {Array.isArray(recipes)
-            ? recipes.map((recipe) => {
-                const isSaved = savedIds.includes(recipe._id);
-                return (
-                  <li key={recipe._id} className="card">
-                    <h2 className="text-xl font-semibold mb-1">{recipe.title}</h2>
-                    <p className="text-gray-600 mb-3">{recipe.instructions?.slice(0, 150)}...</p>
-                    <div className="flex items-center gap-2">
-                      <Link to={`/edit/${recipe._id}`} className="btn-secondary">
-                        Edit
-                      </Link>
-                      <button
-                        onClick={() => handleSave(recipe._id, isSaved)}
-                        disabled={savingId === recipe._id}
-                        className={isSaved ? "btn-danger" : "btn-primary"}
-                      >
-                        {isSaved ? "Unsave" : "Save"}
-                      </button>
-                    </div>
-                  </li>
-                );
-              })
-            : null}
-        </ul>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {recipes.map((recipe) => {
+            const isSaved = savedIds.includes(recipe._id);
+            return (
+              <RecipeCard
+                key={recipe._id}
+                recipe={recipe}
+                actions={
+                  <>
+                    <Link to={`/edit/${recipe._id}`} className="btn-secondary flex-1">
+                      Edit
+                    </Link>
+                    <button
+                      onClick={() => handleSave(recipe._id, isSaved)}
+                      disabled={savingId === recipe._id}
+                      className={`flex-1 ${isSaved ? "btn-danger" : "btn-primary"}`}
+                    >
+                      {isSaved ? "Unsave" : "Save"}
+                    </button>
+                  </>
+                }
+              />
+            );
+          })}
+        </div>
       )}
     </div>
   );

@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import API from "../services/api";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import RecipeCard from "../components/RecipeCard";
 
 const MAX_AVATAR_BYTES = 8 * 1024 * 1024;
 
@@ -13,7 +14,6 @@ const Profile = () => {
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [avatarError, setAvatarError] = useState(null);
   const fileInputRef = useRef(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -41,10 +41,6 @@ const Profile = () => {
   useEffect(() => {
     if (authUser) setUser(authUser);
   }, [authUser]);
-
-  const handleEdit = (recipeId) => {
-    navigate(`/edit/${recipeId}`);
-  };
 
   const handleDelete = async (recipeId) => {
     setDeletingId(recipeId);
@@ -112,8 +108,8 @@ const Profile = () => {
   if (!user) return <div className="page-container text-center text-gray-600">Loading profile...</div>;
 
   return (
-    <div className="page-container max-w-lg">
-      <div className="card mb-6">
+    <div className="page-container max-w-4xl">
+      <div className="card mb-6 max-w-lg">
         <div className="flex items-center gap-4">
           <input
             ref={fileInputRef}
@@ -156,34 +152,35 @@ const Profile = () => {
         </div>
       </div>
 
-      <div className="card">
-        <h3 className="text-xl font-semibold mb-4">
-          Recipes by {user.username}
-        </h3>
-        {recipes.length === 0 ? (
-          <p className="text-gray-600">No recipes yet.</p>
-        ) : (
-          <ul className="space-y-3">
-            {(Array.isArray(recipes) ? recipes : []).map((recipe) => (
-              <li key={recipe._id} className="card-sm flex items-center justify-between gap-3">
-                <span className="font-medium">{recipe.title}</span>
-                <div className="flex items-center gap-2">
-                  <button onClick={() => handleEdit(recipe._id)} className="btn-secondary">
+      <h3 className="text-xl font-semibold mb-4">
+        Recipes by {user.username}
+      </h3>
+      {recipes.length === 0 ? (
+        <p className="text-gray-600">No recipes yet.</p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {(Array.isArray(recipes) ? recipes : []).map((recipe) => (
+            <RecipeCard
+              key={recipe._id}
+              recipe={recipe}
+              actions={
+                <>
+                  <Link to={`/edit/${recipe._id}`} className="btn-secondary flex-1">
                     Edit
-                  </button>
+                  </Link>
                   <button
                     onClick={() => handleDelete(recipe._id)}
                     disabled={deletingId === recipe._id}
-                    className="btn-danger"
+                    className="btn-danger flex-1"
                   >
                     {deletingId === recipe._id ? "Deleting..." : "Delete"}
                   </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+                </>
+              }
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

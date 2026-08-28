@@ -35,15 +35,14 @@ function MealDetail() {
   return (
     <div className="page-container max-w-2xl">
       <div className="card">
+        <div className="detail-hero">
+          <img src={meal.strMealThumb} alt={meal.strMeal} loading="lazy" />
+        </div>
         <h1 className="text-2xl font-bold text-green-700 mb-3">{meal.strMeal}</h1>
-        <img
-          src={meal.strMealThumb}
-          alt={meal.strMeal}
-          loading="lazy"
-          className="w-full rounded-lg mb-4 object-cover max-h-80"
-        />
-        <p className="text-gray-700 mb-1"><strong>Category:</strong> {meal.strCategory}</p>
-        <p className="text-gray-700 mb-4"><strong>Area:</strong> {meal.strArea}</p>
+        <div className="flex gap-2 mb-4">
+          <span className="recipe-card__badge" style={{ position: "static" }}>{meal.strCategory}</span>
+          <span className="recipe-card__badge" style={{ position: "static" }}>{meal.strArea}</span>
+        </div>
 
         <h3 className="font-semibold text-lg mb-2">Ingredients</h3>
         <ul className="list-disc list-inside text-gray-700 space-y-1 mb-4">

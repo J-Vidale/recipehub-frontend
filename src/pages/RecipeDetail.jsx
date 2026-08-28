@@ -15,12 +15,14 @@ const RecipeDetail = () => {
   const [error, setError] = useState(null);
   const [isSaved, setIsSaved] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [activeMediaIndex, setActiveMediaIndex] = useState(0);
 
   useEffect(() => {
     const fetchRecipe = async () => {
       try {
         const response = await API.get(`/recipes/${id}`);
         setRecipe(response.data);
+        setActiveMediaIndex(0);
       } catch (error) {
         console.error("Error fetching recipe:", error);
         setError("Couldn't load this recipe. It may have been deleted.");
@@ -60,9 +62,32 @@ const RecipeDetail = () => {
   if (error) return <div className="page-container text-center text-red-600">{error}</div>;
   if (!recipe) return <div className="page-container text-center text-gray-600">Loading...</div>;
 
+  const media = recipe.media || [];
+  const activeMedia = media[activeMediaIndex];
+
   return (
     <div className="page-container max-w-2xl">
       <div className="card">
+        <div className="detail-hero">
+          {activeMedia ? (
+            <img src={activeMedia.url} alt="" />
+          ) : (
+            <div className="detail-hero__placeholder" aria-hidden="true">🍽</div>
+          )}
+        </div>
+        {media.length > 1 && (
+          <div className="detail-hero-strip">
+            {media.map((item, i) => (
+              <img
+                key={item.publicId || i}
+                src={item.url}
+                alt=""
+                className={i === activeMediaIndex ? "is-active" : ""}
+                onClick={() => setActiveMediaIndex(i)}
+              />
+            ))}
+          </div>
+        )}
         <h1 className="text-3xl font-bold text-green-700 mb-2">
           {recipe.title}
         </h1>
