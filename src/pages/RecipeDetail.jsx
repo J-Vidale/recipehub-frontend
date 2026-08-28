@@ -7,6 +7,7 @@ import ShareButton from "../components/ShareButton";
 import CommentSection from "../components/CommentSection";
 import ReportButton from "../components/ReportButton";
 import HashtagText from "../components/HashtagText";
+import RecipeCard from "../components/RecipeCard";
 
 const RecipeDetail = () => {
   const { id } = useParams();
@@ -16,6 +17,7 @@ const RecipeDetail = () => {
   const [isSaved, setIsSaved] = useState(false);
   const [saving, setSaving] = useState(false);
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
+  const [moreFromUser, setMoreFromUser] = useState([]);
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -30,6 +32,13 @@ const RecipeDetail = () => {
     };
     fetchRecipe();
   }, [id]);
+
+  useEffect(() => {
+    if (!recipe?.user?._id) return;
+    API.get(`/recipes/user/${recipe.user._id}`, { params: { page: 1, limit: 8 } })
+      .then((res) => setMoreFromUser(res.data.recipes.filter((r) => r._id !== recipe._id)))
+      .catch((err) => console.error("Failed to fetch more recipes from this user:", err));
+  }, [recipe]);
 
   useEffect(() => {
     if (!recipe || !user) return; // Only logged-in users have a saved list to check
@@ -148,6 +157,19 @@ const RecipeDetail = () => {
           pinnedCommentId={recipe.pinnedComment}
         />
       </div>
+
+      {moreFromUser.length > 0 && (
+        <div className="rail">
+          <h3 className="rail__title">More from {recipe.user?.username}</h3>
+          <div className="rail__track">
+            {moreFromUser.map((r) => (
+              <div key={r._id} className="rail__card">
+                <RecipeCard recipe={r} />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

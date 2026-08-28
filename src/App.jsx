@@ -26,6 +26,7 @@ const SavedRecipes = lazy(() => import("./pages/SavedRecipes"));
 const PopularMeals = lazy(() => import("./pages/PopularMeals"));
 const RandomMeal = lazy(() => import("./pages/RandomMeal"));
 const MealDetail = lazy(() => import("./pages/MealDetail"));
+const DrinkDetail = lazy(() => import("./pages/DrinkDetail"));
 const RecipeDetail = lazy(() => import("./pages/RecipeDetail"));
 const UserProfile = lazy(() => import("./pages/UserProfile"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -122,6 +123,7 @@ function App() {
             <Route path="/popular-meals" element={<PopularMeals />} />
             <Route path="/random-meal" element={<RandomMeal />} />
             <Route path="/meals/:id" element={<MealDetail />} />
+            <Route path="/drinks/:id" element={<DrinkDetail />} />
             <Route path="/recipes/:id" element={<RecipeDetail />} />
             <Route path="/users/:id" element={<UserProfile />} />
             <Route path="*" element={<NotFound />} />
