@@ -1,40 +1,75 @@
 // src/pages/PopularMeals.jsx
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import MealRail from '../components/MealRail';
+import { fetchMealsByCategory, fetchDrinksByCategory } from '../utils/mealdb';
+
+// A fixed, curated subset rather than every category TheMealDB has (60+)
+// - enough variety for a genuine "browse by section" feel without an
+// overwhelming wall of rails or 15+ API calls on page load.
+const MEAL_SECTIONS = ["Beef", "Chicken", "Dessert", "Seafood", "Vegetarian", "Pasta"];
+const DRINK_SECTIONS = ["Cocktail", "Ordinary Drink"];
 
 const PopularMeals = () => {
-  const [meals, setMeals] = useState([]);
+  const [mealSections, setMealSections] = useState({});
+  const [drinkSections, setDrinkSections] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchPopularMeals = async () => {
+    const loadAll = async () => {
       try {
-        const res = await fetch('https://www.themealdb.com/api/json/v1/1/filter.php?c=Beef');
-        const data = await res.json();
-        setMeals(data.meals.slice(0, 10)); // display top 10 beef meals as "popular"
+        const mealResults = await Promise.all(
+          MEAL_SECTIONS.map((category) => fetchMealsByCategory(category))
+        );
+        setMealSections(Object.fromEntries(MEAL_SECTIONS.map((c, i) => [c, mealResults[i]])));
+
+        const drinkResults = await Promise.all(
+          DRINK_SECTIONS.map((category) => fetchDrinksByCategory(category))
+        );
+        setDrinkSections(Object.fromEntries(DRINK_SECTIONS.map((c, i) => [c, drinkResults[i]])));
       } catch (err) {
-        console.error('Error fetching popular meals:', err);
+        console.error('Error fetching popular meals/drinks:', err);
       } finally {
         setLoading(false);
       }
     };
-    fetchPopularMeals();
+    loadAll();
   }, []);
 
   return (
     <div className="page-container max-w-6xl">
-      <h2 className="text-3xl font-bold text-green-700 mb-8 text-center">Popular Meals</h2>
+      <h2 className="text-3xl font-bold text-green-700 mb-8 text-center">Popular Meals & Drinks</h2>
       {loading ? (
-        <p className="text-center text-gray-600">Loading...</p>
-      ) : (
-        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {Array.isArray(meals) ? meals.map(meal => (
-            <Link to={`/meals/${meal.idMeal}`} key={meal.idMeal} className="card card-hover overflow-hidden p-0">
-              <img src={meal.strMealThumb} alt={meal.strMeal} loading="lazy" className="w-full h-40 object-cover" />
-              <h3 className="font-semibold p-3">{meal.strMeal}</h3>
-            </Link>
-          )) : null}
+        <div className="space-y-8">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i}>
+              <div className="skeleton h-5 w-40 mb-3" />
+              <div className="flex gap-4 overflow-hidden">
+                {Array.from({ length: 5 }).map((_, j) => (
+                  <div key={j} className="skeleton flex-shrink-0" style={{ width: "13rem", aspectRatio: "4 / 3" }} />
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
+      ) : (
+        <>
+          {MEAL_SECTIONS.map((category) => (
+            <MealRail
+              key={category}
+              title={category}
+              items={(mealSections[category] || []).map((m) => ({ id: m.idMeal, title: m.strMeal, thumb: m.strMealThumb }))}
+              linkTo={(id) => `/meals/${id}`}
+            />
+          ))}
+          {DRINK_SECTIONS.map((category) => (
+            <MealRail
+              key={category}
+              title={category === "Ordinary Drink" ? "Drinks" : category}
+              items={(drinkSections[category] || []).map((d) => ({ id: d.idDrink, title: d.strDrink, thumb: d.strDrinkThumb }))}
+              linkTo={(id) => `/drinks/${id}`}
+            />
+          ))}
+        </>
       )}
     </div>
   );
