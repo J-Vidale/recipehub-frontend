@@ -47,7 +47,7 @@ const Messages = () => {
         <ul className="space-y-2">
           {conversations.map((c) => (
             <li key={c._id}>
-              <Link to={`/messages/${c._id}`} className="card-sm flex items-center gap-3 hover:shadow-md transition">
+              <Link to={`/messages/${c._id}`} className="card-sm card-hover flex items-center gap-3">
                 {c.otherUser?.avatarUrl ? (
                   <img src={c.otherUser.avatarUrl} alt={c.otherUser.username} className="avatar avatar-sm" />
                 ) : (

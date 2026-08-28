@@ -50,7 +50,7 @@ const SearchResults = () => {
                   <Link
                     key={u._id}
                     to={`/users/${u._id}`}
-                    className="card-sm hover:shadow-md transition"
+                    className="card-sm card-hover"
                   >
                     <p className="font-semibold">{u.username}</p>
                     <p className="text-sm text-gray-500">{u.followerCount} followers</p>
@@ -67,7 +67,7 @@ const SearchResults = () => {
                   <Link
                     key={r._id}
                     to={`/recipes/${r._id}`}
-                    className="card hover:shadow-lg transition flex flex-col"
+                    className="card card-hover flex flex-col"
                   >
                     <h4 className="font-semibold mb-1">{r.title}</h4>
                     {r.user?.username && (

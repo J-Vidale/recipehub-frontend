@@ -57,7 +57,7 @@ const Explore = () => {
             <Link
               key={tag}
               to={`/tag/${tag}`}
-              className="card-sm px-3 py-1 text-sm text-green-700 hover:shadow-md transition"
+              className="card-sm card-hover px-3 py-1 text-sm text-green-700"
             >
               #{tag} <span className="text-gray-400">{count}</span>
             </Link>
@@ -72,7 +72,7 @@ const Explore = () => {
         <>
           <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {recipes.map(recipe => (
-              <Link to={`/recipes/${recipe._id}`} key={recipe._id} className="card hover:shadow-lg transition flex flex-col">
+              <Link to={`/recipes/${recipe._id}`} key={recipe._id} className="card card-hover flex flex-col">
                 <h3 className="text-lg font-semibold mb-1">{recipe.title}</h3>
                 {recipe.user?.username && (
                   <p className="text-xs text-gray-500 mb-2">by {recipe.user.username}</p>

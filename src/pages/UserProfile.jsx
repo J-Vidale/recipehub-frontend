@@ -145,7 +145,7 @@ const UserProfile = () => {
                 <Link
                   to={`/recipes/${recipe._id}`}
                   key={recipe._id}
-                  className="card hover:shadow-lg transition flex flex-col"
+                  className="card card-hover flex flex-col"
                 >
                   <h3 className="text-lg font-semibold mb-2">{recipe.title}</h3>
                   <p className="text-gray-600 text-sm flex-1">{recipe.instructions?.slice(0, 100)}...</p>

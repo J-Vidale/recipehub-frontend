@@ -58,7 +58,7 @@ const TagPage = () => {
               <Link
                 to={`/recipes/${recipe._id}`}
                 key={recipe._id}
-                className="card hover:shadow-lg transition flex flex-col"
+                className="card card-hover flex flex-col"
               >
                 <h3 className="text-lg font-semibold mb-1">{recipe.title}</h3>
                 {recipe.user?.username && (

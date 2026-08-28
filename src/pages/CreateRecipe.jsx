@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../services/api";
 import IngredientFields from "../components/IngredientFields";
-import useCategories from "../hooks/useCategories";
+import CategoryAutocomplete from "../components/CategoryAutocomplete";
 
 const CreateRecipe = () => {
   const [formData, setFormData] = useState({
@@ -12,14 +12,15 @@ const CreateRecipe = () => {
   });
   const [ingredients, setIngredients] = useState([]);
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const categories = useCategories();
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
     setSubmitting(true);
     try {
       await API.post("/recipes", {
@@ -27,9 +28,9 @@ const CreateRecipe = () => {
         ingredients: ingredients.filter((i) => i.name.trim() && i.amount.trim()),
       });
       navigate("/your-recipes");
-    } catch (error) {
-      console.error("Create recipe error:", error.message);
-      alert("Failed to create recipe.");
+    } catch (err) {
+      console.error("Create recipe error:", err.message);
+      setError(err.response?.data?.message || "Failed to create recipe.");
     } finally {
       setSubmitting(false);
     }
@@ -39,6 +40,7 @@ const CreateRecipe = () => {
     <div className="page-container max-w-lg">
       <div className="card">
         <h1 className="text-2xl font-bold text-green-700 mb-6">Create Recipe</h1>
+        {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"
@@ -49,19 +51,13 @@ const CreateRecipe = () => {
             className="input"
             required
           />
-          <select
-            name="category"
-            value={formData.category}
-            onChange={handleChange}
-            className="input"
-          >
-            <option value="">Select a category (optional)</option>
-            {categories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </select>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Category (optional)</label>
+            <CategoryAutocomplete
+              value={formData.category}
+              onChange={(category) => setFormData((prev) => ({ ...prev, category }))}
+            />
+          </div>
           <textarea
             name="instructions"
             placeholder="Instructions (write #hashtags to tag your recipe)"

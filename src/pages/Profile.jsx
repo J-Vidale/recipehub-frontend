@@ -115,31 +115,42 @@ const Profile = () => {
     <div className="page-container max-w-lg">
       <div className="card mb-6">
         <div className="flex items-center gap-4">
-          {user.avatarUrl ? (
-            <img src={user.avatarUrl} alt={user.username} className="avatar avatar-lg" />
-          ) : (
-            <span className="avatar avatar-lg">{user.username?.[0]?.toUpperCase()}</span>
-          )}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleAvatarChange}
+            className="hidden"
+          />
+          <button
+            type="button"
+            onClick={handleAvatarPick}
+            disabled={uploadingAvatar}
+            className="avatar-upload"
+            aria-label={user.avatarUrl ? "Change profile picture" : "Add a profile picture"}
+          >
+            {user.avatarUrl ? (
+              <img src={user.avatarUrl} alt="" className="avatar avatar-lg" />
+            ) : (
+              <span className="avatar avatar-lg">{user.username?.[0]?.toUpperCase()}</span>
+            )}
+            <span className="avatar-upload__overlay" aria-hidden="true">
+              <span>📷</span>
+              <span>{uploadingAvatar ? "Uploading…" : user.avatarUrl ? "Change" : "Add"}</span>
+            </span>
+          </button>
           <div className="flex-1">
             <h2 className="text-2xl font-bold text-green-700 mb-1">{user.username}</h2>
             <p className="text-gray-600 text-sm mb-3">{user.email}</p>
-            <div className="flex items-center gap-2 flex-wrap">
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handleAvatarChange}
-                className="hidden"
-              />
-              <button onClick={handleAvatarPick} disabled={uploadingAvatar} className="btn-secondary">
-                {uploadingAvatar ? "Uploading..." : user.avatarUrl ? "Change photo" : "Add photo"}
+            {user.avatarUrl && (
+              <button
+                onClick={handleAvatarRemove}
+                disabled={uploadingAvatar}
+                className="text-sm text-red-600 hover:underline disabled:opacity-60"
+              >
+                Remove photo
               </button>
-              {user.avatarUrl && (
-                <button onClick={handleAvatarRemove} disabled={uploadingAvatar} className="btn-danger">
-                  Remove
-                </button>
-              )}
-            </div>
+            )}
             {avatarError && <p className="text-red-600 text-sm mt-2">{avatarError}</p>}
           </div>
         </div>

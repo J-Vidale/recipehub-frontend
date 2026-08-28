@@ -39,7 +39,7 @@ const SavedRecipes = () => {
                 <Link
                   to={`/recipes/${recipe._id}`}
                   key={recipe._id}
-                  className="card hover:shadow-lg transition"
+                  className="card card-hover"
                 >
                   <h2 className="text-lg font-semibold text-green-700 mb-2">
                     {recipe.title}
