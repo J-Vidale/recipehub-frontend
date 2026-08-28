@@ -18,14 +18,11 @@ import RandomMeal from "./pages/RandomMeal";
 import MealDetail from "./pages/MealDetail";
 import RecipeDetail from "./pages/RecipeDetail";
 import NotFound from "./pages/NotFound";
-import { useAuth } from "./context/AuthContext";
 
 function App() {
-  const { user } = useAuth();
-
   return (
     <>
-      {user && <Navbar />}
+      <Navbar />
       <ErrorBoundary>
         <Routes>
           <Route path="/" element={<Home />} />

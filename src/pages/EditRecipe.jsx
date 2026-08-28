@@ -9,18 +9,24 @@ const EditRecipe = () => {
   const [form, setForm] = useState({ title: "", instructions: "", category: "" });
   const [ingredients, setIngredients] = useState([]);
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchRecipe = async () => {
-      const res = await API.get(`/recipes/${id}`);
-      setRecipe(res.data);
-      setForm({
-        title: res.data.title,
-        instructions: res.data.instructions,
-        category: res.data.category,
-      });
-      setIngredients(res.data.ingredients || []);
+      try {
+        const res = await API.get(`/recipes/${id}`);
+        setRecipe(res.data);
+        setForm({
+          title: res.data.title,
+          instructions: res.data.instructions,
+          category: res.data.category,
+        });
+        setIngredients(res.data.ingredients || []);
+      } catch (err) {
+        console.error("Failed to fetch recipe:", err);
+        setError("Couldn't load this recipe. It may have been deleted.");
+      }
     };
     fetchRecipe();
   }, [id]);
@@ -44,6 +50,17 @@ const EditRecipe = () => {
       setSubmitting(false);
     }
   };
+
+  if (error) {
+    return (
+      <div>
+        <p>{error}</p>
+        <button type="button" onClick={() => navigate("/your-recipes")}>
+          Back to Your Recipes
+        </button>
+      </div>
+    );
+  }
 
   if (!recipe) return <div>Loading...</div>;
 

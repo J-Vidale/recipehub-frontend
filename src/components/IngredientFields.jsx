@@ -1,4 +1,15 @@
+import { useRef } from "react";
+
 function IngredientFields({ ingredients, setIngredients }) {
+  // Stable per-row identity, decoupled from array position, so React
+  // doesn't reuse a DOM node (and its focused input) for a different
+  // ingredient after a row above it is removed.
+  const nextKeyId = useRef(0);
+  const keysRef = useRef([]);
+  if (keysRef.current.length !== ingredients.length) {
+    keysRef.current = ingredients.map(() => `ing-${nextKeyId.current++}`);
+  }
+
   const handleChange = (index, field, value) => {
     setIngredients(
       ingredients.map((ingredient, i) =>
@@ -8,10 +19,12 @@ function IngredientFields({ ingredients, setIngredients }) {
   };
 
   const handleAdd = () => {
+    keysRef.current = [...keysRef.current, `ing-${nextKeyId.current++}`];
     setIngredients([...ingredients, { name: "", amount: "" }]);
   };
 
   const handleRemove = (index) => {
+    keysRef.current = keysRef.current.filter((_, i) => i !== index);
     setIngredients(ingredients.filter((_, i) => i !== index));
   };
 
@@ -19,7 +32,7 @@ function IngredientFields({ ingredients, setIngredients }) {
     <div>
       <h3 className="text-lg font-medium mt-4 mb-2">Ingredients</h3>
       {ingredients.map((ingredient, index) => (
-        <div key={index} className="flex gap-2 mb-2">
+        <div key={keysRef.current[index]} className="flex gap-2 mb-2">
           <input
             type="text"
             placeholder="Name"

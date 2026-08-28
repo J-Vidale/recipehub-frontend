@@ -5,14 +5,19 @@ const YourRecipes = () => {
   const [recipes, setRecipes] = useState([]);
   const [savedIds, setSavedIds] = useState([]);
   const [savingId, setSavingId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
         const res = await API.get("/recipes/mine");
-        setRecipes(res.data);
+        setRecipes(res.data.recipes || []);
       } catch (error) {
         console.error("Error fetching recipes:", error.message);
+        setError("Couldn't load your recipes. Please try again.");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -60,7 +65,11 @@ const YourRecipes = () => {
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Your Recipes</h1>
-      {recipes.length === 0 ? (
+      {loading ? (
+        <p>Loading...</p>
+      ) : error ? (
+        <p className="text-red-600">{error}</p>
+      ) : recipes.length === 0 ? (
         <p>No recipes found. Add some!</p>
       ) : (
         <ul className="space-y-4">

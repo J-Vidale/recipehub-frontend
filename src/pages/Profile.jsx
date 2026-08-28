@@ -14,11 +14,9 @@ const Profile = () => {
     const fetchUserProfile = async () => {
       try {
         if (authUser && authUser._id) {
-          // Fetch user info if needed
           setUser(authUser);
-          // Fetch recipes using full API URL
-          const recipesRes = await API.get(`/recipes/user/${authUser._id}`);
-          setRecipes(Array.isArray(recipesRes.data) ? recipesRes.data : []);
+          const recipesRes = await API.get("/recipes/mine");
+          setRecipes(recipesRes.data.recipes || []);
         } else {
           setRecipes([]);
         }
