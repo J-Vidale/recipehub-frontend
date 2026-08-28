@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import API from "../services/api";
 import IngredientFields from "../components/IngredientFields";
+import useCategories from "../hooks/useCategories";
 
 const EditRecipe = () => {
   const { id } = useParams();
@@ -11,6 +12,7 @@ const EditRecipe = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const categories = useCategories();
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -53,46 +55,54 @@ const EditRecipe = () => {
 
   if (error) {
     return (
-      <div>
-        <p>{error}</p>
-        <button type="button" onClick={() => navigate("/your-recipes")}>
+      <div className="page-container max-w-lg text-center">
+        <p className="text-red-600 mb-4">{error}</p>
+        <button type="button" onClick={() => navigate("/your-recipes")} className="btn-secondary">
           Back to Your Recipes
         </button>
       </div>
     );
   }
 
-  if (!recipe) return <div>Loading...</div>;
+  if (!recipe) return <div className="page-container text-center text-gray-600">Loading...</div>;
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Edit Recipe</h2>
-      <input
-        name="title"
-        value={form.title}
-        onChange={handleChange}
-        placeholder="Title"
-        required
-      />
-      <textarea
-        name="instructions"
-        value={form.instructions}
-        onChange={handleChange}
-        placeholder="Instructions"
-        required
-      />
-      <input
-        name="category"
-        value={form.category}
-        onChange={handleChange}
-        placeholder="Category"
-        required
-      />
-      <IngredientFields ingredients={ingredients} setIngredients={setIngredients} />
-      <button type="submit" disabled={submitting}>
-        {submitting ? "Saving..." : "Save Changes"}
-      </button>
-    </form>
+    <div className="page-container max-w-lg">
+      <div className="card">
+        <h2 className="text-2xl font-bold text-green-700 mb-6">Edit Recipe</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            name="title"
+            value={form.title}
+            onChange={handleChange}
+            placeholder="Title"
+            className="input"
+            required
+          />
+          <select name="category" value={form.category || ""} onChange={handleChange} className="input">
+            <option value="">Select a category (optional)</option>
+            {categories.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
+          <textarea
+            name="instructions"
+            value={form.instructions}
+            onChange={handleChange}
+            placeholder="Instructions"
+            rows={6}
+            className="input"
+            required
+          />
+          <IngredientFields ingredients={ingredients} setIngredients={setIngredients} />
+          <button type="submit" disabled={submitting} className="btn-primary w-full">
+            {submitting ? "Saving..." : "Save Changes"}
+          </button>
+        </form>
+      </div>
+    </div>
   );
 };
 
