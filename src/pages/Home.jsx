@@ -13,7 +13,7 @@ const Home = () => {
         </h1>
         <p className="text-lg text-gray-600 mb-9 max-w-lg mx-auto">
           Discover new dishes from real cooks, save the ones you'll actually make,
-          and share your own — RecipeHub is where recipes become a feed worth following.
+          and share your own. RecipeHub is where recipes become a feed worth following.
         </p>
         <div className="flex items-center justify-center gap-3">
           <Link to="/register" className="btn-primary text-base px-7 py-3">

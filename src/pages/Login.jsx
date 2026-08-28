@@ -31,7 +31,7 @@ function Login() {
   };
 
   return (
-    <div className="page-container flex items-center justify-center">
+    <div className="page-container hero flex items-center justify-center">
       <div className="card w-full max-w-md">
         <h2 className="text-2xl font-bold text-green-700 mb-6 text-center">Login</h2>
         {error && <p className="text-red-600 text-sm mb-4">{error}</p>}

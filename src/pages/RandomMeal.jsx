@@ -30,15 +30,14 @@ const RandomMeal = () => {
   return (
     <div className="page-container max-w-2xl">
       <div className="card">
+        <div className="detail-hero">
+          <img src={meal.strMealThumb} alt={meal.strMeal} loading="lazy" />
+        </div>
         <h2 className="text-2xl font-bold text-green-700 mb-3">{meal.strMeal}</h2>
-        <img
-          src={meal.strMealThumb}
-          alt={meal.strMeal}
-          loading="lazy"
-          className="w-full rounded-lg mb-4 object-cover max-h-80"
-        />
-        <p className="text-gray-700 mb-1"><strong>Category:</strong> {meal.strCategory}</p>
-        <p className="text-gray-700 mb-4"><strong>Area:</strong> {meal.strArea}</p>
+        <div className="flex gap-2 mb-4">
+          <span className="recipe-card__badge" style={{ position: "static" }}>{meal.strCategory}</span>
+          <span className="recipe-card__badge" style={{ position: "static" }}>{meal.strArea}</span>
+        </div>
         <p className="text-gray-600 mb-4 whitespace-pre-line">{meal.strInstructions}</p>
         <div className="flex items-center gap-3">
           <button onClick={fetchRandomMeal} disabled={loading} className="btn-primary">

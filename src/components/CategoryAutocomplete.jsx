@@ -96,7 +96,7 @@ const CategoryAutocomplete = ({ value, onChange, placeholder = "e.g. Chicken, or
         <div id={listboxId} role="listbox" className="combobox-panel">
           {curated.length === 0 && community.length === 0 ? (
             <p className="px-3 py-3 text-sm text-gray-500">
-              No matching categories — that's OK, your typed name will be used as-is.
+              No matching categories found. Your typed name will be used as-is.
             </p>
           ) : (
             <>
@@ -151,7 +151,7 @@ const CategoryAutocomplete = ({ value, onChange, placeholder = "e.g. Chicken, or
           )}
           {value?.trim() && !exactMatch && (
             <p className="px-3 py-2 text-xs text-gray-500 border-t border-gray-200">
-              Not seeing it? Keep typing — "{value.trim()}" will be used as your category.
+              Not seeing it? Keep typing. "{value.trim()}" will be used as your category.
             </p>
           )}
         </div>
