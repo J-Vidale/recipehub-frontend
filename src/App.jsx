@@ -13,6 +13,7 @@ const Explore = lazy(() => import("./pages/Explore"));
 const Feed = lazy(() => import("./pages/Feed"));
 const Notifications = lazy(() => import("./pages/Notifications"));
 const SearchResults = lazy(() => import("./pages/SearchResults"));
+const TagPage = lazy(() => import("./pages/TagPage"));
 const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
 const Profile = lazy(() => import("./pages/Profile"));
@@ -41,6 +42,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/explore" element={<Explore />} />
             <Route path="/search" element={<SearchResults />} />
+            <Route path="/tag/:tag" element={<TagPage />} />
             <Route
               path="/feed"
               element={

@@ -6,6 +6,7 @@ import LikeButton from "../components/LikeButton";
 import ShareButton from "../components/ShareButton";
 import CommentSection from "../components/CommentSection";
 import ReportButton from "../components/ReportButton";
+import HashtagText from "../components/HashtagText";
 
 const RecipeDetail = () => {
   const { id } = useParams();
@@ -73,7 +74,7 @@ const RecipeDetail = () => {
             </Link>
           </p>
         )}
-        <p className="text-gray-700 mb-4">{recipe.instructions}</p>
+        <HashtagText text={recipe.instructions} className="text-gray-700 mb-4" />
         <div>
           <h2 className="font-semibold text-lg">Ingredients:</h2>
           <ul className="list-disc list-inside">

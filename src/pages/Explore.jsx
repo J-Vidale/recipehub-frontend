@@ -10,6 +10,7 @@ const Explore = () => {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
+  const [popularTags, setPopularTags] = useState([]);
 
   useEffect(() => {
     const fetchAllRecipes = async () => {
@@ -26,6 +27,10 @@ const Explore = () => {
       }
     };
     fetchAllRecipes();
+
+    API.get('/tags/popular', { params: { limit: 10 } })
+      .then((res) => setPopularTags(res.data.tags))
+      .catch((err) => console.error('Failed to fetch popular tags:', err));
   }, []);
 
   const loadMore = async () => {
@@ -45,7 +50,20 @@ const Explore = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4">
-      <h2 className="text-3xl font-bold text-green-700 mb-8 text-center">Explore Recipes</h2>
+      <h2 className="text-3xl font-bold text-green-700 mb-4 text-center">Explore Recipes</h2>
+      {popularTags.length > 0 && (
+        <div className="flex flex-wrap justify-center gap-2 mb-8">
+          {popularTags.map(({ tag, count }) => (
+            <Link
+              key={tag}
+              to={`/tag/${tag}`}
+              className="px-3 py-1 rounded-full bg-white border text-sm text-green-700 hover:bg-green-50"
+            >
+              #{tag} <span className="text-gray-400">{count}</span>
+            </Link>
+          ))}
+        </div>
+      )}
       {loading ? (
         <p className="text-center text-gray-600">Loading...</p>
       ) : error ? (
