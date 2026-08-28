@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import LikeButton from "../components/LikeButton";
 import ShareButton from "../components/ShareButton";
 import CommentSection from "../components/CommentSection";
+import ReportButton from "../components/ReportButton";
 
 const RecipeDetail = () => {
   const { id } = useParams();
@@ -112,6 +113,10 @@ const RecipeDetail = () => {
               Log in to save
             </Link>
           )}
+        </div>
+
+        <div className="mt-3">
+          <ReportButton targetType="recipe" targetId={recipe._id} />
         </div>
 
         <CommentSection

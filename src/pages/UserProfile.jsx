@@ -3,6 +3,8 @@ import { useParams, Link } from "react-router-dom";
 import API from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import FollowButton from "../components/FollowButton";
+import BlockButton from "../components/BlockButton";
+import ReportButton from "../components/ReportButton";
 
 const UserProfile = () => {
   const { id } = useParams();
@@ -87,11 +89,17 @@ const UserProfile = () => {
               Manage your recipes
             </Link>
           ) : (
-            <FollowButton
-              userId={profile._id}
-              initialFollowingByMe={profile.followingByMe}
-              onFollowerCountChange={handleFollowerCountChange}
-            />
+            <div className="flex flex-col items-end gap-2">
+              <FollowButton
+                userId={profile._id}
+                initialFollowingByMe={profile.followingByMe}
+                onFollowerCountChange={handleFollowerCountChange}
+              />
+              <div className="flex gap-3">
+                <BlockButton userId={profile._id} />
+                <ReportButton targetType="user" targetId={profile._id} />
+              </div>
+            </div>
           )}
         </div>
       </div>
