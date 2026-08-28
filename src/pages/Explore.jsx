@@ -49,7 +49,7 @@ const Explore = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4">
+    <div className="page-container max-w-6xl">
       <h2 className="text-3xl font-bold text-green-700 mb-4 text-center">Explore Recipes</h2>
       {popularTags.length > 0 && (
         <div className="flex flex-wrap justify-center gap-2 mb-8">
@@ -57,7 +57,7 @@ const Explore = () => {
             <Link
               key={tag}
               to={`/tag/${tag}`}
-              className="px-3 py-1 rounded-full bg-white border text-sm text-green-700 hover:bg-green-50"
+              className="card-sm px-3 py-1 text-sm text-green-700 hover:shadow-md transition"
             >
               #{tag} <span className="text-gray-400">{count}</span>
             </Link>
@@ -70,14 +70,14 @@ const Explore = () => {
         <p className="text-center text-red-600">{error}</p>
       ) : (
         <>
-          <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {recipes.map(recipe => (
-              <Link to={`/recipes/${recipe._id}`} key={recipe._id} className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition flex flex-col">
-                <h3 className="text-xl font-semibold mb-1">{recipe.title}</h3>
+              <Link to={`/recipes/${recipe._id}`} key={recipe._id} className="card hover:shadow-lg transition flex flex-col">
+                <h3 className="text-lg font-semibold mb-1">{recipe.title}</h3>
                 {recipe.user?.username && (
                   <p className="text-xs text-gray-500 mb-2">by {recipe.user.username}</p>
                 )}
-                <p className="text-gray-600 flex-1">{recipe.instructions?.slice(0, 100)}...</p>
+                <p className="text-gray-600 text-sm flex-1">{recipe.instructions?.slice(0, 100)}...</p>
               </Link>
             ))}
           </div>
@@ -86,7 +86,7 @@ const Explore = () => {
               <button
                 onClick={loadMore}
                 disabled={loadingMore}
-                className="px-6 py-2 rounded bg-green-600 hover:bg-green-700 text-white disabled:opacity-60"
+                className="btn-primary"
               >
                 {loadingMore ? "Loading..." : "Load more"}
               </button>

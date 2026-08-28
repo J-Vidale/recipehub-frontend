@@ -93,68 +93,64 @@ const Notifications = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4">
-      <div className="max-w-2xl mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-3xl font-bold text-green-700">Notifications</h2>
-          {notifications.some((n) => !n.read) && (
-            <button
-              onClick={handleMarkAllAsRead}
-              className="text-sm text-green-700 hover:underline"
-            >
-              Mark all as read
-            </button>
-          )}
-        </div>
+    <div className="page-container max-w-2xl">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-3xl font-bold text-green-700">Notifications</h2>
+        {notifications.some((n) => !n.read) && (
+          <button onClick={handleMarkAllAsRead} className="text-sm text-green-700 hover:underline">
+            Mark all as read
+          </button>
+        )}
+      </div>
 
-        {loading ? (
-          <p className="text-gray-600">Loading...</p>
-        ) : error ? (
-          <p className="text-red-600">{error}</p>
-        ) : notifications.length === 0 ? (
-          <p className="text-gray-600">No notifications yet.</p>
-        ) : (
-          <>
-            <ul className="space-y-2">
-              {notifications.map((n) => {
-                const link = notificationLink(n);
-                const content = (
-                  <div
-                    className={`p-4 rounded-lg shadow-sm ${n.read ? "bg-white" : "bg-green-50 border border-green-200"}`}
-                  >
+      {loading ? (
+        <p className="text-gray-600">Loading...</p>
+      ) : error ? (
+        <p className="text-red-600">{error}</p>
+      ) : notifications.length === 0 ? (
+        <p className="text-gray-600">No notifications yet.</p>
+      ) : (
+        <>
+          <ul className="space-y-2">
+            {notifications.map((n) => {
+              const link = notificationLink(n);
+              const content = (
+                <div className={`card-sm flex items-start gap-3 ${n.read ? "" : "border border-green-200 bg-green-50"}`}>
+                  {n.actor?.avatarUrl ? (
+                    <img src={n.actor.avatarUrl} alt={n.actor.username} className="avatar avatar-sm" />
+                  ) : (
+                    <span className="avatar avatar-sm">{n.actor?.username?.[0]?.toUpperCase() || "?"}</span>
+                  )}
+                  <div>
                     <p className="text-gray-800">{describeNotification(n)}</p>
                     <p className="text-xs text-gray-400 mt-1">
                       {new Date(n.createdAt).toLocaleString()}
                     </p>
                   </div>
-                );
-                return (
-                  <li key={n._id} onClick={() => !n.read && handleMarkAsRead(n._id)}>
-                    {link ? (
-                      <Link to={link} className="block">
-                        {content}
-                      </Link>
-                    ) : (
-                      content
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
-            {nextCursor && (
-              <div className="flex justify-center mt-6">
-                <button
-                  onClick={loadMore}
-                  disabled={loadingMore}
-                  className="px-6 py-2 rounded bg-green-600 hover:bg-green-700 text-white disabled:opacity-60"
-                >
-                  {loadingMore ? "Loading..." : "Load more"}
-                </button>
-              </div>
-            )}
-          </>
-        )}
-      </div>
+                </div>
+              );
+              return (
+                <li key={n._id} onClick={() => !n.read && handleMarkAsRead(n._id)}>
+                  {link ? (
+                    <Link to={link} className="block">
+                      {content}
+                    </Link>
+                  ) : (
+                    content
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+          {nextCursor && (
+            <div className="flex justify-center mt-6">
+              <button onClick={loadMore} disabled={loadingMore} className="btn-primary">
+                {loadingMore ? "Loading..." : "Load more"}
+              </button>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 };

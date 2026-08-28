@@ -30,7 +30,7 @@ function IngredientFields({ ingredients, setIngredients }) {
 
   return (
     <div>
-      <h3 className="text-lg font-medium mt-4 mb-2">Ingredients</h3>
+      <h3 className="text-sm font-semibold text-gray-700 mt-2 mb-2">Ingredients</h3>
       {ingredients.map((ingredient, index) => (
         <div key={keysRef.current[index]} className="flex gap-2 mb-2">
           <input
@@ -38,19 +38,19 @@ function IngredientFields({ ingredients, setIngredients }) {
             placeholder="Name"
             value={ingredient.name}
             onChange={(e) => handleChange(index, "name", e.target.value)}
-            className="border p-2 w-1/2"
+            className="input flex-1"
           />
           <input
             type="text"
             placeholder="Amount"
             value={ingredient.amount}
             onChange={(e) => handleChange(index, "amount", e.target.value)}
-            className="border p-2 w-1/3"
+            className="input w-28"
           />
           <button
             type="button"
             onClick={() => handleRemove(index)}
-            className="text-red-500"
+            className="text-red-500 hover:text-red-700 px-1"
           >
             ✕
           </button>
@@ -59,7 +59,7 @@ function IngredientFields({ ingredients, setIngredients }) {
       <button
         type="button"
         onClick={handleAdd}
-        className="text-blue-500 underline mt-2"
+        className="text-green-700 hover:underline text-sm mt-1"
       >
         + Add Ingredient
       </button>

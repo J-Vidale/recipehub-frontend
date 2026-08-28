@@ -46,21 +46,17 @@ const ReportButton = ({ targetType, targetId }) => {
             placeholder="Why are you reporting this?"
             maxLength={500}
             rows={3}
-            className="border p-2 rounded text-sm"
+            className="input text-sm"
           />
           <div className="flex gap-2">
             <button
               type="submit"
               disabled={submitting || !reason.trim()}
-              className="px-3 py-1 rounded bg-red-600 text-white text-sm disabled:opacity-60"
+              className="btn-danger"
             >
               {submitting ? "Submitting..." : "Submit report"}
             </button>
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              className="px-3 py-1 rounded bg-gray-200 text-gray-700 text-sm"
-            >
+            <button type="button" onClick={() => setOpen(false)} className="btn-secondary">
               Cancel
             </button>
           </div>

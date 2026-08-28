@@ -57,27 +57,29 @@ const RecipeDetail = () => {
     }
   };
 
-  if (error) return <div className="p-4 text-red-600">{error}</div>;
-  if (!recipe) return <div className="p-4">Loading...</div>;
+  if (error) return <div className="page-container text-center text-red-600">{error}</div>;
+  if (!recipe) return <div className="page-container text-center text-gray-600">Loading...</div>;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4">
-      <div className="max-w-2xl mx-auto p-8 bg-white rounded-xl shadow mt-10">
-        <h1 className="text-3xl font-bold text-green-700 mb-1">
-          <Link to={`/recipes/${recipe._id}`}>{recipe.title}</Link>
+    <div className="page-container max-w-2xl">
+      <div className="card">
+        <h1 className="text-3xl font-bold text-green-700 mb-2">
+          {recipe.title}
         </h1>
         {recipe.user?.username && (
-          <p className="text-sm text-gray-500 mb-4">
-            by{" "}
-            <Link to={`/users/${recipe.user._id}`} className="text-green-700 hover:underline">
-              {recipe.user.username}
-            </Link>
-          </p>
+          <Link to={`/users/${recipe.user._id}`} className="flex items-center gap-2 mb-4">
+            {recipe.user.avatarUrl ? (
+              <img src={recipe.user.avatarUrl} alt={recipe.user.username} className="avatar avatar-xs" />
+            ) : (
+              <span className="avatar avatar-xs">{recipe.user.username[0]?.toUpperCase()}</span>
+            )}
+            <span className="text-sm text-gray-500 hover:underline">by {recipe.user.username}</span>
+          </Link>
         )}
         <HashtagText text={recipe.instructions} className="text-gray-700 mb-4" />
-        <div>
-          <h2 className="font-semibold text-lg">Ingredients:</h2>
-          <ul className="list-disc list-inside">
+        <div className="mb-4">
+          <h2 className="font-semibold text-lg mb-2">Ingredients</h2>
+          <ul className="list-disc list-inside text-gray-700 space-y-1">
             {recipe.ingredients.map((item, index) => (
               <li key={index}>
                 {item.name} - {item.amount}
@@ -85,7 +87,7 @@ const RecipeDetail = () => {
             ))}
           </ul>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <LikeButton
             recipeId={recipe._id}
             initialLikeCount={recipe.likeCount || 0}
@@ -100,17 +102,12 @@ const RecipeDetail = () => {
             <button
               onClick={handleSave}
               disabled={saving}
-              className={`px-4 py-2 rounded disabled:opacity-60 ${
-                isSaved ? "bg-red-500 text-white" : "bg-green-500 text-white"
-              }`}
+              className={isSaved ? "btn-danger" : "btn-primary"}
             >
               {isSaved ? "Unsave" : "Save"}
             </button>
           ) : (
-            <Link
-              to="/login"
-              className="inline-block px-4 py-2 rounded bg-green-500 text-white"
-            >
+            <Link to="/login" className="btn-primary">
               Log in to save
             </Link>
           )}

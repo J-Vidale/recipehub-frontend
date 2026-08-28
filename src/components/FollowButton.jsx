@@ -33,10 +33,7 @@ const FollowButton = ({ userId, initialFollowingByMe = false, onFollowerCountCha
 
   if (!user) {
     return (
-      <Link
-        to="/login"
-        className="inline-block px-4 py-1.5 rounded bg-green-600 text-white hover:bg-green-700"
-      >
+      <Link to="/login" className="btn-primary">
         Log in to follow
       </Link>
     );
@@ -46,11 +43,7 @@ const FollowButton = ({ userId, initialFollowingByMe = false, onFollowerCountCha
     <button
       onClick={handleToggle}
       disabled={busy}
-      className={`px-4 py-1.5 rounded disabled:opacity-60 ${
-        followingByMe
-          ? "bg-gray-200 text-gray-800 hover:bg-gray-300"
-          : "bg-green-600 text-white hover:bg-green-700"
-      }`}
+      className={followingByMe ? "btn-secondary" : "btn-primary"}
     >
       {followingByMe ? "Following" : "Follow"}
     </button>

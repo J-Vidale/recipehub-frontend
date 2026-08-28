@@ -36,6 +36,18 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Merges a partial update (e.g. a new avatarUrl) into the current user
+  // without a full re-fetch, keeping localStorage in sync so it survives
+  // a refresh.
+  const updateUser = (partial) => {
+    setUser((prev) => {
+      if (!prev) return prev;
+      const next = { ...prev, ...partial };
+      localStorage.setItem("user", JSON.stringify(next));
+      return next;
+    });
+  };
+
   const logout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
@@ -60,7 +72,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, fetchUserData }}>
+    <AuthContext.Provider value={{ user, login, register, logout, fetchUserData, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

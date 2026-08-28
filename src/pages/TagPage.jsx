@@ -43,7 +43,7 @@ const TagPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4">
+    <div className="page-container max-w-6xl">
       <h2 className="text-2xl font-bold text-green-700 mb-6 text-center">#{tag}</h2>
       {loading ? (
         <p className="text-center text-gray-600">Loading...</p>
@@ -53,12 +53,12 @@ const TagPage = () => {
         <p className="text-center text-gray-600">No recipes tagged #{tag} yet.</p>
       ) : (
         <>
-          <div className="max-w-4xl mx-auto grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
             {recipes.map((recipe) => (
               <Link
                 to={`/recipes/${recipe._id}`}
                 key={recipe._id}
-                className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition flex flex-col"
+                className="card hover:shadow-lg transition flex flex-col"
               >
                 <h3 className="text-lg font-semibold mb-1">{recipe.title}</h3>
                 {recipe.user?.username && (
@@ -73,7 +73,7 @@ const TagPage = () => {
               <button
                 onClick={loadMore}
                 disabled={loadingMore}
-                className="px-6 py-2 rounded bg-green-600 hover:bg-green-700 text-white disabled:opacity-60"
+                className="btn-primary"
               >
                 {loadingMore ? "Loading..." : "Load more"}
               </button>

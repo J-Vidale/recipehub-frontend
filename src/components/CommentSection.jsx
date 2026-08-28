@@ -3,6 +3,13 @@ import { Link } from "react-router-dom";
 import API from "../services/api";
 import { useAuth } from "../context/AuthContext";
 
+const CommentAvatar = ({ user }) =>
+  user.avatarUrl ? (
+    <img src={user.avatarUrl} alt={user.username} className="avatar avatar-xs" />
+  ) : (
+    <span className="avatar avatar-xs">{user.username?.[0]?.toUpperCase()}</span>
+  );
+
 const CommentLikeButton = ({ commentId, initialLikeCount, initialLikedByMe }) => {
   const { user } = useAuth();
   const [likeCount, setLikeCount] = useState(initialLikeCount);
@@ -185,7 +192,7 @@ const CommentSection = ({ recipeId, recipeOwnerId, pinnedCommentId }) => {
   };
 
   return (
-    <div className="mt-8">
+    <div className="mt-8 pt-6 border-t border-gray-200">
       <h2 className="font-semibold text-lg mb-3">Comments</h2>
 
       {user ? (
@@ -196,13 +203,9 @@ const CommentSection = ({ recipeId, recipeOwnerId, pinnedCommentId }) => {
             onChange={(e) => setNewText(e.target.value)}
             placeholder="Add a comment..."
             maxLength={1000}
-            className="border p-2 flex-1 rounded"
+            className="input flex-1"
           />
-          <button
-            type="submit"
-            disabled={posting || !newText.trim()}
-            className="px-4 py-2 rounded bg-green-600 text-white disabled:opacity-60"
-          >
+          <button type="submit" disabled={posting || !newText.trim()} className="btn-primary">
             {posting ? "Posting..." : "Post"}
           </button>
         </form>
@@ -221,53 +224,61 @@ const CommentSection = ({ recipeId, recipeOwnerId, pinnedCommentId }) => {
       ) : (
         <ul className="space-y-4">
           {orderedTopLevel.map((comment) => (
-            <li key={comment._id} className={pinnedId === comment._id ? "bg-yellow-50 p-3 rounded" : ""}>
+            <li key={comment._id} className={pinnedId === comment._id ? "card-sm bg-yellow-50" : ""}>
               {pinnedId === comment._id && (
                 <p className="text-xs font-medium text-yellow-700 mb-1">📌 Pinned</p>
               )}
-              <p>
-                <Link to={`/users/${comment.user._id}`} className="font-semibold text-green-700">
-                  {comment.user.username}
-                </Link>{" "}
-                {comment.text}
-              </p>
-              {renderCommentActions(comment)}
+              <div className="flex items-start gap-2">
+                <CommentAvatar user={comment.user} />
+                <div className="flex-1">
+                  <p>
+                    <Link to={`/users/${comment.user._id}`} className="font-semibold text-green-700">
+                      {comment.user.username}
+                    </Link>{" "}
+                    {comment.text}
+                  </p>
+                  {renderCommentActions(comment)}
 
-              {replyingTo === comment._id && (
-                <form onSubmit={(e) => handleReply(e, comment._id)} className="flex gap-2 mt-2 ml-6">
-                  <input
-                    type="text"
-                    value={replyText}
-                    onChange={(e) => setReplyText(e.target.value)}
-                    placeholder="Write a reply..."
-                    maxLength={1000}
-                    className="border p-2 flex-1 rounded text-sm"
-                  />
-                  <button
-                    type="submit"
-                    disabled={replying || !replyText.trim()}
-                    className="px-3 py-1 rounded bg-green-600 text-white text-sm disabled:opacity-60"
-                  >
-                    {replying ? "Posting..." : "Reply"}
-                  </button>
-                </form>
-              )}
+                  {replyingTo === comment._id && (
+                    <form onSubmit={(e) => handleReply(e, comment._id)} className="flex gap-2 mt-2">
+                      <input
+                        type="text"
+                        value={replyText}
+                        onChange={(e) => setReplyText(e.target.value)}
+                        placeholder="Write a reply..."
+                        maxLength={1000}
+                        className="input flex-1 text-sm"
+                      />
+                      <button
+                        type="submit"
+                        disabled={replying || !replyText.trim()}
+                        className="btn-primary"
+                      >
+                        {replying ? "Posting..." : "Reply"}
+                      </button>
+                    </form>
+                  )}
 
-              {repliesFor(comment._id).length > 0 && (
-                <ul className="ml-6 mt-2 space-y-2 border-l-2 pl-3">
-                  {repliesFor(comment._id).map((reply) => (
-                    <li key={reply._id}>
-                      <p>
-                        <Link to={`/users/${reply.user._id}`} className="font-semibold text-green-700">
-                          {reply.user.username}
-                        </Link>{" "}
-                        {reply.text}
-                      </p>
-                      {renderCommentActions(reply)}
-                    </li>
-                  ))}
-                </ul>
-              )}
+                  {repliesFor(comment._id).length > 0 && (
+                    <ul className="ml-2 mt-3 space-y-3 border-l-2 border-gray-200 pl-3">
+                      {repliesFor(comment._id).map((reply) => (
+                        <li key={reply._id} className="flex items-start gap-2">
+                          <CommentAvatar user={reply.user} />
+                          <div>
+                            <p>
+                              <Link to={`/users/${reply.user._id}`} className="font-semibold text-green-700">
+                                {reply.user.username}
+                              </Link>{" "}
+                              {reply.text}
+                            </p>
+                            {renderCommentActions(reply)}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
             </li>
           ))}
         </ul>

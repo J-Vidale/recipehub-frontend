@@ -80,26 +80,33 @@ const UserProfile = () => {
     }
   };
 
-  if (loading) return <div className="p-8 text-center text-gray-600">Loading profile...</div>;
-  if (error) return <div className="p-8 text-center text-red-600">{error}</div>;
+  if (loading) return <div className="page-container text-center text-gray-600">Loading profile...</div>;
+  if (error) return <div className="page-container text-center text-red-600">{error}</div>;
   if (!profile) return null;
 
   const isOwnProfile = authUser && authUser._id === profile._id;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4">
-      <div className="max-w-2xl mx-auto bg-white rounded-xl shadow p-8 mb-8">
+    <div className="page-container max-w-4xl">
+      <div className="card mb-8">
         <div className="flex items-center justify-between flex-wrap gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-green-700">{profile.username}</h1>
-            <div className="flex gap-4 text-gray-600 text-sm mt-2">
-              <span><strong>{profile.recipeCount}</strong> recipes</span>
-              <span><strong>{profile.followerCount}</strong> followers</span>
-              <span><strong>{profile.followingCount}</strong> following</span>
+          <div className="flex items-center gap-4">
+            {profile.avatarUrl ? (
+              <img src={profile.avatarUrl} alt={profile.username} className="avatar avatar-lg" />
+            ) : (
+              <span className="avatar avatar-lg">{profile.username?.[0]?.toUpperCase()}</span>
+            )}
+            <div>
+              <h1 className="text-2xl font-bold text-green-700">{profile.username}</h1>
+              <div className="flex gap-4 text-gray-600 text-sm mt-2">
+                <span><strong>{profile.recipeCount}</strong> recipes</span>
+                <span><strong>{profile.followerCount}</strong> followers</span>
+                <span><strong>{profile.followingCount}</strong> following</span>
+              </div>
             </div>
           </div>
           {isOwnProfile ? (
-            <Link to="/profile" className="px-4 py-1.5 rounded bg-gray-200 text-gray-800 hover:bg-gray-300">
+            <Link to="/profile" className="btn-secondary">
               Manage your recipes
             </Link>
           ) : (
@@ -113,7 +120,7 @@ const UserProfile = () => {
                 <button
                   onClick={handleMessage}
                   disabled={startingConversation}
-                  className="px-4 py-1.5 rounded bg-gray-200 text-gray-800 hover:bg-gray-300 disabled:opacity-60"
+                  className="btn-secondary"
                 >
                   {startingConversation ? "..." : "Message"}
                 </button>
@@ -127,7 +134,7 @@ const UserProfile = () => {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto">
+      <div>
         <h2 className="text-xl font-semibold mb-4">Recipes</h2>
         {recipes.length === 0 ? (
           <p className="text-gray-600">No recipes yet.</p>
@@ -138,7 +145,7 @@ const UserProfile = () => {
                 <Link
                   to={`/recipes/${recipe._id}`}
                   key={recipe._id}
-                  className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition flex flex-col"
+                  className="card hover:shadow-lg transition flex flex-col"
                 >
                   <h3 className="text-lg font-semibold mb-2">{recipe.title}</h3>
                   <p className="text-gray-600 text-sm flex-1">{recipe.instructions?.slice(0, 100)}...</p>
@@ -150,7 +157,7 @@ const UserProfile = () => {
                 <button
                   onClick={loadMore}
                   disabled={loadingMore}
-                  className="px-6 py-2 rounded bg-green-600 hover:bg-green-700 text-white disabled:opacity-60"
+                  className="btn-primary"
                 >
                   {loadingMore ? "Loading..." : "Load more"}
                 </button>

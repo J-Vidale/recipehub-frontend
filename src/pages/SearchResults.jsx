@@ -29,62 +29,60 @@ const SearchResults = () => {
   const hasResults = results.recipes.length > 0 || results.users.length > 0;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4">
-      <div className="max-w-3xl mx-auto">
-        <h2 className="text-2xl font-bold text-green-700 mb-6">
-          Search results for "{q}"
-        </h2>
+    <div className="page-container max-w-3xl">
+      <h2 className="text-2xl font-bold text-green-700 mb-6">
+        Search results for "{q}"
+      </h2>
 
-        {loading ? (
-          <p className="text-gray-600">Loading...</p>
-        ) : error ? (
-          <p className="text-red-600">{error}</p>
-        ) : !hasResults ? (
-          <p className="text-gray-600">No results found.</p>
-        ) : (
-          <div className="space-y-8">
-            {results.users.length > 0 && (
-              <div>
-                <h3 className="text-lg font-semibold mb-3">People</h3>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {results.users.map((u) => (
-                    <Link
-                      key={u._id}
-                      to={`/users/${u._id}`}
-                      className="bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition"
-                    >
-                      <p className="font-semibold">{u.username}</p>
-                      <p className="text-sm text-gray-500">{u.followerCount} followers</p>
-                    </Link>
-                  ))}
-                </div>
+      {loading ? (
+        <p className="text-gray-600">Loading...</p>
+      ) : error ? (
+        <p className="text-red-600">{error}</p>
+      ) : !hasResults ? (
+        <p className="text-gray-600">No results found.</p>
+      ) : (
+        <div className="space-y-8">
+          {results.users.length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold mb-3">People</h3>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {results.users.map((u) => (
+                  <Link
+                    key={u._id}
+                    to={`/users/${u._id}`}
+                    className="card-sm hover:shadow-md transition"
+                  >
+                    <p className="font-semibold">{u.username}</p>
+                    <p className="text-sm text-gray-500">{u.followerCount} followers</p>
+                  </Link>
+                ))}
               </div>
-            )}
-            {results.recipes.length > 0 && (
-              <div>
-                <h3 className="text-lg font-semibold mb-3">Recipes</h3>
-                <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-                  {results.recipes.map((r) => (
-                    <Link
-                      key={r._id}
-                      to={`/recipes/${r._id}`}
-                      className="bg-white rounded-xl shadow-md p-5 hover:shadow-lg transition flex flex-col"
-                    >
-                      <h4 className="font-semibold mb-1">{r.title}</h4>
-                      {r.user?.username && (
-                        <p className="text-xs text-gray-500 mb-2">by {r.user.username}</p>
-                      )}
-                      <p className="text-sm text-gray-600 flex-1">
-                        {r.instructions?.slice(0, 100)}...
-                      </p>
-                    </Link>
-                  ))}
-                </div>
+            </div>
+          )}
+          {results.recipes.length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold mb-3">Recipes</h3>
+              <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+                {results.recipes.map((r) => (
+                  <Link
+                    key={r._id}
+                    to={`/recipes/${r._id}`}
+                    className="card hover:shadow-lg transition flex flex-col"
+                  >
+                    <h4 className="font-semibold mb-1">{r.title}</h4>
+                    {r.user?.username && (
+                      <p className="text-xs text-gray-500 mb-2">by {r.user.username}</p>
+                    )}
+                    <p className="text-sm text-gray-600 flex-1">
+                      {r.instructions?.slice(0, 100)}...
+                    </p>
+                  </Link>
+                ))}
               </div>
-            )}
-          </div>
-        )}
-      </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

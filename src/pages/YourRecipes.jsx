@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import API from "../services/api";
 
 const YourRecipes = () => {
@@ -63,34 +64,35 @@ const YourRecipes = () => {
   };
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Your Recipes</h1>
+    <div className="page-container max-w-2xl">
+      <h1 className="text-2xl font-bold text-green-700 mb-6">Your Recipes</h1>
       {loading ? (
-        <p>Loading...</p>
+        <p className="text-gray-600">Loading...</p>
       ) : error ? (
         <p className="text-red-600">{error}</p>
       ) : recipes.length === 0 ? (
-        <p>No recipes found. Add some!</p>
+        <p className="text-gray-600">No recipes found. Add some!</p>
       ) : (
         <ul className="space-y-4">
           {Array.isArray(recipes)
             ? recipes.map((recipe) => {
                 const isSaved = savedIds.includes(recipe._id);
                 return (
-                  <li key={recipe._id} className="p-4 bg-white shadow rounded">
-                    <h2 className="text-xl font-semibold">{recipe.title}</h2>
-                    <p>{recipe.instructions}</p>
-                    <button
-                      onClick={() => handleSave(recipe._id, isSaved)}
-                      disabled={savingId === recipe._id}
-                      className={`px-4 py-2 rounded disabled:opacity-60 ${
-                        isSaved
-                          ? "bg-red-500 text-white"
-                          : "bg-green-500 text-white"
-                      }`}
-                    >
-                      {isSaved ? "Unsave" : "Save"}
-                    </button>
+                  <li key={recipe._id} className="card">
+                    <h2 className="text-xl font-semibold mb-1">{recipe.title}</h2>
+                    <p className="text-gray-600 mb-3">{recipe.instructions?.slice(0, 150)}...</p>
+                    <div className="flex items-center gap-2">
+                      <Link to={`/edit/${recipe._id}`} className="btn-secondary">
+                        Edit
+                      </Link>
+                      <button
+                        onClick={() => handleSave(recipe._id, isSaved)}
+                        disabled={savingId === recipe._id}
+                        className={isSaved ? "btn-danger" : "btn-primary"}
+                      >
+                        {isSaved ? "Unsave" : "Save"}
+                      </button>
+                    </div>
                   </li>
                 );
               })

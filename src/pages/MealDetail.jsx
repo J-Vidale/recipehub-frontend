@@ -29,47 +29,47 @@ function MealDetail() {
     fetchMeal();
   }, [id]);
 
-  if (loading) return <p>Loading meal...</p>;
-  if (error) return <p>{error}</p>;
+  if (loading) return <p className="page-container text-center text-gray-600">Loading meal...</p>;
+  if (error) return <p className="page-container text-center text-red-600">{error}</p>;
 
   return (
-    <div className="meal-detail">
-      <h1>{meal.strMeal}</h1>
-      <img
-        src={meal.strMealThumb}
-        alt={meal.strMeal}
-        loading="lazy"
-        style={{ maxWidth: "300px", borderRadius: "10px" }}
-      />
-      <p><strong>Category:</strong> {meal.strCategory}</p>
-      <p><strong>Area:</strong> {meal.strArea}</p>
-      <p><strong>Instructions:</strong></p>
-      <p>{meal.strInstructions}</p>
+    <div className="page-container max-w-2xl">
+      <div className="card">
+        <h1 className="text-2xl font-bold text-green-700 mb-3">{meal.strMeal}</h1>
+        <img
+          src={meal.strMealThumb}
+          alt={meal.strMeal}
+          loading="lazy"
+          className="w-full rounded-lg mb-4 object-cover max-h-80"
+        />
+        <p className="text-gray-700 mb-1"><strong>Category:</strong> {meal.strCategory}</p>
+        <p className="text-gray-700 mb-4"><strong>Area:</strong> {meal.strArea}</p>
 
-      <h3>Ingredients</h3>
-      <ul>
-        {Array.from({ length: 20 }).map((_, i) => {
-          const ingredient = meal[`strIngredient${i + 1}`];
-          const measure = meal[`strMeasure${i + 1}`];
-          if (ingredient && ingredient.trim()) {
-            return (
-              <li key={i}>
-                {ingredient} - {measure}
-              </li>
-            );
-          }
-          return null;
-        })}
-      </ul>
+        <h3 className="font-semibold text-lg mb-2">Ingredients</h3>
+        <ul className="list-disc list-inside text-gray-700 space-y-1 mb-4">
+          {Array.from({ length: 20 }).map((_, i) => {
+            const ingredient = meal[`strIngredient${i + 1}`];
+            const measure = meal[`strMeasure${i + 1}`];
+            if (ingredient && ingredient.trim()) {
+              return (
+                <li key={i}>
+                  {ingredient} - {measure}
+                </li>
+              );
+            }
+            return null;
+          })}
+        </ul>
 
-      {meal.strYoutube && (
-        <div>
-          <h3>Video Recipe</h3>
-          <a href={meal.strYoutube} target="_blank" rel="noreferrer">
+        <h3 className="font-semibold text-lg mb-2">Instructions</h3>
+        <p className="text-gray-600 whitespace-pre-line mb-4">{meal.strInstructions}</p>
+
+        {meal.strYoutube && (
+          <a href={meal.strYoutube} target="_blank" rel="noreferrer" className="btn-primary inline-flex">
             Watch on YouTube
           </a>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
