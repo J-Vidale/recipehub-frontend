@@ -40,7 +40,7 @@ const Feed = () => {
   };
 
   return (
-    <div className="page-container max-w-2xl">
+    <div className="page-container max-w-xl">
       <h2 className="text-3xl font-bold text-green-700 mb-8 text-center">Your Feed</h2>
       {loading ? (
         <p className="text-center text-gray-600">Loading...</p>
@@ -57,28 +57,47 @@ const Feed = () => {
         </div>
       ) : (
         <>
-          <div className="space-y-4">
-            {recipes.map((recipe) => (
-              <div key={recipe._id} className="card">
-                <Link to={`/recipes/${recipe._id}`} className="text-xl font-semibold text-green-700 hover:underline">
-                  {recipe.title}
-                </Link>
-                {recipe.user?.username && (
-                  <p className="text-sm text-gray-500 mb-2">
-                    by{" "}
-                    <Link to={`/users/${recipe.user._id}`} className="text-green-700 hover:underline">
-                      {recipe.user.username}
+          <div className="space-y-6">
+            {recipes.map((recipe) => {
+              const thumbnail = recipe.media?.[0]?.url;
+              return (
+                <div key={recipe._id} className="card recipe-card">
+                  {recipe.user?.username && (
+                    <div className="flex items-center gap-2 px-4 pt-4 pb-1">
+                      {recipe.user.avatarUrl ? (
+                        <img src={recipe.user.avatarUrl} alt="" className="avatar avatar-sm" />
+                      ) : (
+                        <span className="avatar avatar-sm">{recipe.user.username[0]?.toUpperCase()}</span>
+                      )}
+                      <Link to={`/users/${recipe.user._id}`} className="font-semibold text-sm hover:underline">
+                        {recipe.user.username}
+                      </Link>
+                    </div>
+                  )}
+                  <Link to={`/recipes/${recipe._id}`} className="recipe-card__media block">
+                    {thumbnail ? (
+                      <img src={thumbnail} alt="" loading="lazy" />
+                    ) : (
+                      <div className="recipe-card__placeholder" aria-hidden="true">
+                        {recipe.title?.[0]?.toUpperCase() || "🍽"}
+                      </div>
+                    )}
+                    {recipe.category && <span className="recipe-card__badge">{recipe.category}</span>}
+                  </Link>
+                  <div className="p-4">
+                    <Link to={`/recipes/${recipe._id}`} className="text-lg font-semibold text-gray-900 hover:underline">
+                      {recipe.title}
                     </Link>
-                  </p>
-                )}
-                <p className="text-gray-600 mb-3">{recipe.instructions?.slice(0, 150)}...</p>
-                <LikeButton
-                  recipeId={recipe._id}
-                  initialLikeCount={recipe.likeCount || 0}
-                  initialLikedByMe={false}
-                />
-              </div>
-            ))}
+                    <p className="text-gray-600 text-sm mt-1 mb-3">{recipe.instructions?.slice(0, 150)}...</p>
+                    <LikeButton
+                      recipeId={recipe._id}
+                      initialLikeCount={recipe.likeCount || 0}
+                      initialLikedByMe={false}
+                    />
+                  </div>
+                </div>
+              );
+            })}
           </div>
           {nextCursor && (
             <div className="flex justify-center mt-8">

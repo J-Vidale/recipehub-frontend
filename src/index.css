@@ -24,6 +24,12 @@
   --color-danger: #dc2626;
   --color-danger-dark: #b91c1c;
 
+  --gradient-brand: linear-gradient(135deg, #16a34a 0%, #15803d 55%, #14532d 100%);
+  --gradient-hero: radial-gradient(circle at 15% 20%, rgba(22, 163, 74, 0.16), transparent 55%),
+    radial-gradient(circle at 85% 15%, rgba(217, 119, 6, 0.14), transparent 50%),
+    linear-gradient(180deg, #f0faf3 0%, var(--color-bg) 65%);
+  --gradient-placeholder: linear-gradient(135deg, #dcfce7 0%, #fef3c7 100%);
+
   /* A small consistent elevation scale instead of one-off shadow values
      per component - flat resting state, a mid step for cards, a strong
      step for popovers/menus that need to visually float above content. */
@@ -49,26 +55,6 @@ body {
   margin: 0;
 }
 
-a {
-  color: var(--color-brand);
-  text-decoration: inherit;
-}
-a:hover {
-  color: var(--color-brand-dark);
-}
-
-/* A visible ring for keyboard focus on anything that isn't already an
-   .input (which defines its own). Only shows for keyboard/programmatic
-   focus (:focus-visible), not for a mouse click, matching how the
-   browser itself decides when a focus ring is useful. */
-a:focus-visible,
-button:focus-visible,
-[tabindex]:focus-visible {
-  outline: 2px solid var(--color-brand);
-  outline-offset: 2px;
-  border-radius: 0.25rem;
-}
-
 ::-webkit-scrollbar {
   width: 8px;
   background: var(--color-bg);
@@ -76,6 +62,35 @@ button:focus-visible,
 ::-webkit-scrollbar-thumb {
   background: var(--color-border);
   border-radius: 4px;
+}
+
+@layer base {
+  /* Plain-text links (inside paragraphs, comment bodies, etc). Deliberately
+     in @layer base, one step below @layer components in Tailwind's layer
+     order - so a .btn-* class applied to an <a> (every "Log in" / "Go
+     Home" CTA in the app is a <Link>) always wins on color. Unlayered
+     CSS beats every @layer, including components, regardless of source
+     order - putting this in base is what lets components override it at
+     all, instead of every button-styled link silently losing its text
+     color to whatever's declared here. */
+  a {
+    color: var(--color-brand);
+    text-decoration: inherit;
+  }
+  a:hover {
+    color: var(--color-brand-dark);
+  }
+
+  /* A visible ring for keyboard focus on anything that isn't already an
+     .input (which defines its own). Only shows for keyboard/programmatic
+     focus (:focus-visible), not for a mouse click. */
+  a:focus-visible,
+  button:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+    border-radius: 0.25rem;
+  }
 }
 
 @layer components {
@@ -86,6 +101,39 @@ button:focus-visible,
     padding: 2.5rem 1rem;
     margin: 0 auto;
     width: 100%;
+  }
+
+  /* Sticky top nav: restrained glassmorphism (frosted blur + a hairline
+     border) rather than a flat opaque bar, so page content softly shows
+     through as you scroll instead of hard-cutting underneath it. */
+  .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+  }
+
+  .navbar-link {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-muted);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: color 0.15s ease;
+  }
+  .navbar-link:hover {
+    color: var(--color-brand);
+  }
+
+  /* Hero banner for the logged-out Home page - a soft brand-tinted
+     gradient wash instead of a flat background, framing the welcome
+     card without competing with it. */
+  .hero {
+    background: var(--gradient-hero);
   }
 
   /* The one card style used everywhere - recipe cards, profile headers,
@@ -131,6 +179,78 @@ button:focus-visible,
     }
   }
 
+  /* Photo-forward recipe card: a food app lives or dies on its imagery,
+     so the thumbnail is the dominant element and text is secondary,
+     rather than a text-only tile with a photo bolted on. Falls back to
+     a soft gradient + initial when a recipe has no media yet. */
+  .recipe-card {
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .recipe-card__media {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    background: var(--gradient-placeholder);
+    overflow: hidden;
+  }
+  .recipe-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.25s ease;
+  }
+  .recipe-card:hover .recipe-card__media img {
+    transform: scale(1.04);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .recipe-card__media img {
+      transition: none;
+    }
+    .recipe-card:hover .recipe-card__media img {
+      transform: none;
+    }
+  }
+  .recipe-card__placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-brand-dark);
+    opacity: 0.5;
+  }
+  .recipe-card__badge {
+    position: absolute;
+    top: 0.6rem;
+    left: 0.6rem;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(4px);
+    color: var(--color-brand-dark);
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 9999px;
+  }
+  .recipe-card__body {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    flex: 1;
+  }
+  .recipe-card__author {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--color-muted);
+    font-size: 0.8rem;
+  }
+
   /* Buttons: three variants cover every action in the app. Using real
      button classes instead of ad-hoc bg-green-600/bg-gray-200 strings
      scattered per-component means a palette change is a one-line edit. */
@@ -147,7 +267,7 @@ button:focus-visible,
     font-weight: 600;
     border: none;
     cursor: pointer;
-    transition: background-color 0.15s ease, opacity 0.15s ease, transform 0.05s ease;
+    transition: background-color 0.15s ease, opacity 0.15s ease, transform 0.05s ease, box-shadow 0.15s ease;
   }
   .btn-primary:active,
   .btn-secondary:active,
@@ -163,11 +283,13 @@ button:focus-visible,
   }
 
   .btn-primary {
-    background: var(--color-brand);
+    background: var(--gradient-brand);
     color: #fff;
+    box-shadow: 0 2px 8px rgba(21, 128, 61, 0.25);
   }
   .btn-primary:hover:not(:disabled) {
-    background: var(--color-brand-dark);
+    box-shadow: 0 4px 14px rgba(21, 128, 61, 0.35);
+    filter: brightness(1.05);
   }
 
   .btn-secondary {

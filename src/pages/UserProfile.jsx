@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import FollowButton from "../components/FollowButton";
 import BlockButton from "../components/BlockButton";
 import ReportButton from "../components/ReportButton";
+import RecipeCard from "../components/RecipeCard";
 
 const UserProfile = () => {
   const { id } = useParams();
@@ -142,14 +143,7 @@ const UserProfile = () => {
           <>
             <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
               {recipes.map((recipe) => (
-                <Link
-                  to={`/recipes/${recipe._id}`}
-                  key={recipe._id}
-                  className="card card-hover flex flex-col"
-                >
-                  <h3 className="text-lg font-semibold mb-2">{recipe.title}</h3>
-                  <p className="text-gray-600 text-sm flex-1">{recipe.instructions?.slice(0, 100)}...</p>
-                </Link>
+                <RecipeCard key={recipe._id} recipe={{ ...recipe, user: profile }} />
               ))}
             </div>
             {hasMore && (

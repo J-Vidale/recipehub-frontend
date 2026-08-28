@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import API from "../services/api";
+import RecipeCard from "../components/RecipeCard";
 
 const SavedRecipes = () => {
   const [savedRecipes, setSavedRecipes] = useState([]);
@@ -35,26 +35,7 @@ const SavedRecipes = () => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {Array.isArray(savedRecipes)
-            ? savedRecipes.map((recipe) => (
-                <Link
-                  to={`/recipes/${recipe._id}`}
-                  key={recipe._id}
-                  className="card card-hover"
-                >
-                  <h2 className="text-lg font-semibold text-green-700 mb-2">
-                    {recipe.title}
-                  </h2>
-                  <p className="text-gray-600 text-sm mb-2">
-                    {recipe.instructions?.slice(0, 120)}...
-                  </p>
-                  <p className="text-xs text-gray-400">
-                    Saved on:{" "}
-                    {recipe.savedAt
-                      ? new Date(recipe.savedAt).toLocaleDateString()
-                      : "N/A"}
-                  </p>
-                </Link>
-              ))
+            ? savedRecipes.map((recipe) => <RecipeCard key={recipe._id} recipe={recipe} />)
             : null}
         </div>
       )}

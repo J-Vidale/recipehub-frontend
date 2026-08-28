@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import API from "../services/api";
+import RecipeCard from "../components/RecipeCard";
 
 const TagPage = () => {
   const { tag } = useParams();
@@ -55,17 +56,7 @@ const TagPage = () => {
         <>
           <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
             {recipes.map((recipe) => (
-              <Link
-                to={`/recipes/${recipe._id}`}
-                key={recipe._id}
-                className="card card-hover flex flex-col"
-              >
-                <h3 className="text-lg font-semibold mb-1">{recipe.title}</h3>
-                {recipe.user?.username && (
-                  <p className="text-xs text-gray-500 mb-2">by {recipe.user.username}</p>
-                )}
-                <p className="text-gray-600 text-sm flex-1">{recipe.instructions?.slice(0, 100)}...</p>
-              </Link>
+              <RecipeCard key={recipe._id} recipe={recipe} />
             ))}
           </div>
           {hasMore && (
