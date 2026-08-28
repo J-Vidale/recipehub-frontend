@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import API from '../services/api';
+import RecipeCard from '../components/RecipeCard';
 
 const Explore = () => {
   const [recipes, setRecipes] = useState([]);
@@ -65,20 +66,24 @@ const Explore = () => {
         </div>
       )}
       {loading ? (
-        <p className="text-center text-gray-600">Loading...</p>
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="card overflow-hidden p-0">
+              <div className="skeleton" style={{ aspectRatio: "4 / 3" }} />
+              <div className="p-4 space-y-2">
+                <div className="skeleton h-4 w-3/4" />
+                <div className="skeleton h-3 w-1/2" />
+              </div>
+            </div>
+          ))}
+        </div>
       ) : error ? (
         <p className="text-center text-red-600">{error}</p>
       ) : (
         <>
           <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {recipes.map(recipe => (
-              <Link to={`/recipes/${recipe._id}`} key={recipe._id} className="card card-hover flex flex-col">
-                <h3 className="text-lg font-semibold mb-1">{recipe.title}</h3>
-                {recipe.user?.username && (
-                  <p className="text-xs text-gray-500 mb-2">by {recipe.user.username}</p>
-                )}
-                <p className="text-gray-600 text-sm flex-1">{recipe.instructions?.slice(0, 100)}...</p>
-              </Link>
+            {recipes.map((recipe) => (
+              <RecipeCard key={recipe._id} recipe={recipe} />
             ))}
           </div>
           {hasMore && (

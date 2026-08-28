@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import API from "../services/api";
+import RecipeCard from "../components/RecipeCard";
 
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
@@ -64,19 +65,7 @@ const SearchResults = () => {
               <h3 className="text-lg font-semibold mb-3">Recipes</h3>
               <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
                 {results.recipes.map((r) => (
-                  <Link
-                    key={r._id}
-                    to={`/recipes/${r._id}`}
-                    className="card card-hover flex flex-col"
-                  >
-                    <h4 className="font-semibold mb-1">{r.title}</h4>
-                    {r.user?.username && (
-                      <p className="text-xs text-gray-500 mb-2">by {r.user.username}</p>
-                    )}
-                    <p className="text-sm text-gray-600 flex-1">
-                      {r.instructions?.slice(0, 100)}...
-                    </p>
-                  </Link>
+                  <RecipeCard key={r._id} recipe={r} />
                 ))}
               </div>
             </div>
