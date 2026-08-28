@@ -17,6 +17,7 @@ import PopularMeals from "./pages/PopularMeals";
 import RandomMeal from "./pages/RandomMeal";
 import MealDetail from "./pages/MealDetail";
 import RecipeDetail from "./pages/RecipeDetail";
+import UserProfile from "./pages/UserProfile";
 import NotFound from "./pages/NotFound";
 
 function App() {
@@ -73,6 +74,7 @@ function App() {
           <Route path="/random-meal" element={<RandomMeal />} />
           <Route path="/meals/:id" element={<MealDetail />} />
           <Route path="/recipes/:id" element={<RecipeDetail />} />
+          <Route path="/users/:id" element={<UserProfile />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </ErrorBoundary>

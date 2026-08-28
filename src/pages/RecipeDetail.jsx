@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import API from "../services/api";
 import { useAuth } from "../context/AuthContext";
+import LikeButton from "../components/LikeButton";
+import CommentSection from "../components/CommentSection";
 
 const RecipeDetail = () => {
   const { id } = useParams();
@@ -58,9 +60,17 @@ const RecipeDetail = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4">
       <div className="max-w-2xl mx-auto p-8 bg-white rounded-xl shadow mt-10">
-        <h1 className="text-3xl font-bold text-green-700 mb-4">
+        <h1 className="text-3xl font-bold text-green-700 mb-1">
           <Link to={`/recipes/${recipe._id}`}>{recipe.title}</Link>
         </h1>
+        {recipe.user?.username && (
+          <p className="text-sm text-gray-500 mb-4">
+            by{" "}
+            <Link to={`/users/${recipe.user._id}`} className="text-green-700 hover:underline">
+              {recipe.user.username}
+            </Link>
+          </p>
+        )}
         <p className="text-gray-700 mb-4">{recipe.instructions}</p>
         <div>
           <h2 className="font-semibold text-lg">Ingredients:</h2>
@@ -72,24 +82,37 @@ const RecipeDetail = () => {
             ))}
           </ul>
         </div>
-        {user ? (
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className={`px-4 py-2 rounded disabled:opacity-60 ${
-              isSaved ? "bg-red-500 text-white" : "bg-green-500 text-white"
-            }`}
-          >
-            {isSaved ? "Unsave" : "Save"}
-          </button>
-        ) : (
-          <Link
-            to="/login"
-            className="inline-block px-4 py-2 rounded bg-green-500 text-white"
-          >
-            Log in to save
-          </Link>
-        )}
+        <div className="flex items-center gap-3">
+          <LikeButton
+            recipeId={recipe._id}
+            initialLikeCount={recipe.likeCount || 0}
+            initialLikedByMe={false}
+          />
+          {user ? (
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className={`px-4 py-2 rounded disabled:opacity-60 ${
+                isSaved ? "bg-red-500 text-white" : "bg-green-500 text-white"
+              }`}
+            >
+              {isSaved ? "Unsave" : "Save"}
+            </button>
+          ) : (
+            <Link
+              to="/login"
+              className="inline-block px-4 py-2 rounded bg-green-500 text-white"
+            >
+              Log in to save
+            </Link>
+          )}
+        </div>
+
+        <CommentSection
+          recipeId={recipe._id}
+          recipeOwnerId={recipe.user?._id}
+          pinnedCommentId={recipe.pinnedComment}
+        />
       </div>
     </div>
   );
