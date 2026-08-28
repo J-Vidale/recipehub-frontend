@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import API from "../services/api";
+import { useSocket } from "../context/SocketContext";
 
 const POLL_INTERVAL_MS = 45000;
 
 const NotificationBell = () => {
   const [unreadCount, setUnreadCount] = useState(0);
+  const socket = useSocket();
 
   useEffect(() => {
     let cancelled = false;
@@ -20,6 +22,10 @@ const NotificationBell = () => {
     };
 
     fetchCount();
+    // The poll stays as the source of truth regardless of socket state -
+    // it's what guarantees the badge is eventually correct even if a
+    // live event is missed (a dropped connection during a free-tier
+    // sleep, a tab that was closed when the event fired, etc.).
     const interval = setInterval(fetchCount, POLL_INTERVAL_MS);
 
     return () => {
@@ -27,6 +33,17 @@ const NotificationBell = () => {
       clearInterval(interval);
     };
   }, []);
+
+  useEffect(() => {
+    if (!socket) return;
+    // Live update: bump the badge immediately instead of waiting for the
+    // next poll. The poll above still re-syncs periodically regardless.
+    const handleNewNotification = () => {
+      setUnreadCount((prev) => prev + 1);
+    };
+    socket.on("notification:new", handleNewNotification);
+    return () => socket.off("notification:new", handleNewNotification);
+  }, [socket]);
 
   return (
     <Link to="/notifications" className="relative inline-flex items-center" aria-label="Notifications">

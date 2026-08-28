@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import API from "../services/api";
+import { useSocket } from "../context/SocketContext";
 
 const describeNotification = (n) => {
   const actorName = n.actor?.username || "Someone";
@@ -33,6 +34,16 @@ const Notifications = () => {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
+  const socket = useSocket();
+
+  useEffect(() => {
+    if (!socket) return;
+    const handleNewNotification = (notification) => {
+      setNotifications((prev) => [notification, ...prev]);
+    };
+    socket.on("notification:new", handleNewNotification);
+    return () => socket.off("notification:new", handleNewNotification);
+  }, [socket]);
 
   useEffect(() => {
     const fetchNotifications = async () => {
