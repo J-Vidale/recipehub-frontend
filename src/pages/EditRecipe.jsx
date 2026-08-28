@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import API from "../services/api";
 import IngredientFields from "../components/IngredientFields";
-import useCategories from "../hooks/useCategories";
+import CategoryAutocomplete from "../components/CategoryAutocomplete";
 
 const EditRecipe = () => {
   const { id } = useParams();
@@ -11,8 +11,8 @@ const EditRecipe = () => {
   const [ingredients, setIngredients] = useState([]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
+  const [submitError, setSubmitError] = useState(null);
   const navigate = useNavigate();
-  const categories = useCategories();
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -22,7 +22,7 @@ const EditRecipe = () => {
         setForm({
           title: res.data.title,
           instructions: res.data.instructions,
-          category: res.data.category,
+          category: res.data.category || "",
         });
         setIngredients(res.data.ingredients || []);
       } catch (err) {
@@ -39,6 +39,7 @@ const EditRecipe = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitError(null);
     setSubmitting(true);
     try {
       await API.put(`/recipes/${id}`, {
@@ -48,7 +49,7 @@ const EditRecipe = () => {
       navigate("/profile");
     } catch (err) {
       console.error("Failed to update recipe:", err);
-      alert("Failed to save changes.");
+      setSubmitError(err.response?.data?.message || "Failed to save changes.");
       setSubmitting(false);
     }
   };
@@ -70,6 +71,7 @@ const EditRecipe = () => {
     <div className="page-container max-w-lg">
       <div className="card">
         <h2 className="text-2xl font-bold text-green-700 mb-6">Edit Recipe</h2>
+        {submitError && <p className="text-red-600 text-sm mb-4">{submitError}</p>}
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             name="title"
@@ -79,14 +81,13 @@ const EditRecipe = () => {
             className="input"
             required
           />
-          <select name="category" value={form.category || ""} onChange={handleChange} className="input">
-            <option value="">Select a category (optional)</option>
-            {categories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </select>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Category (optional)</label>
+            <CategoryAutocomplete
+              value={form.category}
+              onChange={(category) => setForm((prev) => ({ ...prev, category }))}
+            />
+          </div>
           <textarea
             name="instructions"
             value={form.instructions}

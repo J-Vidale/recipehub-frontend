@@ -8,10 +8,14 @@
 
   /* A single source of truth for the app's palette - every custom class
      below reads from these instead of hardcoding hex values, so changing
-     the brand color means changing it in one place. */
+     the brand color means changing it in one place. Warm amber accent
+     pairs with the green brand color for things that shouldn't read as
+     an "action" (ratings, pinned/highlighted content). */
   --color-brand: #15803d;
   --color-brand-dark: #14532d;
   --color-brand-light: #dcfce7;
+  --color-accent: #d97706;
+  --color-accent-light: #fef3c7;
   --color-ink: #1f2937;
   --color-muted: #6b7280;
   --color-surface: #ffffff;
@@ -19,6 +23,13 @@
   --color-border: #e5e7eb;
   --color-danger: #dc2626;
   --color-danger-dark: #b91c1c;
+
+  /* A small consistent elevation scale instead of one-off shadow values
+     per component - flat resting state, a mid step for cards, a strong
+     step for popovers/menus that need to visually float above content. */
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.06);
+  --shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.14), 0 2px 6px rgba(15, 23, 42, 0.08);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -46,6 +57,18 @@ a:hover {
   color: var(--color-brand-dark);
 }
 
+/* A visible ring for keyboard focus on anything that isn't already an
+   .input (which defines its own). Only shows for keyboard/programmatic
+   focus (:focus-visible), not for a mouse click, matching how the
+   browser itself decides when a focus ring is useful. */
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+  border-radius: 0.25rem;
+}
+
 ::-webkit-scrollbar {
   width: 8px;
   background: var(--color-bg);
@@ -70,16 +93,42 @@ a:hover {
      and padding instead of every page picking its own. */
   .card {
     background: var(--color-surface);
+    border: 1px solid var(--color-border);
     border-radius: 1rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    box-shadow: var(--shadow-sm);
     padding: 1.75rem;
   }
 
   .card-sm {
     background: var(--color-surface);
+    border: 1px solid var(--color-border);
     border-radius: 0.75rem;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-sm);
     padding: 1rem;
+  }
+
+  /* Applied alongside .card/.card-sm on anything clickable (a recipe
+     card, a conversation row) - lifts and brightens on hover/focus so a
+     grid of cards reads as "these are tappable" without needing an
+     explicit affordance on every one. Motion is skipped entirely for
+     users who've asked for reduced motion. */
+  .card-hover {
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+  .card-hover:hover,
+  .card-hover:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: color-mix(in srgb, var(--color-brand) 30%, var(--color-border));
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .card-hover {
+      transition: box-shadow 0.15s ease, border-color 0.15s ease;
+    }
+    .card-hover:hover,
+    .card-hover:focus-visible {
+      transform: none;
+    }
   }
 
   /* Buttons: three variants cover every action in the app. Using real
@@ -193,5 +242,113 @@ a:hover {
     width: 6rem;
     height: 6rem;
     font-size: 2rem;
+  }
+
+  /* Wraps an .avatar-lg on the Profile page: a dark overlay fades in on
+     hover/focus with a camera icon and label, the standard "tap the
+     photo to change it" pattern. The trigger is a real <button> so it's
+     keyboard-reachable and the overlay appears on focus too, not just
+     mouse hover. */
+  .avatar-upload {
+    position: relative;
+    display: inline-block;
+    border-radius: 9999px;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+    background: none;
+  }
+  .avatar-upload__overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.15rem;
+    border-radius: 9999px;
+    background: rgba(15, 23, 42, 0.55);
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+  .avatar-upload:hover .avatar-upload__overlay,
+  .avatar-upload:focus-visible .avatar-upload__overlay {
+    opacity: 1;
+  }
+  .avatar-upload:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+  }
+
+  /* Skeleton loading blocks: a shimmering placeholder instead of a bare
+     "Loading..." string, used for card grids while their first page of
+     data is in flight. */
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--color-border) 25%,
+      #f0f1ef 37%,
+      var(--color-border) 63%
+    );
+    background-size: 400% 100%;
+    animation: skeleton-shimmer 1.4s ease infinite;
+    border-radius: 0.5rem;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton {
+      animation: none;
+      background: var(--color-border);
+    }
+  }
+
+  /* Autocomplete/combobox panel (category picker) - a floating listbox
+     matching the accessible combobox pattern: grouped options, a
+     highlighted "active" option that tracks arrow-key navigation, and a
+     visible affordance that free text is always an accepted answer. */
+  .combobox-panel {
+    position: absolute;
+    z-index: 50;
+    margin-top: 0.35rem;
+    width: 100%;
+    max-height: 16rem;
+    overflow-y: auto;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow-lg);
+  }
+  .combobox-group-label {
+    padding: 0.5rem 0.85rem 0.25rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+  .combobox-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.55rem 0.85rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  .combobox-option:hover,
+  .combobox-option[aria-selected="true"] {
+    background: var(--color-brand-light);
+    color: var(--color-brand-dark);
+  }
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
   }
 }

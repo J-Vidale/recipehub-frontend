@@ -29,7 +29,7 @@ const PopularMeals = () => {
       ) : (
         <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {Array.isArray(meals) ? meals.map(meal => (
-            <Link to={`/meals/${meal.idMeal}`} key={meal.idMeal} className="card hover:shadow-lg transition overflow-hidden p-0">
+            <Link to={`/meals/${meal.idMeal}`} key={meal.idMeal} className="card card-hover overflow-hidden p-0">
               <img src={meal.strMealThumb} alt={meal.strMeal} loading="lazy" className="w-full h-40 object-cover" />
               <h3 className="font-semibold p-3">{meal.strMeal}</h3>
             </Link>
