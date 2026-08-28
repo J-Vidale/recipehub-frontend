@@ -11,6 +11,7 @@ import Home from "./pages/Home";
 // pay for CreateRecipe/EditRecipe/comment UI/etc. it may never use.
 const Explore = lazy(() => import("./pages/Explore"));
 const Feed = lazy(() => import("./pages/Feed"));
+const Notifications = lazy(() => import("./pages/Notifications"));
 const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
 const Profile = lazy(() => import("./pages/Profile"));
@@ -43,6 +44,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Feed />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/notifications"
+              element={
+                <ProtectedRoute>
+                  <Notifications />
                 </ProtectedRoute>
               }
             />

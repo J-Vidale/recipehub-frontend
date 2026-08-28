@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import NotificationBell from "./NotificationBell";
 
 function Navbar() {
   const { user, logout } = useContext(AuthContext);
@@ -25,6 +26,7 @@ function Navbar() {
         {user ? (
           <>
             <Link to="/feed">Feed</Link>
+            <NotificationBell />
             <Link to="/profile">Profile</Link>
             <Link to="/your-recipes">Your Recipes</Link>
             <Link to="/create">Create</Link>
