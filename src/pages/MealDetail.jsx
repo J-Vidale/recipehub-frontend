@@ -63,7 +63,7 @@ function MealDetail() {
         <h3 className="font-semibold text-lg mb-2">Instructions</h3>
         <p className="text-gray-600 whitespace-pre-line mb-4">{meal.strInstructions}</p>
 
-        {meal.strYoutube && (
+        {meal.strYoutube && /^https?:\/\//i.test(meal.strYoutube) && (
           <a href={meal.strYoutube} target="_blank" rel="noreferrer" className="btn-primary inline-flex">
             Watch on YouTube
           </a>
