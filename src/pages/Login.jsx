@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
 function Login() {
@@ -31,35 +31,40 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md"
-      >
-        <h2 className="text-2xl font-bold text-green-700 mb-6 text-center">
-          Login
-        </h2>
-        {error && <p className="text-red-500 mb-4">{error}</p>}
-        <input
-          type="text"
-          name="username"
-          placeholder="Username"
-          value={formData.username}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
-        <button type="submit" disabled={submitting} className="w-full mt-2">
-          {submitting ? "Logging in..." : "Log In"}
-        </button>
-      </form>
+    <div className="page-container flex items-center justify-center">
+      <div className="card w-full max-w-md">
+        <h2 className="text-2xl font-bold text-green-700 mb-6 text-center">Login</h2>
+        {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            type="text"
+            name="username"
+            placeholder="Username"
+            value={formData.username}
+            onChange={handleChange}
+            className="input"
+            required
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
+            className="input"
+            required
+          />
+          <button type="submit" disabled={submitting} className="btn-primary w-full">
+            {submitting ? "Logging in..." : "Log In"}
+          </button>
+        </form>
+        <p className="text-sm text-gray-600 text-center mt-4">
+          Don't have an account?{" "}
+          <Link to="/register" className="text-green-700 hover:underline">
+            Register
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }

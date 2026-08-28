@@ -40,14 +40,14 @@ const Feed = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4">
+    <div className="page-container max-w-2xl">
       <h2 className="text-3xl font-bold text-green-700 mb-8 text-center">Your Feed</h2>
       {loading ? (
         <p className="text-center text-gray-600">Loading...</p>
       ) : error ? (
         <p className="text-center text-red-600">{error}</p>
       ) : recipes.length === 0 ? (
-        <div className="max-w-md mx-auto text-center text-gray-600">
+        <div className="card text-center text-gray-600">
           <p className="mb-4">
             No recipes yet from people you follow.
           </p>
@@ -57,9 +57,9 @@ const Feed = () => {
         </div>
       ) : (
         <>
-          <div className="max-w-2xl mx-auto space-y-6">
+          <div className="space-y-4">
             {recipes.map((recipe) => (
-              <div key={recipe._id} className="bg-white rounded-xl shadow-md p-6">
+              <div key={recipe._id} className="card">
                 <Link to={`/recipes/${recipe._id}`} className="text-xl font-semibold text-green-700 hover:underline">
                   {recipe.title}
                 </Link>
@@ -85,7 +85,7 @@ const Feed = () => {
               <button
                 onClick={loadMore}
                 disabled={loadingMore}
-                className="px-6 py-2 rounded bg-green-600 hover:bg-green-700 text-white disabled:opacity-60"
+                className="btn-primary"
               >
                 {loadingMore ? "Loading..." : "Load more"}
               </button>

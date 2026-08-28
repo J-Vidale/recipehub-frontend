@@ -35,31 +35,33 @@ const Messages = () => {
   }, [socket]);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4">
-      <div className="max-w-2xl mx-auto">
-        <h2 className="text-2xl font-bold text-green-700 mb-6">Messages</h2>
-        {loading ? (
-          <p className="text-gray-600">Loading...</p>
-        ) : error ? (
-          <p className="text-red-600">{error}</p>
-        ) : conversations.length === 0 ? (
-          <p className="text-gray-600">No conversations yet.</p>
-        ) : (
-          <ul className="space-y-2">
-            {conversations.map((c) => (
-              <li key={c._id}>
-                <Link
-                  to={`/messages/${c._id}`}
-                  className="block bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition"
-                >
+    <div className="page-container max-w-2xl">
+      <h2 className="text-2xl font-bold text-green-700 mb-6">Messages</h2>
+      {loading ? (
+        <p className="text-gray-600">Loading...</p>
+      ) : error ? (
+        <p className="text-red-600">{error}</p>
+      ) : conversations.length === 0 ? (
+        <p className="text-gray-600">No conversations yet.</p>
+      ) : (
+        <ul className="space-y-2">
+          {conversations.map((c) => (
+            <li key={c._id}>
+              <Link to={`/messages/${c._id}`} className="card-sm flex items-center gap-3 hover:shadow-md transition">
+                {c.otherUser?.avatarUrl ? (
+                  <img src={c.otherUser.avatarUrl} alt={c.otherUser.username} className="avatar avatar-sm" />
+                ) : (
+                  <span className="avatar avatar-sm">{c.otherUser?.username?.[0]?.toUpperCase()}</span>
+                )}
+                <div className="min-w-0">
                   <p className="font-semibold">{c.otherUser?.username}</p>
                   <p className="text-sm text-gray-600 truncate">{c.lastMessageText}</p>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };

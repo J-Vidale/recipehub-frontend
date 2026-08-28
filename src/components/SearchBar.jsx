@@ -68,11 +68,11 @@ const SearchBar = () => {
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => results && setOpen(true)}
           placeholder="Search recipes or people..."
-          className="border rounded px-3 py-1.5 text-sm w-48 md:w-64"
+          className="input text-sm py-1.5 w-48 md:w-64"
         />
       </form>
       {open && (
-        <div className="absolute mt-1 w-72 bg-white border rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
+        <div className="absolute mt-1 w-72 card p-0 shadow-lg z-50 max-h-96 overflow-y-auto">
           {loading ? (
             <p className="p-3 text-sm text-gray-500">Searching...</p>
           ) : !hasResults ? (
