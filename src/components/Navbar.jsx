@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import NotificationBell from "./NotificationBell";
+import SearchBar from "./SearchBar";
 
 function Navbar() {
   const { user, logout } = useContext(AuthContext);
@@ -21,6 +22,7 @@ function Navbar() {
         <Link to="/explore">Explore</Link>
         <Link to="/popular-meals">Popular</Link>
         <Link to="/random-meal">Random</Link>
+        <SearchBar />
       </div>
       <div className="flex items-center gap-4">
         {user ? (
