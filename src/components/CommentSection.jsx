@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import API from "../services/api";
+import { useToast } from "../context/ToastContext";
 import { useAuth } from "../context/AuthContext";
+import { HeartIcon, PinIcon } from "./icons";
 
 const CommentAvatar = ({ user }) =>
   user.avatarUrl ? (
@@ -46,12 +48,13 @@ const CommentLikeButton = ({ commentId, initialLikeCount, initialLikedByMe }) =>
       disabled={busy}
       className={`text-xs disabled:opacity-60 ${likedByMe ? "text-pink-700 font-medium" : "text-gray-500 hover:text-gray-700"}`}
     >
-      {likedByMe ? "♥" : "♡"} {likeCount} {likeCount === 1 ? "like" : "likes"}
+      <HeartIcon filled={likedByMe} /> {likeCount} {likeCount === 1 ? "like" : "likes"}
     </button>
   );
 };
 
 const CommentSection = ({ recipeId, recipeOwnerId, pinnedCommentId }) => {
+  const toast = useToast();
   const { user } = useAuth();
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -96,7 +99,7 @@ const CommentSection = ({ recipeId, recipeOwnerId, pinnedCommentId }) => {
       setComments((prev) => [...prev, res.data]);
       setNewText("");
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to post comment.");
+      toast.error(err.response?.data?.message || "Failed to post comment.");
     } finally {
       setPosting(false);
     }
@@ -115,7 +118,7 @@ const CommentSection = ({ recipeId, recipeOwnerId, pinnedCommentId }) => {
       setReplyText("");
       setReplyingTo(null);
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to post reply.");
+      toast.error(err.response?.data?.message || "Failed to post reply.");
     } finally {
       setReplying(false);
     }
@@ -129,8 +132,9 @@ const CommentSection = ({ recipeId, recipeOwnerId, pinnedCommentId }) => {
         prev.filter((c) => c._id !== commentId && c.parentComment !== commentId)
       );
       if (pinnedId === commentId) setPinnedId(null);
+      toast.success("Comment deleted.");
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to delete comment.");
+      toast.error(err.response?.data?.message || "Failed to delete comment.");
     }
   };
 
@@ -144,7 +148,7 @@ const CommentSection = ({ recipeId, recipeOwnerId, pinnedCommentId }) => {
         setPinnedId(commentId);
       }
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to update pin.");
+      toast.error(err.response?.data?.message || "Failed to update pin.");
     }
   };
 
@@ -226,7 +230,7 @@ const CommentSection = ({ recipeId, recipeOwnerId, pinnedCommentId }) => {
           {orderedTopLevel.map((comment) => (
             <li key={comment._id} className={pinnedId === comment._id ? "card-sm bg-yellow-50" : ""}>
               {pinnedId === comment._id && (
-                <p className="text-xs font-medium text-yellow-700 mb-1">📌 Pinned</p>
+                <p className="text-xs font-medium text-yellow-700 mb-1 inline-flex items-center gap-1"><PinIcon /> Pinned</p>
               )}
               <div className="flex items-start gap-2">
                 <CommentAvatar user={comment.user} />

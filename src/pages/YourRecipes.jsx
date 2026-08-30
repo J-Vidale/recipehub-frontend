@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import API from "../services/api";
+import { useToast } from "../context/ToastContext";
 import RecipeCard from "../components/RecipeCard";
 import Seo from "../components/Seo";
 
 const YourRecipes = () => {
+  const toast = useToast();
   const [recipes, setRecipes] = useState([]);
   const [savedIds, setSavedIds] = useState([]);
   const [savingId, setSavingId] = useState(null);
@@ -59,7 +61,7 @@ const YourRecipes = () => {
       } else {
         setSavedIds((prev) => prev.filter((id) => id !== recipeId));
       }
-      alert("Failed to update saved recipes.");
+      toast.error("Failed to update saved recipes.");
     } finally {
       setSavingId(null);
     }

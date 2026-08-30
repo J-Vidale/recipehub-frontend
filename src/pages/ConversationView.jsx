@@ -1,13 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import API from "../services/api";
+import { useToast } from "../context/ToastContext";
 import { useAuth } from "../context/AuthContext";
 import { useSocket } from "../context/SocketContext";
 import Seo from "../components/Seo";
+import { ArrowLeftIcon } from "../components/icons";
 
 const ConversationView = () => {
   const { id } = useParams();
   const { user } = useAuth();
+  const toast = useToast();
   const socket = useSocket();
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -60,7 +63,7 @@ const ConversationView = () => {
       setMessages((prev) => [...prev, res.data]);
       setText("");
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to send message.");
+      toast.error(err.response?.data?.message || "Failed to send message.");
     } finally {
       setSending(false);
     }
@@ -74,7 +77,7 @@ const ConversationView = () => {
       <Seo title="Conversation" description="Your private conversation on RecipeHub." noindex />
       <h1 className="sr-only">Conversation</h1>
       <Link to="/messages" className="text-sm text-green-700 hover:underline mb-4">
-        ← Back to messages
+        <ArrowLeftIcon /> Back to messages
       </Link>
       <div className="card flex-1 mb-4 overflow-y-auto max-h-[60vh] space-y-2">
         {messages.length === 0 ? (

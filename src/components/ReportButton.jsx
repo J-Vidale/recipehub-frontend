@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import API from "../services/api";
+import { useToast } from "../context/ToastContext";
 import { useAuth } from "../context/AuthContext";
 
 const ReportButton = ({ targetType, targetId }) => {
   const { user } = useAuth();
+  const toast = useToast();
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -19,8 +21,9 @@ const ReportButton = ({ targetType, targetId }) => {
       await API.post("/reports", { targetType, targetId, reason: reason.trim() });
       setSubmitted(true);
       setOpen(false);
+      toast.success("Report submitted. Thanks for letting us know.");
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to submit report.");
+      toast.error(err.response?.data?.message || "Failed to submit report.");
     } finally {
       setSubmitting(false);
     }

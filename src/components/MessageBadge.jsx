@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import API from "../services/api";
+import { MailIcon } from "./icons";
 import { useSocket } from "../context/SocketContext";
 
 const POLL_INTERVAL_MS = 45000;
@@ -47,7 +48,7 @@ const MessageBadge = () => {
 
   return (
     <Link to="/messages" className="relative inline-flex items-center" aria-label="Messages">
-      <span aria-hidden="true">✉️</span>
+      <MailIcon size="1.15rem" />
       {unreadCount > 0 && (
         <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[1.1rem] text-center leading-tight">
           {unreadCount > 99 ? "99+" : unreadCount}

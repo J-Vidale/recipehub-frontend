@@ -19,3 +19,14 @@ export const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.jpg`;
 
 export const absoluteUrl = (path = "/") =>
   `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
+
+// Contact details shown in the footer and legal pages. Left empty on
+// purpose: the footer and legal pages render a contact line only when a
+// value is set here, so nothing ships a fake address or phone number.
+// Fill these in (or set the matching VITE_ vars) before publishing the
+// legal pages, since Terms and Privacy both need a way to reach you.
+export const CONTACT_EMAIL = import.meta.env.VITE_CONTACT_EMAIL || "";
+export const CONTACT_PHONE = import.meta.env.VITE_CONTACT_PHONE || "";
+
+// Digits only, for the tel: href (e.g. "+15551234567").
+export const CONTACT_PHONE_HREF = CONTACT_PHONE.replace(/[^\d+]/g, "");

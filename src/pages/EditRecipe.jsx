@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import API from "../services/api";
+import { useToast } from "../context/ToastContext";
 import IngredientFields from "../components/IngredientFields";
 import CategoryAutocomplete from "../components/CategoryAutocomplete";
 import Seo from "../components/Seo";
@@ -14,6 +15,7 @@ const EditRecipe = () => {
   const [error, setError] = useState(null);
   const [submitError, setSubmitError] = useState(null);
   const navigate = useNavigate();
+  const toast = useToast();
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -47,6 +49,7 @@ const EditRecipe = () => {
         ...form,
         ingredients: ingredients.filter((i) => i.name.trim() && i.amount.trim()),
       });
+      toast.success("Changes saved.");
       navigate("/profile");
     } catch (err) {
       console.error("Failed to update recipe:", err);

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import API from "../services/api";
 import { useAuth } from "../context/AuthContext";
+import { HeartIcon } from "./icons";
 
 const LikeButton = ({ recipeId, initialLikeCount, initialLikedByMe = false }) => {
   const { user } = useAuth();
@@ -33,7 +34,7 @@ const LikeButton = ({ recipeId, initialLikeCount, initialLikedByMe = false }) =>
   if (!user) {
     return (
       <Link to="/login" className="inline-flex items-center gap-1 text-gray-600 hover:text-green-700">
-        <span aria-hidden="true">♡</span> {likeCount} {likeCount === 1 ? "like" : "likes"}
+        <HeartIcon /> {likeCount} {likeCount === 1 ? "like" : "likes"}
       </Link>
     );
   }
@@ -46,7 +47,7 @@ const LikeButton = ({ recipeId, initialLikeCount, initialLikedByMe = false }) =>
         likedByMe ? "bg-pink-100 text-pink-700" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
       }`}
     >
-      <span aria-hidden="true">{likedByMe ? "♥" : "♡"}</span>
+      <HeartIcon filled={likedByMe} />
       {likeCount} {likeCount === 1 ? "like" : "likes"}
     </button>
   );
