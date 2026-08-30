@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import API from "../services/api";
 import IngredientFields from "../components/IngredientFields";
 import CategoryAutocomplete from "../components/CategoryAutocomplete";
+import Seo from "../components/Seo";
 
 const CreateRecipe = () => {
   const [formData, setFormData] = useState({
@@ -38,8 +39,13 @@ const CreateRecipe = () => {
 
   return (
     <div className="page-container max-w-lg">
+      <Seo
+        title="Create a Recipe"
+        description="Publish a new recipe on RecipeHub with ingredients, instructions and hashtags."
+        noindex
+      />
       <div className="card">
-        <h1 className="text-2xl font-bold text-green-700 mb-6">Create Recipe</h1>
+        <h1 className="text-2xl font-bold text-green-700 mb-6">Create a Recipe</h1>
         {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
         <form onSubmit={handleSubmit} className="space-y-4">
           <input

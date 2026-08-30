@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import Seo from "../components/Seo";
 
 function Register() {
   const { login, register } = useContext(AuthContext);
@@ -34,8 +35,12 @@ function Register() {
 
   return (
     <div className="page-container hero flex items-center justify-center">
+      <Seo
+        title="Create an Account"
+        description="Join RecipeHub to publish your own recipes with photos, follow other home cooks, and save the dishes you want to make next."
+      />
       <div className="card w-full max-w-md">
-        <h2 className="text-2xl font-bold text-green-700 mb-6 text-center">Register</h2>
+        <h1 className="text-2xl font-bold text-green-700 mb-6 text-center">Create your account</h1>
         {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
         <form onSubmit={handleSubmit} className="space-y-4">
           <input

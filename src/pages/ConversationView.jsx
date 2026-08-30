@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import API from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import { useSocket } from "../context/SocketContext";
+import Seo from "../components/Seo";
 
 const ConversationView = () => {
   const { id } = useParams();
@@ -70,6 +71,8 @@ const ConversationView = () => {
 
   return (
     <div className="page-container max-w-2xl flex flex-col">
+      <Seo title="Conversation" description="Your private conversation on RecipeHub." noindex />
+      <h1 className="sr-only">Conversation</h1>
       <Link to="/messages" className="text-sm text-green-700 hover:underline mb-4">
         ← Back to messages
       </Link>

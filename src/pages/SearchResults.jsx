@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import API from "../services/api";
 import RecipeCard from "../components/RecipeCard";
+import Seo from "../components/Seo";
 
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
@@ -31,9 +32,16 @@ const SearchResults = () => {
 
   return (
     <div className="page-container max-w-3xl">
-      <h2 className="text-2xl font-bold text-green-700 mb-6">
+      {/* Search result pages are per-query and thin, so they are kept out
+          of the index (matching the Disallow in robots.txt). */}
+      <Seo
+        title={q ? `Search: ${q}` : "Search"}
+        description={`RecipeHub search results for "${q}".`}
+        noindex
+      />
+      <h1 className="text-2xl font-bold text-green-700 mb-6">
         Search results for "{q}"
-      </h2>
+      </h1>
 
       {loading ? (
         <p className="text-gray-600">Loading...</p>

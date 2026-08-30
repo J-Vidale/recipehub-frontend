@@ -16,7 +16,7 @@ const NotificationBell = () => {
       try {
         const res = await API.get("/notifications/unread-count");
         if (!cancelled) setUnreadCount(res.data.count);
-      } catch (err) {
+      } catch {
         // Silent - a missed badge update isn't worth surfacing an error for.
       }
     };

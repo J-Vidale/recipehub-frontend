@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import API from "../services/api";
 import LikeButton from "../components/LikeButton";
+import Seo from "../components/Seo";
 
 const Feed = () => {
   const [recipes, setRecipes] = useState([]);
@@ -41,7 +42,8 @@ const Feed = () => {
 
   return (
     <div className="page-container max-w-xl">
-      <h2 className="text-3xl font-bold text-green-700 mb-8 text-center">Your Feed</h2>
+      <Seo title="Your Feed" description="The latest recipes from the cooks you follow on RecipeHub." noindex />
+      <h1 className="text-3xl font-bold text-green-700 mb-8 text-center">Your Feed</h1>
       {loading ? (
         <p className="text-center text-gray-600">Loading...</p>
       ) : error ? (
@@ -76,7 +78,7 @@ const Feed = () => {
                   )}
                   <Link to={`/recipes/${recipe._id}`} className="recipe-card__media block">
                     {thumbnail ? (
-                      <img src={thumbnail} alt="" loading="lazy" />
+                      <img src={thumbnail} alt={recipe.title} loading="lazy" />
                     ) : (
                       <div className="recipe-card__placeholder" aria-hidden="true">
                         {recipe.title?.[0]?.toUpperCase() || "🍽"}

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import API from "../services/api";
 import RecipeCard from "../components/RecipeCard";
+import Seo from "../components/Seo";
+import Breadcrumbs from "../components/Breadcrumbs";
 
 const TagPage = () => {
   const { tag } = useParams();
@@ -45,7 +47,18 @@ const TagPage = () => {
 
   return (
     <div className="page-container max-w-6xl">
-      <h2 className="text-2xl font-bold text-green-700 mb-6 text-center">#{tag}</h2>
+      <Seo
+        title={`#${tag} recipes`}
+        description={`Every RecipeHub recipe tagged #${tag}, shared by home cooks in the community.`}
+      />
+      <Breadcrumbs
+        items={[
+          { label: "Home", to: "/" },
+          { label: "Explore", to: "/explore" },
+          { label: `#${tag}` },
+        ]}
+      />
+      <h1 className="text-2xl font-bold text-green-700 mb-6 text-center">#{tag}</h1>
       {loading ? (
         <p className="text-center text-gray-600">Loading...</p>
       ) : error ? (

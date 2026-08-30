@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import API from "../services/api";
 import IngredientFields from "../components/IngredientFields";
 import CategoryAutocomplete from "../components/CategoryAutocomplete";
+import Seo from "../components/Seo";
 
 const EditRecipe = () => {
   const { id } = useParams();
@@ -69,8 +70,13 @@ const EditRecipe = () => {
 
   return (
     <div className="page-container max-w-lg">
+      <Seo
+        title={recipe.title ? `Edit ${recipe.title}` : "Edit Recipe"}
+        description="Update your recipe on RecipeHub."
+        noindex
+      />
       <div className="card">
-        <h2 className="text-2xl font-bold text-green-700 mb-6">Edit Recipe</h2>
+        <h1 className="text-2xl font-bold text-green-700 mb-6">Edit Recipe</h1>
         {submitError && <p className="text-red-600 text-sm mb-4">{submitError}</p>}
         <form onSubmit={handleSubmit} className="space-y-4">
           <input

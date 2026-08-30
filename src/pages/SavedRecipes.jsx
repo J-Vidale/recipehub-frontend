@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import API from "../services/api";
 import RecipeCard from "../components/RecipeCard";
+import Seo from "../components/Seo";
 
 const SavedRecipes = () => {
   const [savedRecipes, setSavedRecipes] = useState([]);
@@ -25,6 +26,7 @@ const SavedRecipes = () => {
 
   return (
     <div className="page-container max-w-6xl">
+      <Seo title="Saved Recipes" description="Recipes you have saved to cook later on RecipeHub." noindex />
       <h1 className="text-3xl font-bold text-green-700 mb-6">Saved Recipes</h1>
       {loading ? (
         <p className="text-gray-600">Loading...</p>

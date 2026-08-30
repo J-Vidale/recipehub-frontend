@@ -8,6 +8,9 @@ import CommentSection from "../components/CommentSection";
 import ReportButton from "../components/ReportButton";
 import HashtagText from "../components/HashtagText";
 import RecipeCard from "../components/RecipeCard";
+import Seo from "../components/Seo";
+import Breadcrumbs from "../components/Breadcrumbs";
+import { communityRecipeSchema } from "../lib/structuredData";
 
 const RecipeDetail = () => {
   const { id } = useParams();
@@ -74,12 +77,32 @@ const RecipeDetail = () => {
   const media = recipe.media || [];
   const activeMedia = media[activeMediaIndex];
 
+  const summary = recipe.instructions
+    ? `${recipe.instructions.slice(0, 155)}${recipe.instructions.length > 155 ? "..." : ""}`
+    : `${recipe.title} - a recipe shared on RecipeHub${recipe.user?.username ? ` by ${recipe.user.username}` : ""}.`;
+
   return (
     <div className="page-container max-w-2xl">
+      <Seo
+        title={recipe.title}
+        description={summary}
+        image={media[0]?.url}
+        structuredData={communityRecipeSchema(recipe, `/recipes/${recipe._id}`)}
+      />
+      <Breadcrumbs
+        items={[
+          { label: "Home", to: "/" },
+          { label: "Explore", to: "/explore" },
+          ...(recipe.user?.username
+            ? [{ label: recipe.user.username, to: `/users/${recipe.user._id}` }]
+            : []),
+          { label: recipe.title },
+        ]}
+      />
       <div className="card">
         <div className="detail-hero">
           {activeMedia ? (
-            <img src={activeMedia.url} alt="" />
+            <img src={activeMedia.url} alt={recipe.title} />
           ) : (
             <div className="detail-hero__placeholder" aria-hidden="true">🍽</div>
           )}
@@ -90,7 +113,7 @@ const RecipeDetail = () => {
               <img
                 key={item.publicId || i}
                 src={item.url}
-                alt=""
+                alt={`${recipe.title}, photo ${i + 1} of ${media.length}`}
                 className={i === activeMediaIndex ? "is-active" : ""}
                 onClick={() => setActiveMediaIndex(i)}
               />

@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import MealRail from "../components/MealRail";
+import Seo from "../components/Seo";
+import Breadcrumbs from "../components/Breadcrumbs";
+import { drinkRecipeSchema } from "../lib/structuredData";
 import { fetchDrinkById, fetchDrinksByCategory, extractIngredients } from "../utils/mealdb";
 
 function DrinkDetail() {
@@ -36,9 +39,26 @@ function DrinkDetail() {
 
   return (
     <div className="page-container max-w-2xl">
+      <Seo
+        title={drink.strDrink}
+        description={`How to make a ${drink.strDrink}${drink.strCategory ? `, a ${drink.strCategory.toLowerCase()}` : ""}. Full ingredient list, measurements and mixing instructions.`}
+        image={drink.strDrinkThumb}
+        structuredData={drinkRecipeSchema(drink, `/drinks/${id}`)}
+      />
+      <Breadcrumbs
+        items={[
+          { label: "Home", to: "/" },
+          { label: "Popular drinks", to: "/popular-meals" },
+          { label: drink.strDrink },
+        ]}
+      />
       <div className="card">
         <div className="detail-hero">
-          <img src={drink.strDrinkThumb} alt={drink.strDrink} loading="lazy" />
+          <img
+            src={drink.strDrinkThumb}
+            alt={`${drink.strDrink}${drink.strGlass ? ` served in a ${drink.strGlass.toLowerCase()}` : ""}`}
+            loading="lazy"
+          />
         </div>
         <h1 className="text-2xl font-bold text-green-700 mb-3">{drink.strDrink}</h1>
         <div className="flex gap-2 mb-4">

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import API from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import RecipeCard from "../components/RecipeCard";
+import Seo from "../components/Seo";
 
 const MAX_AVATAR_BYTES = 8 * 1024 * 1024;
 
@@ -79,9 +80,9 @@ const Profile = () => {
 
     setUploadingAvatar(true);
     try {
-      const res = await API.post("/users/me/avatar", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      // No explicit Content-Type: the browser sets multipart/form-data
+      // along with the boundary the server needs to parse the upload.
+      const res = await API.post("/users/me/avatar", formData);
       updateUser({ avatarUrl: res.data.avatarUrl });
     } catch (err) {
       console.error("Failed to upload avatar:", err);
@@ -109,6 +110,12 @@ const Profile = () => {
 
   return (
     <div className="page-container max-w-4xl">
+      <Seo
+        title="Your Profile"
+        description="Manage your RecipeHub profile picture and the recipes you have published."
+        noindex
+      />
+      <h1 className="sr-only">Your profile</h1>
       <div className="card mb-6 max-w-lg">
         <div className="flex items-center gap-4">
           <input

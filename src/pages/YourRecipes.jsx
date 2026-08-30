@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import API from "../services/api";
 import RecipeCard from "../components/RecipeCard";
+import Seo from "../components/Seo";
 
 const YourRecipes = () => {
   const [recipes, setRecipes] = useState([]);
@@ -66,6 +67,7 @@ const YourRecipes = () => {
 
   return (
     <div className="page-container max-w-6xl">
+      <Seo title="Your Recipes" description="Manage the recipes you have published on RecipeHub." noindex />
       <h1 className="text-3xl font-bold text-green-700 mb-6">Your Recipes</h1>
       {loading ? (
         <p className="text-gray-600">Loading...</p>

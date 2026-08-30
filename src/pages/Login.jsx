@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import Seo from "../components/Seo";
 
 function Login() {
   const { login: contextLogin, fetchUserData } = useContext(AuthContext);
@@ -32,8 +33,12 @@ function Login() {
 
   return (
     <div className="page-container hero flex items-center justify-center">
+      <Seo
+        title="Log In"
+        description="Log in to RecipeHub to publish your recipes, save the dishes you want to cook, and follow other home cooks."
+      />
       <div className="card w-full max-w-md">
-        <h2 className="text-2xl font-bold text-green-700 mb-6 text-center">Login</h2>
+        <h1 className="text-2xl font-bold text-green-700 mb-6 text-center">Log in to RecipeHub</h1>
         {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
