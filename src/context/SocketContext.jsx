@@ -1,5 +1,7 @@
+/* eslint-disable react-refresh/only-export-components -- this module intentionally exports useSocket alongside its provider, the conventional React context pattern. The rule only affects Fast Refresh granularity during development. */
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useAuth } from "./AuthContext";
+import { getStored } from "../lib/storage";
 
 const SocketContext = createContext(null);
 
@@ -21,7 +23,7 @@ export const SocketProvider = ({ children }) => {
       return;
     }
 
-    const token = localStorage.getItem("token");
+    const token = getStored("token");
     if (!token) return;
 
     let cancelled = false;
@@ -37,12 +39,26 @@ export const SocketProvider = ({ children }) => {
       const newSocket = io(SOCKET_URL, {
         auth: { token },
         // Real-time is a best-effort latency improvement here, not a
-        // guarantee (see backend README) - reconnect indefinitely with
-        // capped backoff rather than giving up, since the service coming
-        // back from a free-tier sleep is exactly when we want it to retry.
+        // guarantee (see backend README): every feature it drives is also
+        // polled. Retry with capped backoff so a backend returning from a
+        // free-tier sleep reconnects, but stop after a bounded number of
+        // attempts instead of retrying forever - an unreachable backend
+        // would otherwise log a failed request every few seconds for as
+        // long as the tab stays open.
         reconnection: true,
+        reconnectionAttempts: 8,
         reconnectionDelay: 1000,
         reconnectionDelayMax: 10000,
+      });
+
+      // Without a handler, a failed connection surfaces as an unhandled
+      // Socket.IO error. Real-time being unavailable is an expected,
+      // recoverable state here, so note it once at debug level rather
+      // than reporting it as an application error.
+      newSocket.on("connect_error", () => {
+        if (import.meta.env.DEV) {
+          console.debug("Real-time connection unavailable; falling back to polling.");
+        }
       });
 
       socketRef.current = newSocket;

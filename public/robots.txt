@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+# Authenticated, user-specific, or action-only routes. These hold nothing
+# useful for a search result and (in the case of /messages) are private,
+# so they are kept out of the index. The app also sends a noindex robots
+# meta tag on these pages, which is what actually enforces it for any
+# URL a crawler reaches by other means.
+Disallow: /profile
+Disallow: /feed
+Disallow: /notifications
+Disallow: /messages
+Disallow: /your-recipes
+Disallow: /saved-recipes
+Disallow: /create
+Disallow: /edit/
+Disallow: /search
+
+Sitemap: https://recipehub-frontend-cgip.onrender.com/sitemap.xml

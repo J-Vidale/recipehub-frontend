@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import API from '../services/api';
 import RecipeCard from '../components/RecipeCard';
+import Seo from '../components/Seo';
+import Breadcrumbs from '../components/Breadcrumbs';
 
 const Explore = () => {
   const [recipes, setRecipes] = useState([]);
@@ -51,7 +53,12 @@ const Explore = () => {
 
   return (
     <div className="page-container max-w-6xl">
-      <h2 className="text-3xl font-bold text-green-700 mb-4 text-center">Explore Recipes</h2>
+      <Seo
+        title="Explore Recipes"
+        description="Browse every recipe shared by the RecipeHub community, newest first, and jump into the hashtags people are cooking with right now."
+      />
+      <Breadcrumbs items={[{ label: "Home", to: "/" }, { label: "Explore" }]} />
+      <h1 className="text-3xl font-bold text-green-700 mb-4 text-center">Explore Recipes</h1>
       {popularTags.length > 0 && (
         <div className="flex flex-wrap justify-center gap-2 mb-8">
           {popularTags.map(({ tag, count }) => (

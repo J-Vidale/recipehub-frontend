@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import API from "../services/api";
 import { useSocket } from "../context/SocketContext";
+import Seo from "../components/Seo";
 
 const Messages = () => {
   const [conversations, setConversations] = useState([]);
@@ -31,12 +32,12 @@ const Messages = () => {
     const handleNewMessage = () => fetchConversations();
     socket.on("message:new", handleNewMessage);
     return () => socket.off("message:new", handleNewMessage);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
 
   return (
     <div className="page-container max-w-2xl">
-      <h2 className="text-2xl font-bold text-green-700 mb-6">Messages</h2>
+      <Seo title="Messages" description="Your direct message conversations on RecipeHub." noindex />
+      <h1 className="text-2xl font-bold text-green-700 mb-6">Messages</h1>
       {loading ? (
         <p className="text-gray-600">Loading...</p>
       ) : error ? (

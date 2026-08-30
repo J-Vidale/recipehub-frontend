@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import MealRail from "../components/MealRail";
+import Seo from "../components/Seo";
+import Breadcrumbs from "../components/Breadcrumbs";
+import { mealRecipeSchema } from "../lib/structuredData";
 import { fetchMealsByCategory, extractIngredients, youtubeEmbedUrl } from "../utils/mealdb";
 
 function MealDetail() {
@@ -49,9 +52,26 @@ function MealDetail() {
 
   return (
     <div className="page-container max-w-2xl">
+      <Seo
+        title={meal.strMeal}
+        description={`How to make ${meal.strMeal}, a ${meal.strArea} ${meal.strCategory.toLowerCase()} recipe. Full ingredient list, step-by-step instructions${embedUrl ? " and a cooking video" : ""}.`}
+        image={meal.strMealThumb}
+        structuredData={mealRecipeSchema(meal, `/meals/${id}`)}
+      />
+      <Breadcrumbs
+        items={[
+          { label: "Home", to: "/" },
+          { label: "Popular meals", to: "/popular-meals" },
+          { label: meal.strMeal },
+        ]}
+      />
       <div className="card">
         <div className="detail-hero">
-          <img src={meal.strMealThumb} alt={meal.strMeal} loading="lazy" />
+          <img
+            src={meal.strMealThumb}
+            alt={`${meal.strMeal}, a ${meal.strArea} ${meal.strCategory.toLowerCase()} dish`}
+            loading="lazy"
+          />
         </div>
         <h1 className="text-2xl font-bold text-green-700 mb-3">{meal.strMeal}</h1>
         <div className="flex gap-2 mb-4">
@@ -65,6 +85,8 @@ function MealDetail() {
               src={embedUrl}
               title={`${meal.strMeal} cooking video`}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              referrerPolicy="strict-origin-when-cross-origin"
+              loading="lazy"
               allowFullScreen
             />
           </div>

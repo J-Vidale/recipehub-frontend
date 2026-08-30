@@ -1,6 +1,8 @@
 // src/pages/PopularMeals.jsx
 import React, { useEffect, useState } from 'react';
 import MealRail from '../components/MealRail';
+import Seo from '../components/Seo';
+import Breadcrumbs from '../components/Breadcrumbs';
 import { fetchMealsByCategory, fetchDrinksByCategory } from '../utils/mealdb';
 
 // A fixed, curated subset rather than every category TheMealDB has (60+)
@@ -37,7 +39,12 @@ const PopularMeals = () => {
 
   return (
     <div className="page-container max-w-6xl">
-      <h2 className="text-3xl font-bold text-green-700 mb-8 text-center">Popular Meals & Drinks</h2>
+      <Seo
+        title="Popular Meals and Drinks"
+        description="Browse popular dishes by category - beef, chicken, dessert, seafood, vegetarian and pasta - plus cocktails and everyday drinks, with photos and full recipes."
+      />
+      <Breadcrumbs items={[{ label: "Home", to: "/" }, { label: "Popular meals and drinks" }]} />
+      <h1 className="text-3xl font-bold text-green-700 mb-8 text-center">Popular Meals &amp; Drinks</h1>
       {loading ? (
         <div className="space-y-8">
           {Array.from({ length: 3 }).map((_, i) => (

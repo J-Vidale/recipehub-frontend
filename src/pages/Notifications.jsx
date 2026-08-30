@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import API from "../services/api";
 import { useSocket } from "../context/SocketContext";
+import Seo from "../components/Seo";
 
 const describeNotification = (n) => {
   const actorName = n.actor?.username || "Someone";
@@ -94,8 +95,13 @@ const Notifications = () => {
 
   return (
     <div className="page-container max-w-2xl">
+      <Seo
+        title="Notifications"
+        description="Likes, comments, follows and shares on your RecipeHub activity."
+        noindex
+      />
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-3xl font-bold text-green-700">Notifications</h2>
+        <h1 className="text-3xl font-bold text-green-700">Notifications</h1>
         {notifications.some((n) => !n.read) && (
           <button onClick={handleMarkAllAsRead} className="text-sm text-green-700 hover:underline">
             Mark all as read

@@ -16,7 +16,7 @@ const MessageBadge = () => {
       try {
         const res = await API.get("/conversations/unread-count");
         if (!cancelled) setUnreadCount(res.data.count);
-      } catch (err) {
+      } catch {
         // Silent - a missed badge update isn't worth surfacing an error for.
       }
     };

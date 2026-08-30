@@ -55,6 +55,19 @@ body {
   margin: 0;
 }
 
+/* App shell: a flex column so the routed page grows to fill the viewport
+   and the footer always rests below it rather than floating mid-screen
+   on short pages. */
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+#root > main {
+  flex: 1;
+}
+
 ::-webkit-scrollbar {
   width: 8px;
   background: var(--color-bg);
@@ -96,8 +109,11 @@ body {
 @layer components {
   /* Consistent page wrapper: every page uses this instead of repeating
      min-h-screen / background / padding by hand. */
+  /* No min-height here: the app shell is a flex column that stretches the
+     routed content, so a short page still pushes the footer to the
+     bottom of the viewport without forcing a full extra screen of
+     scroll before the footer becomes reachable. */
   .page-container {
-    min-height: 100vh;
     padding: 2.5rem 1rem;
     margin: 0 auto;
     width: 100%;
@@ -307,6 +323,97 @@ body {
   .detail-hero-strip img:hover,
   .detail-hero-strip img.is-active {
     border-color: var(--color-brand);
+  }
+
+  /* Breadcrumb trail shown above the heading on detail pages. */
+  .breadcrumbs {
+    margin-bottom: 1rem;
+    font-size: 0.8125rem;
+    color: var(--color-muted);
+  }
+  .breadcrumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .breadcrumbs li {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .breadcrumbs a {
+    color: var(--color-muted);
+  }
+  .breadcrumbs a:hover {
+    color: var(--color-brand);
+    text-decoration: underline;
+  }
+  .breadcrumbs [aria-current="page"] {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+  .breadcrumbs__sep {
+    color: var(--color-border);
+  }
+
+  /* Site footer: source attribution and secondary navigation. */
+  .site-footer {
+    border-top: 1px solid var(--color-border);
+    background: var(--color-surface);
+    padding: 2.5rem 1rem 1.5rem;
+    margin-top: 3rem;
+  }
+  .site-footer__inner {
+    max-width: 72rem;
+    margin: 0 auto;
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 640px) {
+    .site-footer__inner {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .site-footer__brand {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--color-brand);
+    margin: 0 0 0.35rem;
+  }
+  .site-footer__note,
+  .site-footer__legal {
+    color: var(--color-muted);
+    font-size: 0.8125rem;
+    margin: 0;
+  }
+  .site-footer__heading {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-ink);
+    margin: 0 0 0.5rem;
+  }
+  .site-footer ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-size: 0.8125rem;
+    color: var(--color-muted);
+  }
+  .site-footer__legal {
+    max-width: 72rem;
+    margin: 2rem auto 0;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-border);
   }
 
   /* Horizontal scroll rail (Explore-style "More Beef", "More like this",

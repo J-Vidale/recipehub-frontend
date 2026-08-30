@@ -15,7 +15,7 @@ const MealRail = ({ title, items, linkTo }) => {
         {items.map((item) => (
           <Link key={item.id} to={linkTo(item.id)} className="rail__card">
             <div className="rail__card-media">
-              <img src={item.thumb} alt="" loading="lazy" />
+              <img src={item.thumb} alt={item.title} loading="lazy" />
             </div>
             <p className="rail__card-title">{item.title}</p>
           </Link>

@@ -2,12 +2,69 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React</title>
+
+    <!-- Defaults for the initial document and for any client that does not
+         run JavaScript. Once React mounts, the <Seo> component rewrites
+         these per route. -->
+    <title>RecipeHub - Share and Discover Recipes</title>
+    <meta
+      name="description"
+      content="Discover, share and save recipes from real home cooks. Browse thousands of dishes and drinks, follow the cooks you like, and build your own recipe collection."
+    />
+    <link rel="canonical" href="https://recipehub-frontend-cgip.onrender.com/" />
+    <meta name="theme-color" content="#15803d" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <meta property="og:site_name" content="RecipeHub" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="RecipeHub - Share and Discover Recipes" />
+    <meta
+      property="og:description"
+      content="Discover, share and save recipes from real home cooks. Browse thousands of dishes and drinks, follow the cooks you like, and build your own recipe collection."
+    />
+    <meta property="og:url" content="https://recipehub-frontend-cgip.onrender.com/" />
+    <meta property="og:image" content="https://recipehub-frontend-cgip.onrender.com/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="RecipeHub - discover, share and save recipes from real home cooks" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="RecipeHub - Share and Discover Recipes" />
+    <meta
+      name="twitter:description"
+      content="Discover, share and save recipes from real home cooks."
+    />
+    <meta name="twitter:image" content="https://recipehub-frontend-cgip.onrender.com/og-image.jpg" />
+
+    <!-- Site-level identity. Page-level graphs (Recipe, BreadcrumbList)
+         are injected per route by the app. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "RecipeHub",
+        "url": "https://recipehub-frontend-cgip.onrender.com/",
+        "description": "Discover, share and save recipes from real home cooks.",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://recipehub-frontend-cgip.onrender.com/search?q={search_term_string}"
+          },
+          "query-input": "required name=search_term_string"
+        }
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      RecipeHub needs JavaScript enabled to browse and share recipes.
+    </noscript>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

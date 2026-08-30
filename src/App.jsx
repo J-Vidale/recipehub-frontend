@@ -1,6 +1,7 @@
 import React, { Suspense, lazy } from "react";
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ErrorBoundary from "./components/ErrorBoundary";
 
@@ -39,6 +40,7 @@ function App() {
   return (
     <>
       <Navbar />
+      <main id="main-content">
       <ErrorBoundary>
         <Suspense fallback={<RouteFallback />}>
           <Routes>
@@ -130,6 +132,8 @@ function App() {
           </Routes>
         </Suspense>
       </ErrorBoundary>
+      </main>
+      <Footer />
     </>
   );
 }

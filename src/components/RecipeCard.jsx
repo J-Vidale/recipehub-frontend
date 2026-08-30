@@ -15,7 +15,7 @@ const RecipeCard = ({ recipe, actions }) => {
       <Link to={`/recipes/${recipe._id}`} className="recipe-card__link">
         <div className="recipe-card__media">
           {thumbnail ? (
-            <img src={thumbnail} alt="" loading="lazy" />
+            <img src={thumbnail} alt={recipe.title} loading="lazy" />
           ) : (
             <div className="recipe-card__placeholder" aria-hidden="true">
               {recipe.title?.[0]?.toUpperCase() || "🍽"}

@@ -6,6 +6,9 @@ import FollowButton from "../components/FollowButton";
 import BlockButton from "../components/BlockButton";
 import ReportButton from "../components/ReportButton";
 import RecipeCard from "../components/RecipeCard";
+import Seo from "../components/Seo";
+import Breadcrumbs from "../components/Breadcrumbs";
+import { absoluteUrl } from "../lib/site";
 
 const UserProfile = () => {
   const { id } = useParams();
@@ -89,6 +92,28 @@ const UserProfile = () => {
 
   return (
     <div className="page-container max-w-4xl">
+      <Seo
+        title={`${profile.username}'s recipes`}
+        description={`${profile.username} has shared ${profile.recipeCount} recipe${profile.recipeCount === 1 ? "" : "s"} on RecipeHub. Browse their cooking and follow along.`}
+        image={profile.avatarUrl}
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "ProfilePage",
+          mainEntity: {
+            "@type": "Person",
+            name: profile.username,
+            url: absoluteUrl(`/users/${profile._id}`),
+            image: profile.avatarUrl || undefined,
+          },
+        }}
+      />
+      <Breadcrumbs
+        items={[
+          { label: "Home", to: "/" },
+          { label: "Explore", to: "/explore" },
+          { label: profile.username },
+        ]}
+      />
       <div className="card mb-8">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-4">
