@@ -30,6 +30,9 @@ const MealDetail = lazy(() => import("./pages/MealDetail"));
 const DrinkDetail = lazy(() => import("./pages/DrinkDetail"));
 const RecipeDetail = lazy(() => import("./pages/RecipeDetail"));
 const UserProfile = lazy(() => import("./pages/UserProfile"));
+const Terms = lazy(() => import("./pages/Terms"));
+const Privacy = lazy(() => import("./pages/Privacy"));
+const Accessibility = lazy(() => import("./pages/Accessibility"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const RouteFallback = () => (
@@ -128,6 +131,9 @@ function App() {
             <Route path="/drinks/:id" element={<DrinkDetail />} />
             <Route path="/recipes/:id" element={<RecipeDetail />} />
             <Route path="/users/:id" element={<UserProfile />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/accessibility" element={<Accessibility />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

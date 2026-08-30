@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import API from "../services/api";
 import { useAuth } from "../context/AuthContext";
+import { ShareIcon } from "./icons";
 
 const ShareButton = ({ recipeId, initialShareCount, initialSharedByMe = false }) => {
   const { user } = useAuth();
@@ -33,7 +34,7 @@ const ShareButton = ({ recipeId, initialShareCount, initialSharedByMe = false })
   if (!user) {
     return (
       <Link to="/login" className="inline-flex items-center gap-1 text-gray-600 hover:text-green-700">
-        <span aria-hidden="true">↗</span> {shareCount} {shareCount === 1 ? "share" : "shares"}
+        <ShareIcon /> {shareCount} {shareCount === 1 ? "share" : "shares"}
       </Link>
     );
   }
@@ -46,7 +47,7 @@ const ShareButton = ({ recipeId, initialShareCount, initialSharedByMe = false })
         sharedByMe ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
       }`}
     >
-      <span aria-hidden="true">↗</span>
+      <ShareIcon />
       {sharedByMe ? "Shared" : "Share"} · {shareCount}
     </button>
   );

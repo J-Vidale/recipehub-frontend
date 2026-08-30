@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import API from "../services/api";
+import { useToast } from "../context/ToastContext";
 import { useAuth } from "../context/AuthContext";
 import LikeButton from "../components/LikeButton";
 import ShareButton from "../components/ShareButton";
@@ -10,11 +11,14 @@ import HashtagText from "../components/HashtagText";
 import RecipeCard from "../components/RecipeCard";
 import Seo from "../components/Seo";
 import Breadcrumbs from "../components/Breadcrumbs";
+import { UtensilsIcon } from "../components/icons";
+import { recipeHeroImage, recipeThumbImage, avatarImage } from "../lib/images";
 import { communityRecipeSchema } from "../lib/structuredData";
 
 const RecipeDetail = () => {
   const { id } = useParams();
   const { user } = useAuth();
+  const toast = useToast();
   const [recipe, setRecipe] = useState(null);
   const [error, setError] = useState(null);
   const [isSaved, setIsSaved] = useState(false);
@@ -63,9 +67,10 @@ const RecipeDetail = () => {
       } else {
         await API.post(`/recipes/save/${recipe._id}`, {});
       }
+      toast.success(previouslySaved ? "Removed from saved recipes." : "Saved to your recipes.");
     } catch {
       setIsSaved(previouslySaved);
-      alert("Failed to update saved recipes.");
+      toast.error("Failed to update saved recipes.");
     } finally {
       setSaving(false);
     }
@@ -102,9 +107,9 @@ const RecipeDetail = () => {
       <div className="card">
         <div className="detail-hero">
           {activeMedia ? (
-            <img src={activeMedia.url} alt={recipe.title} />
+            <img src={recipeHeroImage(activeMedia.url)} alt={recipe.title} decoding="async" />
           ) : (
-            <div className="detail-hero__placeholder" aria-hidden="true">🍽</div>
+            <div className="detail-hero__placeholder" aria-hidden="true"><UtensilsIcon size="4rem" /></div>
           )}
         </div>
         {media.length > 1 && (
@@ -112,8 +117,9 @@ const RecipeDetail = () => {
             {media.map((item, i) => (
               <img
                 key={item.publicId || i}
-                src={item.url}
+                src={recipeThumbImage(item.url)}
                 alt={`${recipe.title}, photo ${i + 1} of ${media.length}`}
+                loading="lazy"
                 className={i === activeMediaIndex ? "is-active" : ""}
                 onClick={() => setActiveMediaIndex(i)}
               />
@@ -126,7 +132,7 @@ const RecipeDetail = () => {
         {recipe.user?.username && (
           <Link to={`/users/${recipe.user._id}`} className="flex items-center gap-2 mb-4">
             {recipe.user.avatarUrl ? (
-              <img src={recipe.user.avatarUrl} alt={recipe.user.username} className="avatar avatar-xs" />
+              <img src={avatarImage(recipe.user.avatarUrl, 56)} alt="" className="avatar avatar-xs" loading="lazy" />
             ) : (
               <span className="avatar avatar-xs">{recipe.user.username[0]?.toUpperCase()}</span>
             )}

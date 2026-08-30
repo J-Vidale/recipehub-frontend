@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import Seo from "../components/Seo";
+import { UtensilsIcon } from "../components/icons";
 
 const NotFound = () => {
   const { pathname } = useLocation();
@@ -13,7 +14,7 @@ const NotFound = () => {
         noindex
       />
 
-      <p className="text-6xl mb-4" aria-hidden="true">🍳</p>
+      <UtensilsIcon size="3.5rem" className="text-green-700 mb-4" />
       <h1 className="text-4xl font-bold text-green-700 mb-3">
         This page isn't on the menu
       </h1>

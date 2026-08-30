@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import API from "../services/api";
 import LikeButton from "../components/LikeButton";
+import { UtensilsIcon } from "../components/icons";
+import { recipeCardImage, avatarImage } from "../lib/images";
 import Seo from "../components/Seo";
 
 const Feed = () => {
@@ -67,7 +69,7 @@ const Feed = () => {
                   {recipe.user?.username && (
                     <div className="flex items-center gap-2 px-4 pt-4 pb-1">
                       {recipe.user.avatarUrl ? (
-                        <img src={recipe.user.avatarUrl} alt="" className="avatar avatar-sm" />
+                        <img src={avatarImage(recipe.user.avatarUrl, 72)} alt="" className="avatar avatar-sm" loading="lazy" />
                       ) : (
                         <span className="avatar avatar-sm">{recipe.user.username[0]?.toUpperCase()}</span>
                       )}
@@ -78,10 +80,17 @@ const Feed = () => {
                   )}
                   <Link to={`/recipes/${recipe._id}`} className="recipe-card__media block">
                     {thumbnail ? (
-                      <img src={thumbnail} alt={recipe.title} loading="lazy" />
+                      <img
+                        src={recipeCardImage(thumbnail)}
+                        alt={recipe.title}
+                        loading="lazy"
+                        decoding="async"
+                        width="600"
+                        height="450"
+                      />
                     ) : (
                       <div className="recipe-card__placeholder" aria-hidden="true">
-                        {recipe.title?.[0]?.toUpperCase() || "🍽"}
+                        {recipe.title?.[0]?.toUpperCase() || <UtensilsIcon size="2rem" />}
                       </div>
                     )}
                     {recipe.category && <span className="recipe-card__badge">{recipe.category}</span>}

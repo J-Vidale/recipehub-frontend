@@ -47,6 +47,38 @@
   box-sizing: border-box;
 }
 
+/* Nothing should ever scroll the page sideways. `overflow-x: clip` (rather
+   than `hidden`) contains stray wide children without turning the root
+   into a scroll container, which would break `position: sticky` on the
+   navbar. */
+html,
+body {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+/* Long unbroken strings - a pasted URL in a comment, a 40-character
+   recipe title, an email address - are the usual cause of a page that
+   scrolls sideways on a phone. Let them wrap instead of forcing width. */
+p,
+h1,
+h2,
+h3,
+h4,
+li,
+span,
+a {
+  overflow-wrap: break-word;
+}
+
+/* Media should shrink to its container, never define it. */
+img,
+video,
+iframe,
+svg {
+  max-width: 100%;
+}
+
 body {
   min-height: 100vh;
   background: var(--color-bg);
@@ -107,6 +139,14 @@ body {
 }
 
 @layer components {
+  /* Inline SVG icons sit on the text baseline like a glyph would, and
+     never shrink inside a flex row. */
+  .icon {
+    display: inline-block;
+    vertical-align: -0.125em;
+    flex-shrink: 0;
+  }
+
   /* Consistent page wrapper: every page uses this instead of repeating
      min-h-screen / background / padding by hand. */
   /* No min-height here: the app shell is a flex column that stretches the
@@ -132,6 +172,27 @@ body {
     border-bottom: 1px solid rgba(229, 231, 235, 0.8);
   }
 
+  .navbar__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    max-width: 90rem;
+    margin: 0 auto;
+  }
+  @media (min-width: 768px) {
+    .navbar__bar { padding: 0.75rem 2rem; }
+  }
+
+  .navbar__brand {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-brand);
+    letter-spacing: -0.02em;
+    flex-shrink: 0;
+  }
+
   .navbar-link {
     font-size: 0.875rem;
     font-weight: 600;
@@ -139,10 +200,102 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
+    white-space: nowrap;
     transition: color 0.15s ease;
   }
   .navbar-link:hover {
     color: var(--color-brand);
+  }
+
+  .navbar__account {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+  .navbar__username {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-ink);
+    max-width: 10rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Desktop nav rows are hidden below the breakpoint; their links move
+     into the collapsible panel instead of wrapping onto three cramped
+     lines the way the old always-visible bar did on a phone. */
+  .navbar__desktop { display: none; }
+  .navbar__mobile-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+  }
+  @media (min-width: 1024px) {
+    .navbar__desktop {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      min-width: 0;
+    }
+    .navbar__desktop--end { gap: 1rem; }
+    .navbar__mobile-actions { display: none; }
+  }
+
+  .navbar__toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* 44px minimum touch target (WCAG 2.5.5 / platform HIG guidance). */
+    width: 2.75rem;
+    height: 2.75rem;
+    border: none;
+    background: none;
+    color: var(--color-ink);
+    cursor: pointer;
+    border-radius: 0.5rem;
+  }
+  .navbar__toggle:hover { background: var(--color-brand-light); }
+
+  .navbar__panel {
+    border-top: 1px solid var(--color-border);
+    background: var(--color-surface);
+    padding: 0.75rem 1rem 1rem;
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;
+  }
+  @media (min-width: 1024px) {
+    .navbar__panel { display: none; }
+  }
+  .navbar__panel-search { margin-bottom: 0.75rem; }
+  .navbar__panel-heading {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    margin: 0.85rem 0 0.35rem;
+  }
+  .navbar__panel-link {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.7rem 0.25rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--color-ink);
+    border-radius: 0.4rem;
+  }
+  .navbar__panel-link:hover {
+    color: var(--color-brand);
+    background: var(--color-brand-light);
+  }
+  .navbar__panel-link--account { font-weight: 600; }
+  .navbar__panel-auth {
+    display: flex;
+    gap: 0.6rem;
+    margin-top: 0.75rem;
   }
 
   /* Hero banner for the logged-out Home page - a soft brand-tinted
@@ -325,6 +478,65 @@ body {
     border-color: var(--color-brand);
   }
 
+  /* Toast notifications: non-blocking feedback for actions that used to
+     interrupt the page with window.alert(). */
+  .toast-region {
+    position: fixed;
+    z-index: 100;
+    bottom: 1rem;
+    left: 1rem;
+    right: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    pointer-events: none;
+  }
+  @media (min-width: 640px) {
+    .toast-region {
+      left: auto;
+      right: 1.5rem;
+      bottom: 1.5rem;
+      max-width: 24rem;
+    }
+  }
+  .toast {
+    pointer-events: auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.75rem 0.9rem;
+    border-radius: 0.7rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid transparent;
+    animation: toast-in 0.18s ease-out;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .toast { animation: none; }
+  }
+  .toast--success {
+    background: var(--color-brand-light);
+    border-color: color-mix(in srgb, var(--color-brand) 35%, transparent);
+    color: var(--color-brand-dark);
+  }
+  .toast--error {
+    background: #fee2e2;
+    border-color: color-mix(in srgb, var(--color-danger) 35%, transparent);
+    color: var(--color-danger-dark);
+  }
+  .toast__close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.7;
+    padding: 0.15rem;
+    flex-shrink: 0;
+  }
+  .toast__close:hover { opacity: 1; }
+
   /* Breadcrumb trail shown above the heading on detail pages. */
   .breadcrumbs {
     margin-bottom: 1rem;
@@ -375,9 +587,10 @@ body {
     grid-template-columns: 1fr;
   }
   @media (min-width: 640px) {
-    .site-footer__inner {
-      grid-template-columns: repeat(3, 1fr);
-    }
+    .site-footer__inner { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 1024px) {
+    .site-footer__inner { grid-template-columns: repeat(4, 1fr); }
   }
   .site-footer__brand {
     font-weight: 700;
@@ -414,6 +627,64 @@ body {
     margin: 2rem auto 0;
     padding-top: 1.25rem;
     border-top: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .site-footer__legal p { margin: 0; }
+
+  .site-footer__contact {
+    margin-top: 0.75rem;
+  }
+  .site-footer__contact a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--color-muted);
+  }
+  .site-footer__contact a:hover {
+    color: var(--color-brand);
+    text-decoration: underline;
+  }
+
+  .site-footer a:hover { color: var(--color-brand); text-decoration: underline; }
+
+  /* Long-form legal and policy pages: comfortable measure and rhythm. */
+  .legal h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-brand-dark);
+    margin-bottom: 0.25rem;
+  }
+  .legal h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--color-ink);
+    margin: 2rem 0 0.5rem;
+  }
+  .legal p,
+  .legal li {
+    color: #374151;
+    line-height: 1.7;
+    margin-bottom: 0.75rem;
+  }
+  .legal ul {
+    list-style: disc;
+    padding-left: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .legal li { margin-bottom: 0.4rem; }
+  .legal a { text-decoration: underline; }
+  .legal__meta {
+    color: var(--color-muted);
+    font-size: 0.875rem;
+    margin-bottom: 1.5rem;
+  }
+  .legal__related {
+    margin-top: 2.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-border);
+    font-size: 0.9rem;
   }
 
   /* Horizontal scroll rail (Explore-style "More Beef", "More like this",
@@ -703,5 +974,16 @@ body {
   }
   100% {
     background-position: 0 50%;
+  }
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

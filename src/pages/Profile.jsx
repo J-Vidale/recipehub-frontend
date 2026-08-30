@@ -1,14 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import API from "../services/api";
+import { useToast } from "../context/ToastContext";
 import { useAuth } from "../context/AuthContext";
 import RecipeCard from "../components/RecipeCard";
 import Seo from "../components/Seo";
+import { avatarImage } from "../lib/images";
+import { CameraIcon } from "../components/icons";
 
 const MAX_AVATAR_BYTES = 8 * 1024 * 1024;
 
 const Profile = () => {
   const { user: authUser, updateUser } = useAuth();
+  const toast = useToast();
   const [user, setUser] = useState(null);
   const [recipes, setRecipes] = useState([]);
   const [deletingId, setDeletingId] = useState(null);
@@ -50,9 +54,10 @@ const Profile = () => {
       setRecipes((prevRecipes) =>
         prevRecipes.filter((recipe) => recipe._id !== recipeId)
       );
+      toast.success("Recipe deleted.");
     } catch (err) {
       console.error("Failed to delete recipe:", err);
-      alert("Failed to delete recipe.");
+      toast.error("Failed to delete recipe.");
     } finally {
       setDeletingId(null);
     }
@@ -84,6 +89,7 @@ const Profile = () => {
       // along with the boundary the server needs to parse the upload.
       const res = await API.post("/users/me/avatar", formData);
       updateUser({ avatarUrl: res.data.avatarUrl });
+      toast.success("Profile picture updated.");
     } catch (err) {
       console.error("Failed to upload avatar:", err);
       setAvatarError(err.response?.data?.message || "Failed to upload avatar.");
@@ -98,6 +104,7 @@ const Profile = () => {
     try {
       await API.delete("/users/me/avatar");
       updateUser({ avatarUrl: null });
+      toast.success("Profile picture removed.");
     } catch (err) {
       console.error("Failed to remove avatar:", err);
       setAvatarError(err.response?.data?.message || "Failed to remove avatar.");
@@ -133,12 +140,12 @@ const Profile = () => {
             aria-label={user.avatarUrl ? "Change profile picture" : "Add a profile picture"}
           >
             {user.avatarUrl ? (
-              <img src={user.avatarUrl} alt="" className="avatar avatar-lg" />
+              <img src={avatarImage(user.avatarUrl, 192)} alt="" className="avatar avatar-lg" />
             ) : (
               <span className="avatar avatar-lg">{user.username?.[0]?.toUpperCase()}</span>
             )}
             <span className="avatar-upload__overlay" aria-hidden="true">
-              <span>📷</span>
+              <CameraIcon size="1.25rem" />
               <span>{uploadingAvatar ? "Uploading…" : user.avatarUrl ? "Change" : "Add"}</span>
             </span>
           </button>

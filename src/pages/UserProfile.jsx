@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import API from "../services/api";
+import { useToast } from "../context/ToastContext";
 import { useAuth } from "../context/AuthContext";
 import FollowButton from "../components/FollowButton";
 import BlockButton from "../components/BlockButton";
 import ReportButton from "../components/ReportButton";
 import RecipeCard from "../components/RecipeCard";
 import Seo from "../components/Seo";
+import { avatarImage } from "../lib/images";
 import Breadcrumbs from "../components/Breadcrumbs";
 import { absoluteUrl } from "../lib/site";
 
 const UserProfile = () => {
   const { id } = useParams();
   const { user: authUser } = useAuth();
+  const toast = useToast();
   const navigate = useNavigate();
   const [startingConversation, setStartingConversation] = useState(false);
   const [profile, setProfile] = useState(null);
@@ -78,7 +81,7 @@ const UserProfile = () => {
       const res = await API.post("/conversations", { userId: profile._id });
       navigate(`/messages/${res.data._id}`);
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to start conversation.");
+      toast.error(err.response?.data?.message || "Failed to start conversation.");
     } finally {
       setStartingConversation(false);
     }
@@ -118,7 +121,7 @@ const UserProfile = () => {
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-4">
             {profile.avatarUrl ? (
-              <img src={profile.avatarUrl} alt={profile.username} className="avatar avatar-lg" />
+              <img src={avatarImage(profile.avatarUrl, 192)} alt="" className="avatar avatar-lg" />
             ) : (
               <span className="avatar avatar-lg">{profile.username?.[0]?.toUpperCase()}</span>
             )}

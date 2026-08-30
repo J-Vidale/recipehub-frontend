@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../services/api";
+import { useToast } from "../context/ToastContext";
 import IngredientFields from "../components/IngredientFields";
 import CategoryAutocomplete from "../components/CategoryAutocomplete";
 import Seo from "../components/Seo";
@@ -15,6 +16,7 @@ const CreateRecipe = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const toast = useToast();
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -28,6 +30,7 @@ const CreateRecipe = () => {
         ...formData,
         ingredients: ingredients.filter((i) => i.name.trim() && i.amount.trim()),
       });
+      toast.success("Recipe published.");
       navigate("/your-recipes");
     } catch (err) {
       console.error("Create recipe error:", err.message);

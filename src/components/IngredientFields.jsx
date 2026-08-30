@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import { CloseIcon } from "./icons";
 
 function IngredientFields({ ingredients, setIngredients }) {
   // Stable per-row identity, decoupled from array position, so React
@@ -51,8 +52,9 @@ function IngredientFields({ ingredients, setIngredients }) {
             type="button"
             onClick={() => handleRemove(index)}
             className="text-red-500 hover:text-red-700 px-1"
+            aria-label={`Remove ingredient${ingredient.name ? ` ${ingredient.name}` : ` ${index + 1}`}`}
           >
-            ✕
+            <CloseIcon />
           </button>
         </div>
       ))}

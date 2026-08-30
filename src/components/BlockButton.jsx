@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import API from "../services/api";
+import { useToast } from "../context/ToastContext";
 
 const BlockButton = ({ userId, onBlockedChange }) => {
+  const toast = useToast();
   const [busy, setBusy] = useState(false);
   const [blocked, setBlocked] = useState(false);
 
@@ -16,14 +18,16 @@ const BlockButton = ({ userId, onBlockedChange }) => {
       if (blocked) {
         await API.delete(`/users/${userId}/block`);
         setBlocked(false);
+        toast.success("User unblocked.");
         onBlockedChange?.(false);
       } else {
         await API.post(`/users/${userId}/block`, {});
         setBlocked(true);
+        toast.success("User blocked.");
         onBlockedChange?.(true);
       }
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to update block status.");
+      toast.error(err.response?.data?.message || "Failed to update block status.");
     } finally {
       setBusy(false);
     }

@@ -1,5 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { UtensilsIcon } from "./icons";
+import { recipeCardImage, avatarImage } from "../lib/images";
 
 // The shared recipe tile used by every grid in the app (Explore, tag
 // pages, search, feed, profiles). Photo-forward - a food app's cards
@@ -15,10 +17,17 @@ const RecipeCard = ({ recipe, actions }) => {
       <Link to={`/recipes/${recipe._id}`} className="recipe-card__link">
         <div className="recipe-card__media">
           {thumbnail ? (
-            <img src={thumbnail} alt={recipe.title} loading="lazy" />
+            <img
+              src={recipeCardImage(thumbnail)}
+              alt={recipe.title}
+              loading="lazy"
+              decoding="async"
+              width="600"
+              height="450"
+            />
           ) : (
             <div className="recipe-card__placeholder" aria-hidden="true">
-              {recipe.title?.[0]?.toUpperCase() || "🍽"}
+              {recipe.title?.[0]?.toUpperCase() || <UtensilsIcon size="2rem" />}
             </div>
           )}
           {recipe.category && <span className="recipe-card__badge">{recipe.category}</span>}
@@ -28,7 +37,7 @@ const RecipeCard = ({ recipe, actions }) => {
           {recipe.user?.username && (
             <div className="recipe-card__author">
               {recipe.user.avatarUrl ? (
-                <img src={recipe.user.avatarUrl} alt="" className="avatar avatar-xs" />
+                <img src={avatarImage(recipe.user.avatarUrl, 56)} alt="" className="avatar avatar-xs" loading="lazy" />
               ) : (
                 <span className="avatar avatar-xs">{recipe.user.username[0]?.toUpperCase()}</span>
               )}
