@@ -1,56 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import API from "../services/api";
 import { BellIcon } from "./icons";
-import { useSocket } from "../context/SocketContext";
+import { useUnreadCounts } from "../context/UnreadCountsContext";
 
-const POLL_INTERVAL_MS = 45000;
-
+// Presentation only: the count is polled once in UnreadCountsProvider, so
+// rendering this in both the desktop bar and the mobile action row costs
+// no extra network traffic.
 const NotificationBell = () => {
-  const [unreadCount, setUnreadCount] = useState(0);
-  const socket = useSocket();
-
-  useEffect(() => {
-    let cancelled = false;
-
-    const fetchCount = async () => {
-      try {
-        const res = await API.get("/notifications/unread-count");
-        if (!cancelled) setUnreadCount(res.data.count);
-      } catch {
-        // Silent - a missed badge update isn't worth surfacing an error for.
-      }
-    };
-
-    fetchCount();
-    // The poll stays as the source of truth regardless of socket state -
-    // it's what guarantees the badge is eventually correct even if a
-    // live event is missed (a dropped connection during a free-tier
-    // sleep, a tab that was closed when the event fired, etc.).
-    const interval = setInterval(fetchCount, POLL_INTERVAL_MS);
-
-    return () => {
-      cancelled = true;
-      clearInterval(interval);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!socket) return;
-    // Live update: bump the badge immediately instead of waiting for the
-    // next poll. The poll above still re-syncs periodically regardless.
-    const handleNewNotification = () => {
-      setUnreadCount((prev) => prev + 1);
-    };
-    socket.on("notification:new", handleNewNotification);
-    return () => socket.off("notification:new", handleNewNotification);
-  }, [socket]);
+  const { notifications: unreadCount } = useUnreadCounts();
 
   return (
-    <Link to="/notifications" className="relative inline-flex items-center" aria-label="Notifications">
+    <Link to="/notifications" className="navbar__badge" aria-label="Notifications">
       <BellIcon size="1.15rem" />
       {unreadCount > 0 && (
-        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[1.1rem] text-center leading-tight">
+        <span className="navbar__badge-count">
           {unreadCount > 99 ? "99+" : unreadCount}
         </span>
       )}

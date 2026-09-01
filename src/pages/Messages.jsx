@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import API from "../services/api";
 import { useSocket } from "../context/SocketContext";
 import Seo from "../components/Seo";
+import { avatarImage } from "../lib/images";
 
 const Messages = () => {
   const [conversations, setConversations] = useState([]);
@@ -50,7 +51,7 @@ const Messages = () => {
             <li key={c._id}>
               <Link to={`/messages/${c._id}`} className="card-sm card-hover flex items-center gap-3">
                 {c.otherUser?.avatarUrl ? (
-                  <img src={c.otherUser.avatarUrl} alt={c.otherUser.username} className="avatar avatar-sm" />
+                  <img src={avatarImage(c.otherUser.avatarUrl, 72)} alt="" className="avatar avatar-sm" loading="lazy" />
                 ) : (
                   <span className="avatar avatar-sm">{c.otherUser?.username?.[0]?.toUpperCase()}</span>
                 )}

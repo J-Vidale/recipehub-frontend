@@ -5,6 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { SocketProvider } from "./context/SocketContext";
 import { ToastProvider } from "./context/ToastContext";
+import { UnreadCountsProvider } from "./context/UnreadCountsContext";
 import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
@@ -12,9 +13,11 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <BrowserRouter>
       <AuthProvider>
         <SocketProvider>
-          <ToastProvider>
-            <App />
-          </ToastProvider>
+          <UnreadCountsProvider>
+            <ToastProvider>
+              <App />
+            </ToastProvider>
+          </UnreadCountsProvider>
         </SocketProvider>
       </AuthProvider>
     </BrowserRouter>

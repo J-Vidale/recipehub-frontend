@@ -243,6 +243,43 @@ body {
     .navbar__mobile-actions { display: none; }
   }
 
+  /* Bell and envelope. On mobile they sit beside the 44px menu button and
+     were previously ~18px icon-sized tap targets; the padded minimum
+     applies there and relaxes on desktop, where a pointer makes the
+     smaller hit area fine and the extra padding would break the bar's
+     spacing. */
+  .navbar__badge {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-ink);
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    border-radius: 0.5rem;
+  }
+  .navbar__badge:hover { color: var(--color-brand); }
+  @media (min-width: 1024px) {
+    .navbar__badge { min-width: 0; min-height: 0; }
+  }
+  .navbar__badge-count {
+    position: absolute;
+    top: 0.25rem;
+    right: 0.25rem;
+    background: var(--color-danger);
+    color: #fff;
+    font-size: 0.7rem;
+    line-height: 1.15;
+    font-weight: 700;
+    border-radius: 9999px;
+    padding: 0.1rem 0.3rem;
+    min-width: 1.1rem;
+    text-align: center;
+  }
+  @media (min-width: 1024px) {
+    .navbar__badge-count { top: -0.4rem; right: -0.5rem; }
+  }
+
   .navbar__toggle {
     display: inline-flex;
     align-items: center;
@@ -593,10 +630,15 @@ body {
     .site-footer__inner { grid-template-columns: repeat(4, 1fr); }
   }
   .site-footer__brand {
+    display: inline-block;
     font-weight: 700;
     font-size: 1.05rem;
     color: var(--color-brand);
     margin: 0 0 0.35rem;
+  }
+  .site-footer__brand:hover {
+    color: var(--color-brand-dark);
+    text-decoration: none;
   }
   .site-footer__note,
   .site-footer__legal {

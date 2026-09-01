@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import API from "../services/api";
 import { useSocket } from "../context/SocketContext";
 import Seo from "../components/Seo";
+import { avatarImage } from "../lib/images";
 
 const describeNotification = (n) => {
   const actorName = n.actor?.username || "Someone";
@@ -123,7 +124,7 @@ const Notifications = () => {
               const content = (
                 <div className={`card-sm flex items-start gap-3 ${n.read ? "" : "border border-green-200 bg-green-50"}`}>
                   {n.actor?.avatarUrl ? (
-                    <img src={n.actor.avatarUrl} alt={n.actor.username} className="avatar avatar-sm" />
+                    <img src={avatarImage(n.actor.avatarUrl, 72)} alt="" className="avatar avatar-sm" loading="lazy" />
                   ) : (
                     <span className="avatar avatar-sm">{n.actor?.username?.[0]?.toUpperCase() || "?"}</span>
                   )}
