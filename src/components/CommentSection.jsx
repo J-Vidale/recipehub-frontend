@@ -4,10 +4,11 @@ import API from "../services/api";
 import { useToast } from "../context/ToastContext";
 import { useAuth } from "../context/AuthContext";
 import { HeartIcon, PinIcon } from "./icons";
+import { avatarImage } from "../lib/images";
 
 const CommentAvatar = ({ user }) =>
   user.avatarUrl ? (
-    <img src={user.avatarUrl} alt={user.username} className="avatar avatar-xs" />
+    <img src={avatarImage(user.avatarUrl, 56)} alt="" className="avatar avatar-xs" loading="lazy" />
   ) : (
     <span className="avatar avatar-xs">{user.username?.[0]?.toUpperCase()}</span>
   );

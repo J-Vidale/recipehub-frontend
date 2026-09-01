@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import NotificationBell from "./NotificationBell";
@@ -10,15 +10,17 @@ import { avatarImage } from "../lib/images";
 function Navbar() {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
-  const { pathname } = useLocation();
+  const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
-  const panelRef = useRef(null);
 
-  // Close the mobile menu whenever navigation happens, so tapping a link
-  // doesn't leave the panel covering the page it just opened.
+  // Close the mobile menu on any navigation, so tapping a link doesn't
+  // leave the panel covering the page it just opened. Keyed on the whole
+  // location, not just pathname: searching from the panel while already
+  // on /search only changes the query string, and that still needs to
+  // dismiss the panel.
   useEffect(() => {
     setMenuOpen(false);
-  }, [pathname]);
+  }, [location.key]);
 
   // Escape closes the panel, matching how every other dismissible overlay
   // on the web behaves.
@@ -118,7 +120,6 @@ function Navbar() {
 
       <div
         id="mobile-menu"
-        ref={panelRef}
         className={`navbar__panel${menuOpen ? " is-open" : ""}`}
         hidden={!menuOpen}
       >
