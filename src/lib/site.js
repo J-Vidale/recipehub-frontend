@@ -13,7 +13,8 @@ export const SITE_URL = (
 export const SITE_NAME = "RecipeHub";
 
 export const SITE_DESCRIPTION =
-  "Discover, share and save recipes from real home cooks. Browse thousands of dishes and drinks, follow the cooks you like, and build your own recipe collection.";
+  
+  "Post the recipes you cook and save the ones you want to try next. Follow other home cooks, and browse dishes and drinks by category or at random.";
 
 export const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.jpg`;
 

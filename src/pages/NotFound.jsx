@@ -18,12 +18,10 @@ const NotFound = () => {
       <h1 className="text-4xl font-bold text-green-700 mb-3">
         This page isn't on the menu
       </h1>
-      <p className="text-gray-600 mb-2 max-w-md">
+      <p className="text-gray-600 mb-8 max-w-md">
         We couldn't find anything at <code className="text-gray-800">{pathname}</code>. It may
         have been removed, or the link might be wrong.
       </p>
-      <p className="text-gray-600 mb-8">Here's where to go instead:</p>
-
       <div className="flex items-center justify-center gap-3 flex-wrap">
         <Link to="/" className="btn-primary">
           Go home
