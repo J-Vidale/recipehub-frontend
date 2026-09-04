@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ErrorBoundary from "./components/ErrorBoundary";
+import RouteTransition from "./components/RouteTransition";
 
 import Home from "./pages/Home";
 
@@ -39,11 +40,22 @@ const RouteFallback = () => (
   <div className="p-8 text-center text-gray-500">Loading...</div>
 );
 
+const MAIN_ID = "main-content";
+
 function App() {
   return (
     <>
+      <RouteTransition mainId={MAIN_ID} />
+      {/* First tabbable element on every page, so a keyboard or screen
+          reader user can jump the navbar instead of tabbing through it
+          again on each route. Visible only while focused. */}
+      <a href={`#${MAIN_ID}`} className="skip-link">
+        Skip to main content
+      </a>
       <Navbar />
-      <main id="main-content">
+      {/* tabIndex -1 makes this focusable programmatically (by
+          RouteTransition and by the skip link) without adding a tab stop. */}
+      <main id={MAIN_ID} tabIndex={-1}>
       <ErrorBoundary>
         <Suspense fallback={<RouteFallback />}>
           <Routes>
