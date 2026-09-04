@@ -1,7 +1,7 @@
 {
   "name": "RecipeHub",
   "short_name": "RecipeHub",
-  "description": "Discover, share and save recipes from real home cooks.",
+  "description": "Post the recipes you cook, save what you want to try next, and follow other home cooks.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f7f8f6",

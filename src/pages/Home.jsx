@@ -17,26 +17,27 @@ const Home = () => {
     <div className="page-container hero flex items-center justify-center">
       <Seo
         title="Share and Discover Recipes"
-        description="Discover, share and save recipes from real home cooks. Browse thousands of dishes and drinks, follow the cooks you like, and build your own recipe collection."
+        description="Post the recipes you cook and save the ones you want to try next. Follow other home cooks, and browse dishes and drinks by category or at random."
         structuredData={structuredData}
       />
       <div className="text-center max-w-2xl">
         <span className="inline-block text-xs font-bold tracking-wide uppercase text-green-700 bg-green-100 px-3 py-1 rounded-full mb-5">
-          Cook. Share. Discover.
+          Recipes from home cooks
         </span>
         <h1 className="text-5xl font-bold text-gray-900 mb-5 leading-tight">
-          Your recipes deserve<br />an audience.
+          Keep every recipe<br />you cook in one place.
         </h1>
         <p className="text-lg text-gray-600 mb-9 max-w-lg mx-auto">
-          Discover new dishes from real cooks, save the ones you'll actually make,
-          and share your own. RecipeHub is where recipes become a feed worth following.
+          Post what you make and save what you want to try next. Follow the cooks
+          whose food you actually want to eat, and their new recipes show up in
+          your feed.
         </p>
         <div className="flex items-center justify-center gap-3">
           <Link to="/register" className="btn-primary text-base px-7 py-3">
-            Get Started
+            Create an account
           </Link>
           <Link to="/login" className="btn-secondary text-base px-7 py-3">
-            Login
+            Log in
           </Link>
         </div>
       </div>

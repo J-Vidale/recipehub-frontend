@@ -2,7 +2,7 @@
 
 > A social recipe-sharing web app. Members publish their own recipes with
 > photos, follow other cooks, and save what they want to make. It also
-> surfaces a large catalogue of reference meals and drinks pulled from
+> surfaces a catalogue of reference meals and drinks pulled from
 > two free public food databases.
 
 RecipeHub is a MERN application: a React single-page frontend and an
