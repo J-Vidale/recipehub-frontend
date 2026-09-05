@@ -74,3 +74,63 @@ export const youtubeEmbedUrl = (watchUrl) => {
   if (!match) return null;
   return `https://www.youtube.com/embed/${match[1]}`;
 };
+
+// --- Browsing dimensions ---------------------------------------------
+// TheMealDB exposes more than the category filter the site started with.
+// Cuisine and ingredient are the two that turn a flat list of dishes into
+// something you can actually explore, and both come from the same keyless
+// endpoints already in use here.
+
+// "Unknown" is a real value in their area list and means the dish has no
+// recorded cuisine, so it is dropped rather than shown as a place.
+export const fetchCuisines = async () => {
+  const res = await fetch(`${MEAL_BASE}/list.php?a=list`);
+  const data = await res.json();
+  return (data.meals || [])
+    .map((row) => row.strArea)
+    .filter((area) => area && area !== "Unknown")
+    .sort((a, b) => a.localeCompare(b));
+};
+
+export const fetchMealsByArea = async (area, limit = 60) => {
+  const res = await fetch(`${MEAL_BASE}/filter.php?a=${encodeURIComponent(area)}`);
+  const data = await res.json();
+  return (data.meals || []).slice(0, limit);
+};
+
+// Around 575 ingredients, each with a short description. One request, so
+// the index page filters client-side rather than querying per keystroke.
+export const fetchIngredients = async () => {
+  const res = await fetch(`${MEAL_BASE}/list.php?i=list`);
+  const data = await res.json();
+  return (data.meals || [])
+    .filter((row) => row.strIngredient)
+    .map((row) => ({
+      name: row.strIngredient,
+      description: row.strDescription || "",
+    }))
+    // Sorted here rather than trusting the upstream order, so the grid
+    // reads alphabetically and a given ingredient keeps its position.
+    .sort((a, b) => a.name.localeCompare(b.name));
+};
+
+export const fetchMealsByIngredient = async (ingredient, limit = 60) => {
+  const res = await fetch(`${MEAL_BASE}/filter.php?i=${encodeURIComponent(ingredient)}`);
+  const data = await res.json();
+  return (data.meals || []).slice(0, limit);
+};
+
+// Ingredient photos live on a predictable path rather than behind an
+// endpoint. "-Small" is roughly 100px, the plain name is full size; there
+// is no medium. Not every ingredient has an image, so callers should
+// treat a broken load as normal (see IngredientTile).
+export const ingredientImage = (name, small = true) =>
+  `https://www.themealdb.com/images/ingredients/${encodeURIComponent(name)}${small ? "-Small" : ""}.png`;
+
+// TheCocktailDB splits its catalogue the same way. Alcoholic and
+// non-alcoholic is the split people actually browse by.
+export const fetchDrinksByAlcoholic = async (kind, limit = 24) => {
+  const res = await fetch(`${COCKTAIL_BASE}/filter.php?a=${encodeURIComponent(kind)}`);
+  const data = await res.json();
+  return (data.drinks || []).slice(0, limit);
+};

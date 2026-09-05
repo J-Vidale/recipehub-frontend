@@ -16,6 +16,8 @@ third-party sources, credited below.
 - [Explore](https://recipehub-frontend-cgip.onrender.com/explore): Every member-published recipe, newest first, plus trending hashtags.
 - [Popular meals and drinks](https://recipehub-frontend-cgip.onrender.com/popular-meals): Reference dishes browsable by category (beef, chicken, dessert, seafood, vegetarian, pasta) and cocktails.
 - [Random meal](https://recipehub-frontend-cgip.onrender.com/random-meal): A randomly selected reference recipe, reshuffled on demand.
+- [Cuisines](https://recipehub-frontend-cgip.onrender.com/cuisines): Reference dishes grouped by the cuisine they belong to; each cuisine has its own page.
+- [Ingredients](https://recipehub-frontend-cgip.onrender.com/ingredients): The full ingredient list, filterable, with a page per ingredient listing the dishes that use it.
 - [Register](https://recipehub-frontend-cgip.onrender.com/register): Create an account to publish, save and follow.
 - [Login](https://recipehub-frontend-cgip.onrender.com/login): Sign in to an existing account.
 
