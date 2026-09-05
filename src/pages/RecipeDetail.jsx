@@ -7,6 +7,7 @@ import LikeButton from "../components/LikeButton";
 import ShareButton from "../components/ShareButton";
 import CommentSection from "../components/CommentSection";
 import ReportButton from "../components/ReportButton";
+import NutritionPanel from "../components/NutritionPanel";
 import HashtagText from "../components/HashtagText";
 import RecipeCard from "../components/RecipeCard";
 import Seo from "../components/Seo";
@@ -150,6 +151,15 @@ const RecipeDetail = () => {
             ))}
           </ul>
         </div>
+
+        {/* Member recipes store {name, amount}; the panel works in the
+            {ingredient, measure} shape the external sources use. */}
+        <NutritionPanel
+          ingredients={recipe.ingredients.map((item) => ({
+            ingredient: item.name,
+            measure: item.amount,
+          }))}
+        />
         <div className="flex items-center gap-3 flex-wrap">
           <LikeButton
             recipeId={recipe._id}

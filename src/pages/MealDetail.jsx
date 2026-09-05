@@ -5,6 +5,7 @@ import Seo from "../components/Seo";
 import Breadcrumbs from "../components/Breadcrumbs";
 import { mealRecipeSchema } from "../lib/structuredData";
 import { fetchMealsByCategory, extractIngredients, youtubeEmbedUrl } from "../utils/mealdb";
+import NutritionPanel from "../components/NutritionPanel";
 
 function MealDetail() {
   const { id } = useParams();
@@ -103,6 +104,8 @@ function MealDetail() {
 
         <h3 className="font-semibold text-lg mb-2">Instructions</h3>
         <p className="text-gray-600 whitespace-pre-line mb-4">{meal.strInstructions}</p>
+
+        <NutritionPanel ingredients={ingredients} />
 
         {!embedUrl && meal.strYoutube && (
           <a href={meal.strYoutube} target="_blank" rel="noreferrer" className="btn-primary inline-flex">

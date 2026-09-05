@@ -1525,3 +1525,152 @@ body {
     transform: translate3d(-2rem, -1.75rem, 0) scale(1);
   }
 }
+
+@layer components {
+  /* --- Nutrition panel ------------------------------------------------ */
+  .nutrition {
+    margin: 2rem 0;
+    padding: 1.25rem;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 0.875rem;
+  }
+
+  .nutrition__heading {
+    margin-bottom: 0.875rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #111827;
+  }
+
+  .nutrition__subheading {
+    margin: 1.5rem 0 0.625rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #111827;
+  }
+
+  /* Wide tables scroll inside their own box rather than pushing the page
+     sideways on a phone. */
+  .nutrition__table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+  }
+
+  .nutrition__table th,
+  .nutrition__table td {
+    padding: 0.5rem 0.75rem 0.5rem 0;
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+    white-space: nowrap;
+  }
+
+  .nutrition__table th {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #6b7280;
+  }
+
+  .nutrition__table td:first-child {
+    white-space: normal;
+  }
+
+  .nutrition__muted {
+    color: #9ca3af;
+  }
+
+  .nutrition__note {
+    margin-top: 0.75rem;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: #6b7280;
+  }
+
+  .nutrition__servings {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    margin: 1.25rem 0 0.875rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+
+  .nutrition__servings-input {
+    width: 5rem;
+  }
+
+  .macro-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
+    gap: 0.625rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .macro {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    padding: 0.75rem;
+    background-color: var(--color-brand-light);
+    border-radius: 0.625rem;
+    text-align: center;
+  }
+
+  .macro__value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-brand-dark);
+    line-height: 1.1;
+  }
+
+  .macro__unit {
+    margin-left: 0.125rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .macro__label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #4b5563;
+  }
+
+  .allergen-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  /* Amber rather than red. These are things to check, not warnings that
+     something is unsafe, and the panel says so in words underneath. */
+  .allergen {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    padding: 0.5rem 0.75rem;
+    background-color: #fef3c7;
+    border: 1px solid #fcd34d;
+    border-radius: 0.5rem;
+  }
+
+  .allergen__label {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #78350f;
+  }
+
+  .allergen__source {
+    font-size: 0.75rem;
+    color: #92400e;
+  }
+}
