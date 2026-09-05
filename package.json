@@ -14,6 +14,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@sentry/react": "^10.73.0",
     "@tailwindcss/vite": "^4.1.11",
     "@vitejs/plugin-react": "^4.7.0",
     "react": "^19.1.0",
