@@ -3,20 +3,30 @@
 // one place so every page that pulls external meal/drink data goes
 // through the same fetch/parse shape instead of duplicating it.
 
+import { cached } from "../lib/apiCache";
+
+// How long each kind of response stays good for. The reference catalogues
+// barely move, so they get the long window; category and cuisine listings
+// change when TheMealDB adds a dish, which is rare.
+const CATALOGUE_TTL = 24 * 60 * 60 * 1000; // a day
+const LISTING_TTL = 60 * 60 * 1000; // an hour
+
 const MEAL_BASE = "https://www.themealdb.com/api/json/v1/1";
 const COCKTAIL_BASE = "https://www.thecocktaildb.com/api/json/v1/1";
 
-export const fetchMealCategories = async () => {
-  const res = await fetch(`${MEAL_BASE}/categories.php`);
-  const data = await res.json();
-  return data.categories || [];
-};
+export const fetchMealCategories = () =>
+  cached("meal-categories", CATALOGUE_TTL, async () => {
+    const res = await fetch(`${MEAL_BASE}/categories.php`);
+    const data = await res.json();
+    return data.categories || [];
+  });
 
-export const fetchMealsByCategory = async (category, limit = 12) => {
-  const res = await fetch(`${MEAL_BASE}/filter.php?c=${encodeURIComponent(category)}`);
-  const data = await res.json();
-  return (data.meals || []).slice(0, limit);
-};
+export const fetchMealsByCategory = (category, limit = 12) =>
+  cached(`meals-category:${category}:${limit}`, LISTING_TTL, async () => {
+    const res = await fetch(`${MEAL_BASE}/filter.php?c=${encodeURIComponent(category)}`);
+    const data = await res.json();
+    return (data.meals || []).slice(0, limit);
+  });
 
 export const fetchMealsByLetter = async (letter) => {
   const res = await fetch(`${MEAL_BASE}/search.php?f=${letter}`);
@@ -38,11 +48,12 @@ export const fetchSomeMeals = async (count = 10) => {
   return [];
 };
 
-export const fetchDrinksByCategory = async (category, limit = 12) => {
-  const res = await fetch(`${COCKTAIL_BASE}/filter.php?c=${encodeURIComponent(category)}`);
-  const data = await res.json();
-  return (data.drinks || []).slice(0, limit);
-};
+export const fetchDrinksByCategory = (category, limit = 12) =>
+  cached(`drinks-category:${category}:${limit}`, LISTING_TTL, async () => {
+    const res = await fetch(`${COCKTAIL_BASE}/filter.php?c=${encodeURIComponent(category)}`);
+    const data = await res.json();
+    return (data.drinks || []).slice(0, limit);
+  });
 
 export const fetchDrinkById = async (id) => {
   const res = await fetch(`${COCKTAIL_BASE}/lookup.php?i=${id}`);
@@ -83,42 +94,46 @@ export const youtubeEmbedUrl = (watchUrl) => {
 
 // "Unknown" is a real value in their area list and means the dish has no
 // recorded cuisine, so it is dropped rather than shown as a place.
-export const fetchCuisines = async () => {
-  const res = await fetch(`${MEAL_BASE}/list.php?a=list`);
-  const data = await res.json();
-  return (data.meals || [])
-    .map((row) => row.strArea)
-    .filter((area) => area && area !== "Unknown")
-    .sort((a, b) => a.localeCompare(b));
-};
+export const fetchCuisines = () =>
+  cached("cuisines", CATALOGUE_TTL, async () => {
+    const res = await fetch(`${MEAL_BASE}/list.php?a=list`);
+    const data = await res.json();
+    return (data.meals || [])
+      .map((row) => row.strArea)
+      .filter((area) => area && area !== "Unknown")
+      .sort((a, b) => a.localeCompare(b));
+  });
 
-export const fetchMealsByArea = async (area, limit = 60) => {
-  const res = await fetch(`${MEAL_BASE}/filter.php?a=${encodeURIComponent(area)}`);
-  const data = await res.json();
-  return (data.meals || []).slice(0, limit);
-};
+export const fetchMealsByArea = (area, limit = 60) =>
+  cached(`meals-area:${area}:${limit}`, LISTING_TTL, async () => {
+    const res = await fetch(`${MEAL_BASE}/filter.php?a=${encodeURIComponent(area)}`);
+    const data = await res.json();
+    return (data.meals || []).slice(0, limit);
+  });
 
 // Around 575 ingredients, each with a short description. One request, so
 // the index page filters client-side rather than querying per keystroke.
-export const fetchIngredients = async () => {
-  const res = await fetch(`${MEAL_BASE}/list.php?i=list`);
-  const data = await res.json();
-  return (data.meals || [])
-    .filter((row) => row.strIngredient)
-    .map((row) => ({
-      name: row.strIngredient,
-      description: row.strDescription || "",
-    }))
-    // Sorted here rather than trusting the upstream order, so the grid
-    // reads alphabetically and a given ingredient keeps its position.
-    .sort((a, b) => a.name.localeCompare(b.name));
-};
+export const fetchIngredients = () =>
+  cached("ingredients", CATALOGUE_TTL, async () => {
+    const res = await fetch(`${MEAL_BASE}/list.php?i=list`);
+    const data = await res.json();
+    return (data.meals || [])
+      .filter((row) => row.strIngredient)
+      .map((row) => ({
+        name: row.strIngredient,
+        description: row.strDescription || "",
+      }))
+      // Sorted here rather than trusting the upstream order, so the grid
+      // reads alphabetically and a given ingredient keeps its position.
+      .sort((a, b) => a.name.localeCompare(b.name));
+  });
 
-export const fetchMealsByIngredient = async (ingredient, limit = 60) => {
-  const res = await fetch(`${MEAL_BASE}/filter.php?i=${encodeURIComponent(ingredient)}`);
-  const data = await res.json();
-  return (data.meals || []).slice(0, limit);
-};
+export const fetchMealsByIngredient = (ingredient, limit = 60) =>
+  cached(`meals-ingredient:${ingredient}:${limit}`, LISTING_TTL, async () => {
+    const res = await fetch(`${MEAL_BASE}/filter.php?i=${encodeURIComponent(ingredient)}`);
+    const data = await res.json();
+    return (data.meals || []).slice(0, limit);
+  });
 
 // Ingredient photos live on a predictable path rather than behind an
 // endpoint. "-Small" is roughly 100px, the plain name is full size; there

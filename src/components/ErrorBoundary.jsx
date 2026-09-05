@@ -1,4 +1,5 @@
 import React from "react";
+import { captureError } from "../lib/monitoring";
 
 // React error boundaries still require a class component - there is no
 // hook-based equivalent as of React 19. Kept deliberately small: one
@@ -17,6 +18,9 @@ class ErrorBoundary extends React.Component {
 
   componentDidCatch(error, info) {
     console.error("Unhandled error in app:", error, info);
+    // The fallback below tells the reader something broke; this is what
+    // tells us what it was. A no-op unless a DSN is configured.
+    captureError(error, { componentStack: info?.componentStack });
   }
 
   handleReload = () => {
