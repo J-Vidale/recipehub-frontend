@@ -3,7 +3,8 @@
   Static routes only. Recipe, meal, drink, user and tag pages are
   generated from data at runtime, so they are not enumerable at build
   time from this static file; they are reachable by crawling from
-  /explore and /popular-meals, which are both listed here.
+  /explore, /popular-meals, /cuisines and /ingredients, which are all
+  listed here.
 -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
@@ -19,6 +20,16 @@
   <url>
     <loc>https://recipehub-frontend-cgip.onrender.com/popular-meals</loc>
     <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://recipehub-frontend-cgip.onrender.com/cuisines</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://recipehub-frontend-cgip.onrender.com/ingredients</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>

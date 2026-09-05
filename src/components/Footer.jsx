@@ -42,6 +42,8 @@ const Footer = () => (
           <li><Link to="/explore">Explore recipes</Link></li>
           <li><Link to="/popular-meals">Popular meals</Link></li>
           <li><Link to="/random-meal">Random meal</Link></li>
+          <li><Link to="/cuisines">Browse by cuisine</Link></li>
+          <li><Link to="/ingredients">Browse by ingredient</Link></li>
         </ul>
       </nav>
 
