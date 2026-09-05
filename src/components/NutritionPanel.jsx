@@ -6,7 +6,12 @@ import { detectAllergens } from "../lib/allergens";
 // ingredients: [{ ingredient, measure }] - the shape both TheMealDB
 // helper and member recipes are normalised into by the callers.
 const NutritionPanel = ({ ingredients }) => {
-  const [servings, setServings] = useState(4);
+  // Held as text while the field is being edited. Clamping on every
+  // keystroke meant clearing the box snapped it straight to 1, so the next
+  // digit appended to it: clear, type "2", get 12. The value is clamped
+  // where it is used and normalised on blur instead.
+  const [servingsText, setServingsText] = useState("4");
+  const servings = Math.min(50, Math.max(1, Number(servingsText) || 1));
 
   const { rows, estimate, allergens } = useMemo(() => {
     const list = (ingredients || []).filter((i) => i && i.ingredient);
@@ -88,8 +93,9 @@ const NutritionPanel = ({ ingredients }) => {
               type="number"
               min="1"
               max="50"
-              value={servings}
-              onChange={(e) => setServings(Math.max(1, Math.min(50, Number(e.target.value) || 1)))}
+              value={servingsText}
+              onChange={(e) => setServingsText(e.target.value.replace(/[^0-9]/g, "").slice(0, 2))}
+              onBlur={() => setServingsText(String(servings))}
               className="input nutrition__servings-input"
             />
           </div>
