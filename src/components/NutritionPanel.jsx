@@ -45,7 +45,8 @@ const NutritionPanel = ({ ingredients }) => {
       </h2>
 
       {/* --- Ingredient weights ---------------------------------------- */}
-      <table className="nutrition__table">
+      <div className="nutrition__table-scroll">
+        <table className="nutrition__table">
         <caption className="sr-only">
           Each ingredient with its original measure and, where it can be worked
           out, the equivalent weight in grams
@@ -74,7 +75,8 @@ const NutritionPanel = ({ ingredients }) => {
             </tr>
           ))}
         </tbody>
-      </table>
+        </table>
+      </div>
 
       <p className="nutrition__note">
         {weighed} of {rows.length} ingredients could be converted to grams. A
