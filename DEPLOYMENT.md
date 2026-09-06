@@ -99,6 +99,33 @@ Any open Socket.IO connection is dropped when the service sleeps. The app
 is built for this — notification and message counts poll as well as
 listen, so they recover on their own. Paid instances do not sleep.
 
+### Keeping it awake
+
+If the 30-second wait bothers you, point a free uptime monitor
+([UptimeRobot](https://uptimerobot.com) and others do this) at the API's
+root URL on a 5-minute interval. The service only sleeps after ~15
+minutes idle, so a ping every 5 keeps it warm.
+
+The root endpoint is built for exactly this: it does no database work and
+answers in a few milliseconds, so pinging it is nearly free. It reports
+the database state in its body rather than in its status code, and always
+returns 200:
+
+```json
+{ "status": "ok", "service": "recipehub-api",
+  "database": "connected", "uptimeSeconds": 1834 }
+```
+
+The status code answers "is the web process alive", which is what a host's
+health check should restart on. A 503 while the database was briefly
+unreachable would make Render restart a process that is working perfectly
+and cannot fix a database, turning a blip into a restart loop. If you want
+alerting on the database specifically, watch the `database` field.
+
+Be aware this keeps a free instance running most of the day. It is within
+Render's free allowance for a single service, but if you later run several,
+the monthly instance hours are shared.
+
 ---
 
 ## Optional, and worth doing
