@@ -9,20 +9,44 @@
 // which fetch/URLSearchParams do natively).
 
 import { getStored, removeStored } from "../lib/storage";
+import { requestStarted, requestFinished } from "../lib/requestActivity";
 
 // Same default as before the axios removal, and the same value
 // SocketContext derives its origin from - production sets VITE_API_URL.
 const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
+// The API's own origin, i.e. BASE_URL without the trailing /api. The health
+// endpoint lives at the root rather than under /api, and the status page
+// needs to name the configured URL in its output.
+export const API_BASE_URL = BASE_URL;
+export const API_ORIGIN = BASE_URL.replace(/\/api\/?$/, "");
+
 // Mirrors axios's error shape so existing `err.response?.data?.message`
 // handling keeps working unchanged.
-class ApiError extends Error {
-  constructor(message, status, data) {
+//
+// `kind` separates "the server answered, and said no" from "the request
+// never reached a server at all". Without it a failed connection was a
+// bare TypeError with no .response, so every call site reading
+// err.response?.data?.message got undefined and fell back to whatever its
+// generic message was - which on the login form meant a server that was
+// unreachable reported "Invalid credentials".
+export class ApiError extends Error {
+  constructor(message, status, data, kind = "http") {
     super(message);
     this.name = "ApiError";
+    this.kind = kind;
     this.response = { status, data };
   }
 }
+
+// True when the request never got an answer: wrong API URL, the server
+// asleep or down, no internet, or a CORS rejection (which the browser
+// reports as an ordinary network failure, deliberately, so a page cannot
+// probe what it is not allowed to read).
+export const isNetworkError = (error) => error?.kind === "network";
+
+const NETWORK_MESSAGE =
+  "Can't reach the RecipeHub server. It may be starting up - wait a moment and try again.";
 
 const buildUrl = (path, params) => {
   const url = `${BASE_URL}${path}`;
@@ -68,12 +92,36 @@ const request = async (method, path, body, options = {}) => {
     payload = JSON.stringify(body);
   }
 
-  const res = await fetch(buildUrl(path, options.params), {
-    method,
-    headers,
-    body: payload,
-    credentials: "include",
-  });
+  let res;
+  requestStarted();
+  try {
+    res = await fetch(buildUrl(path, options.params), {
+      method,
+      headers,
+      body: payload,
+      credentials: "include",
+    });
+  } catch (cause) {
+    // fetch only rejects for network-level failures; an HTTP error is a
+    // resolved response. Classifying it here means every call site gets a
+    // usable error instead of a bare TypeError.
+    const offline = typeof navigator !== "undefined" && navigator.onLine === false;
+    const error = new ApiError(
+      offline ? "You appear to be offline." : NETWORK_MESSAGE,
+      0,
+      null,
+      "network"
+    );
+    // The original TypeError says which host failed, which is the one clue
+    // worth keeping when someone opens the console to work out why.
+    error.cause = cause;
+    throw error;
+  } finally {
+    // Counted down as soon as the response headers arrive; reading the
+    // body is fast and local, and leaving the counter up until then would
+    // keep the waking-up notice on screen after the wait was over.
+    requestFinished();
+  }
 
   // 204 and other empty responses have no JSON to parse.
   const text = await res.text();

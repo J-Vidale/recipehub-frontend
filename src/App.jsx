@@ -5,6 +5,7 @@ import Footer from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ErrorBoundary from "./components/ErrorBoundary";
 import RouteTransition from "./components/RouteTransition";
+import ServerWakingNotice from "./components/ServerWakingNotice";
 
 import Home from "./pages/Home";
 
@@ -39,6 +40,7 @@ const Terms = lazy(() => import("./pages/Terms"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const Accessibility = lazy(() => import("./pages/Accessibility"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const Status = lazy(() => import("./pages/Status"));
 
 const RouteFallback = () => (
   <div className="p-8 text-center text-gray-500">Loading...</div>
@@ -57,6 +59,7 @@ function App() {
         Skip to main content
       </a>
       <Navbar />
+      <ServerWakingNotice />
       {/* tabIndex -1 makes this focusable programmatically (by
           RouteTransition and by the skip link) without adding a tab stop. */}
       <main id={MAIN_ID} tabIndex={-1}>
@@ -144,6 +147,7 @@ function App() {
             <Route path="/popular-meals" element={<PopularMeals />} />
             <Route path="/random-meal" element={<RandomMeal />} />
             <Route path="/meals/:id" element={<MealDetail />} />
+            <Route path="/status" element={<Status />} />
             <Route path="/cuisines" element={<Cuisines />} />
             <Route path="/cuisines/:area" element={<CuisineDetail />} />
             <Route path="/ingredients" element={<Ingredients />} />

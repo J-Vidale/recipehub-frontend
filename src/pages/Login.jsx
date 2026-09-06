@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import Seo from "../components/Seo";
+import { isNetworkError } from "../services/api";
 
 function Login() {
   const { login: contextLogin, fetchUserData } = useContext(AuthContext);
@@ -24,8 +25,15 @@ function Login() {
       await contextLogin(formData.username, formData.password);
       await fetchUserData(); // <-- Add this line!
       navigate("/profile");
-    } catch {
-      setError("Invalid credentials");
+    } catch (err) {
+      // "Invalid credentials" for an unreachable server sent people looking
+      // for a password problem when the actual fault was the API URL or the
+      // CORS allowlist. Only say that when the server actually said no.
+      setError(
+        isNetworkError(err)
+          ? err.message
+          : err.message || "Invalid username or password."
+      );
     } finally {
       setSubmitting(false);
     }

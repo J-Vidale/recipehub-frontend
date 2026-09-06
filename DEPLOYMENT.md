@@ -90,11 +90,14 @@ fine from inside the app. Add a rewrite under **Redirects/Rewrites**:
 ## 5. Free-tier sleep
 
 A free Render web service sleeps after about 15 minutes idle and takes
-roughly 30 seconds to wake. The first request after a quiet spell is slow,
-and any open Socket.IO connection is dropped when it happens. The app is
-built for this — notification and message counts poll as well as listen,
-so they recover on their own — but it is worth knowing before you assume
-something is broken. Paid instances do not sleep.
+roughly 30 seconds to wake. The site says so while it happens: once a
+request has been outstanding for a few seconds, a strip appears explaining
+that the server is starting up, rather than leaving a blank page that
+looks broken.
+
+Any open Socket.IO connection is dropped when the service sleeps. The app
+is built for this — notification and message counts poll as well as
+listen, so they recover on their own. Paid instances do not sleep.
 
 ---
 
@@ -157,6 +160,14 @@ fine at small scale; the startup log says so.
 ---
 
 ## Checking it worked
+
+**Open `https://your-site/status` first.** It runs three checks in order -
+can the browser reach the API, is it allowed to read the reply, and does
+the API have a database - and when one fails it names the environment
+variable to change. Those three failures look identical from any other
+page, which is what makes them slow to diagnose.
+
+Then:
 
 - `https://your-api.onrender.com/` returns
   `{"status":"ok","service":"recipehub-api"}`
