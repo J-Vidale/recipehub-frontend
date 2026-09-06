@@ -12,14 +12,14 @@ third-party sources, credited below.
 
 ## Pages
 
-- [Home](https://recipehub-frontend-cgip.onrender.com/): What RecipeHub is and how to join.
-- [Explore](https://recipehub-frontend-cgip.onrender.com/explore): Every member-published recipe, newest first, plus trending hashtags.
-- [Popular meals and drinks](https://recipehub-frontend-cgip.onrender.com/popular-meals): Reference dishes browsable by category (beef, chicken, dessert, seafood, vegetarian, pasta) and cocktails.
-- [Random meal](https://recipehub-frontend-cgip.onrender.com/random-meal): A randomly selected reference recipe, reshuffled on demand.
-- [Cuisines](https://recipehub-frontend-cgip.onrender.com/cuisines): Reference dishes grouped by the cuisine they belong to; each cuisine has its own page.
-- [Ingredients](https://recipehub-frontend-cgip.onrender.com/ingredients): The full ingredient list, filterable, with a page per ingredient listing the dishes that use it.
-- [Register](https://recipehub-frontend-cgip.onrender.com/register): Create an account to publish, save and follow.
-- [Login](https://recipehub-frontend-cgip.onrender.com/login): Sign in to an existing account.
+- [Home](__SITE_URL__/): What RecipeHub is and how to join.
+- [Explore](__SITE_URL__/explore): Every member-published recipe, newest first, plus trending hashtags.
+- [Popular meals and drinks](__SITE_URL__/popular-meals): Reference dishes browsable by category (beef, chicken, dessert, seafood, vegetarian, pasta) and cocktails.
+- [Random meal](__SITE_URL__/random-meal): A randomly selected reference recipe, reshuffled on demand.
+- [Cuisines](__SITE_URL__/cuisines): Reference dishes grouped by the cuisine they belong to; each cuisine has its own page.
+- [Ingredients](__SITE_URL__/ingredients): The full ingredient list, filterable, with a page per ingredient listing the dishes that use it.
+- [Register](__SITE_URL__/register): Create an account to publish, save and follow.
+- [Login](__SITE_URL__/login): Sign in to an existing account.
 
 ## Content types
 

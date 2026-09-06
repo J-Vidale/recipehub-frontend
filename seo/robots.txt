@@ -16,4 +16,4 @@ Disallow: /create
 Disallow: /edit/
 Disallow: /search
 
-Sitemap: https://recipehub-frontend-cgip.onrender.com/sitemap.xml
+Sitemap: __SITE_URL__/sitemap.xml

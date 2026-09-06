@@ -8,8 +8,7 @@ import Breadcrumbs from "../components/Breadcrumbs";
 const TagPage = () => {
   const { tag } = useParams();
   const [recipes, setRecipes] = useState([]);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(false);
+  const [nextCursor, setNextCursor] = useState(null);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
@@ -17,11 +16,10 @@ const TagPage = () => {
   useEffect(() => {
     setLoading(true);
     setError(null);
-    API.get(`/recipes/tag/${tag}`, { params: { page: 1 } })
+    API.get(`/recipes/tag/${tag}`, { params: {} })
       .then((res) => {
         setRecipes(res.data.recipes);
-        setPage(1);
-        setHasMore(res.data.hasMore);
+        setNextCursor(res.data.nextCursor);
       })
       .catch((err) => {
         console.error("Failed to load tag:", err);
@@ -33,11 +31,9 @@ const TagPage = () => {
   const loadMore = async () => {
     setLoadingMore(true);
     try {
-      const nextPage = page + 1;
-      const res = await API.get(`/recipes/tag/${tag}`, { params: { page: nextPage } });
+      const res = await API.get(`/recipes/tag/${tag}`, { params: { cursor: nextCursor } });
       setRecipes((prev) => [...prev, ...res.data.recipes]);
-      setPage(nextPage);
-      setHasMore(res.data.hasMore);
+      setNextCursor(res.data.nextCursor);
     } catch (err) {
       console.error("Failed to load more:", err);
     } finally {
@@ -72,7 +68,7 @@ const TagPage = () => {
               <RecipeCard key={recipe._id} recipe={recipe} />
             ))}
           </div>
-          {hasMore && (
+          {nextCursor && (
             <div className="flex justify-center mt-8">
               <button
                 onClick={loadMore}

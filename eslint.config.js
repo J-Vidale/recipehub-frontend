@@ -26,4 +26,13 @@ export default defineConfig([
       'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
     },
   },
+  {
+    // Build tooling runs in Node, not the browser: it legitimately uses
+    // process, __dirname and friends, which the browser globals above do
+    // not include.
+    files: ['vite.config.js', 'vitest.config.js', 'vite-plugin-*.js', 'tests/**/*.{js,jsx}'],
+    languageOptions: {
+      globals: { ...globals.node, ...globals.browser },
+    },
+  },
 ])

@@ -8,8 +8,10 @@ import Breadcrumbs from '../components/Breadcrumbs';
 
 const Explore = () => {
   const [recipes, setRecipes] = useState([]);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(false);
+  // Cursor rather than page number. With .skip(), a recipe published
+  // while you are scrolling shifts everything down a slot, so the next
+  // page repeats what you just read; "everything after this id" cannot.
+  const [nextCursor, setNextCursor] = useState(null);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
@@ -18,10 +20,9 @@ const Explore = () => {
   useEffect(() => {
     const fetchAllRecipes = async () => {
       try {
-        const res = await API.get('/recipes', { params: { page: 1 } });
+        const res = await API.get('/recipes', { params: {} });
         setRecipes(res.data.recipes);
-        setPage(1);
-        setHasMore(res.data.hasMore);
+        setNextCursor(res.data.nextCursor);
       } catch (err) {
         console.error('Error fetching recipes:', err);
         setError("Couldn't load recipes. Please try again.");
@@ -39,11 +40,9 @@ const Explore = () => {
   const loadMore = async () => {
     setLoadingMore(true);
     try {
-      const nextPage = page + 1;
-      const res = await API.get('/recipes', { params: { page: nextPage } });
+      const res = await API.get('/recipes', { params: { cursor: nextCursor } });
       setRecipes((prev) => [...prev, ...res.data.recipes]);
-      setPage(nextPage);
-      setHasMore(res.data.hasMore);
+      setNextCursor(res.data.nextCursor);
     } catch (err) {
       console.error('Error fetching more recipes:', err);
     } finally {
@@ -93,7 +92,7 @@ const Explore = () => {
               <RecipeCard key={recipe._id} recipe={recipe} />
             ))}
           </div>
-          {hasMore && (
+          {nextCursor && (
             <div className="flex justify-center mt-8">
               <button
                 onClick={loadMore}
