@@ -25,7 +25,14 @@ export const AuthProvider = ({ children }) => {
       setStored("token", token);
       setUser(userData);
     } catch (error) {
-      throw new Error(error.response?.data?.message || "Login failed");
+      // Rethrowing a bare Error used to discard the network classification,
+      // so an unreachable server was indistinguishable from a rejected
+      // password. The flag rides along now.
+      const wrapped = new Error(
+        error.response?.data?.message || error.message || "Login failed"
+      );
+      wrapped.kind = error.kind;
+      throw wrapped;
     }
   };
 
@@ -34,7 +41,11 @@ export const AuthProvider = ({ children }) => {
       const response = await API.post("/auth/register", { username, email, password });
       return response.data;
     } catch (error) {
-      throw new Error(error.response?.data?.message || "Registration failed");
+      const wrapped = new Error(
+        error.response?.data?.message || error.message || "Registration failed"
+      );
+      wrapped.kind = error.kind;
+      throw wrapped;
     }
   };
 

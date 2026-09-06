@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import Seo from "../components/Seo";
+import { isNetworkError } from "../services/api";
 
 function Register() {
   const { login, register } = useContext(AuthContext);
@@ -27,7 +28,9 @@ function Register() {
       await login(formData.username, formData.password); // Use username, not email
       navigate("/profile");
     } catch (err) {
-      setError(err.message || "Registration failed");
+      setError(
+        isNetworkError(err) ? err.message : err.message || "Registration failed"
+      );
     } finally {
       setSubmitting(false);
     }
