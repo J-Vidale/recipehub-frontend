@@ -1443,11 +1443,25 @@ body {
   /* --- "Somewhere to start" cards ------------------------------------- */
   .start-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    /* Explicit rather than auto-fit: with four cards, auto-fit settled on
+       three columns at desktop and left one stranded on its own row. */
+    grid-template-columns: 1fr;
     gap: 1rem;
     list-style: none;
     padding: 0;
     margin: 0;
+  }
+
+  @media (min-width: 40rem) {
+    .start-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .start-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
   }
 
   .start-card {
@@ -1550,12 +1564,16 @@ body {
     color: #111827;
   }
 
-  /* Wide tables scroll inside their own box rather than pushing the page
-     sideways on a phone. */
-  .nutrition__table {
-    display: block;
+  /* The scroll lives on a wrapper so the table itself can be a real table
+     at full width. With overflow on the table element it became a block
+     box that shrank to its content, leaving half the panel empty. */
+  .nutrition__table-scroll {
     width: 100%;
     overflow-x: auto;
+  }
+
+  .nutrition__table {
+    width: 100%;
     border-collapse: collapse;
     font-size: 0.9375rem;
   }
@@ -1606,7 +1624,9 @@ body {
 
   .macro-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
+    /* Wide enough for a four-digit calorie count plus its unit on one
+       line; below this the number and unit split mid-word. */
+    grid-template-columns: repeat(auto-fit, minmax(6.75rem, 1fr));
     gap: 0.625rem;
     list-style: none;
     padding: 0;
@@ -1624,6 +1644,9 @@ body {
   }
 
   .macro__value {
+    /* The figure and its unit are one token: "1049" and "kcal" must never
+       be separated, and "kcal" must never break across lines. */
+    white-space: nowrap;
     font-size: 1.25rem;
     font-weight: 700;
     color: var(--color-brand-dark);
