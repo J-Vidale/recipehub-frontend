@@ -20,7 +20,12 @@ const Explore = () => {
   useEffect(() => {
     const fetchAllRecipes = async () => {
       try {
-        const res = await API.get('/recipes', { params: {} });
+        // sort=newest is the branch that orders by _id and returns a
+        // cursor; without it this hits the trending ranking, which has no
+        // cursor to follow, so Load more never appeared and the page was
+        // capped at the first twenty. It also matches what this page says
+        // it shows.
+        const res = await API.get('/recipes', { params: { sort: 'newest' } });
         setRecipes(res.data.recipes);
         setNextCursor(res.data.nextCursor);
       } catch (err) {
@@ -40,7 +45,7 @@ const Explore = () => {
   const loadMore = async () => {
     setLoadingMore(true);
     try {
-      const res = await API.get('/recipes', { params: { cursor: nextCursor } });
+      const res = await API.get('/recipes', { params: { sort: 'newest', cursor: nextCursor } });
       setRecipes((prev) => [...prev, ...res.data.recipes]);
       setNextCursor(res.data.nextCursor);
     } catch (err) {

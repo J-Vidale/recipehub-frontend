@@ -14,7 +14,15 @@ let sentryPromise = null;
 export const isMonitoringEnabled = () => Boolean(import.meta.env.VITE_SENTRY_DSN);
 
 const loadSentry = () => {
-  if (!sentryPromise) sentryPromise = import("@sentry/react");
+  if (!sentryPromise) {
+    // A failed chunk load must not be memoised: keeping the rejected
+    // promise would leave monitoring permanently dead and every later
+    // captureError rejecting again.
+    sentryPromise = import("@sentry/react").catch((error) => {
+      sentryPromise = null;
+      throw error;
+    });
+  }
   return sentryPromise;
 };
 
@@ -39,16 +47,27 @@ export const buildSentryOptions = () => ({
 });
 
 // Returns a promise so tests can await it; nothing in the app needs to.
+// Callers do not await these, so they swallow their own failures rather
+// than surfacing as unhandled rejections. Monitoring going missing is not
+// worth breaking the page over.
 export const initMonitoring = async () => {
   if (!isMonitoringEnabled()) return false;
-  const Sentry = await loadSentry();
-  Sentry.init(buildSentryOptions());
-  return true;
+  try {
+    const Sentry = await loadSentry();
+    Sentry.init(buildSentryOptions());
+    return true;
+  } catch {
+    return false;
+  }
 };
 
 export const captureError = async (error, context = {}) => {
   if (!isMonitoringEnabled()) return false;
-  const Sentry = await loadSentry();
-  Sentry.captureException(error, { extra: context });
-  return true;
+  try {
+    const Sentry = await loadSentry();
+    Sentry.captureException(error, { extra: context });
+    return true;
+  } catch {
+    return false;
+  }
 };

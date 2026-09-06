@@ -64,19 +64,33 @@ export const cached = async (key, ttlMs, fetcher) => {
 
   if (inFlight.has(key)) return inFlight.get(key);
 
-  const request = (async () => {
-    try {
-      const value = await fetcher();
-      const entry = { at: Date.now(), value };
-      memory.set(key, entry);
-      writeStored(key, JSON.stringify(entry));
-      return value;
-    } finally {
-      inFlight.delete(key);
-    }
-  })();
+  // Registered before anything can run, then cleaned up in a separate
+  // .finally. Doing the cleanup inside the async body meant a fetcher that
+  // threw synchronously deleted the key before the line below had set it,
+  // leaving a rejected promise wedged in the map so that key could never
+  // be fetched again.
+  // fetcher() is called synchronously, so the request starts on this tick
+  // exactly as before; the try/catch is what makes a synchronous throw
+  // behave like a rejection instead of escaping past the bookkeeping.
+  let started;
+  try {
+    started = Promise.resolve(fetcher());
+  } catch (error) {
+    started = Promise.reject(error);
+  }
+
+  const request = started.then((value) => {
+    const entry = { at: Date.now(), value };
+    memory.set(key, entry);
+    writeStored(key, JSON.stringify(entry));
+    return value;
+  });
 
   inFlight.set(key, request);
+  // Attached after registering, so the key is always removed exactly once,
+  // whichever way the request settles.
+  request.finally(() => inFlight.delete(key)).catch(() => {});
+
   return request;
 };
 
