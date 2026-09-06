@@ -11,26 +11,37 @@ import { cached } from "../lib/apiCache";
 const CATALOGUE_TTL = 24 * 60 * 60 * 1000; // a day
 const LISTING_TTL = 60 * 60 * 1000; // an hour
 
+// Both APIs answer 200 with a body of {"meals": null} for "no results",
+// which is a legitimate empty answer. A 4xx or 5xx is not, and used to be
+// flattened into the same empty list - which the cache then held for a
+// day, so a page that failed once stayed blank for the rest of the tab
+// session where a reload used to fix it. Throwing means nothing is
+// stored and the caller shows its error state.
+const readJson = async (res) => {
+  if (!res.ok) throw new Error(`Upstream responded ${res.status}`);
+  return res.json();
+};
+
 const MEAL_BASE = "https://www.themealdb.com/api/json/v1/1";
 const COCKTAIL_BASE = "https://www.thecocktaildb.com/api/json/v1/1";
 
 export const fetchMealCategories = () =>
   cached("meal-categories", CATALOGUE_TTL, async () => {
     const res = await fetch(`${MEAL_BASE}/categories.php`);
-    const data = await res.json();
+    const data = await readJson(res);
     return data.categories || [];
   });
 
 export const fetchMealsByCategory = (category, limit = 12) =>
   cached(`meals-category:${category}:${limit}`, LISTING_TTL, async () => {
     const res = await fetch(`${MEAL_BASE}/filter.php?c=${encodeURIComponent(category)}`);
-    const data = await res.json();
+    const data = await readJson(res);
     return (data.meals || []).slice(0, limit);
   });
 
 export const fetchMealsByLetter = async (letter) => {
   const res = await fetch(`${MEAL_BASE}/search.php?f=${letter}`);
-  const data = await res.json();
+  const data = await readJson(res);
   return data.meals || [];
 };
 
@@ -51,13 +62,13 @@ export const fetchSomeMeals = async (count = 10) => {
 export const fetchDrinksByCategory = (category, limit = 12) =>
   cached(`drinks-category:${category}:${limit}`, LISTING_TTL, async () => {
     const res = await fetch(`${COCKTAIL_BASE}/filter.php?c=${encodeURIComponent(category)}`);
-    const data = await res.json();
+    const data = await readJson(res);
     return (data.drinks || []).slice(0, limit);
   });
 
 export const fetchDrinkById = async (id) => {
   const res = await fetch(`${COCKTAIL_BASE}/lookup.php?i=${id}`);
-  const data = await res.json();
+  const data = await readJson(res);
   return data.drinks?.[0] || null;
 };
 
@@ -97,7 +108,7 @@ export const youtubeEmbedUrl = (watchUrl) => {
 export const fetchCuisines = () =>
   cached("cuisines", CATALOGUE_TTL, async () => {
     const res = await fetch(`${MEAL_BASE}/list.php?a=list`);
-    const data = await res.json();
+    const data = await readJson(res);
     return (data.meals || [])
       .map((row) => row.strArea)
       .filter((area) => area && area !== "Unknown")
@@ -107,7 +118,7 @@ export const fetchCuisines = () =>
 export const fetchMealsByArea = (area, limit = 60) =>
   cached(`meals-area:${area}:${limit}`, LISTING_TTL, async () => {
     const res = await fetch(`${MEAL_BASE}/filter.php?a=${encodeURIComponent(area)}`);
-    const data = await res.json();
+    const data = await readJson(res);
     return (data.meals || []).slice(0, limit);
   });
 
@@ -116,7 +127,7 @@ export const fetchMealsByArea = (area, limit = 60) =>
 export const fetchIngredients = () =>
   cached("ingredients", CATALOGUE_TTL, async () => {
     const res = await fetch(`${MEAL_BASE}/list.php?i=list`);
-    const data = await res.json();
+    const data = await readJson(res);
     return (data.meals || [])
       .filter((row) => row.strIngredient)
       .map((row) => ({
@@ -131,7 +142,7 @@ export const fetchIngredients = () =>
 export const fetchMealsByIngredient = (ingredient, limit = 60) =>
   cached(`meals-ingredient:${ingredient}:${limit}`, LISTING_TTL, async () => {
     const res = await fetch(`${MEAL_BASE}/filter.php?i=${encodeURIComponent(ingredient)}`);
-    const data = await res.json();
+    const data = await readJson(res);
     return (data.meals || []).slice(0, limit);
   });
 
@@ -146,6 +157,6 @@ export const ingredientImage = (name, small = true) =>
 // non-alcoholic is the split people actually browse by.
 export const fetchDrinksByAlcoholic = async (kind, limit = 24) => {
   const res = await fetch(`${COCKTAIL_BASE}/filter.php?a=${encodeURIComponent(kind)}`);
-  const data = await res.json();
+  const data = await readJson(res);
   return (data.drinks || []).slice(0, limit);
 };

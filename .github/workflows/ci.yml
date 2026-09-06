@@ -34,8 +34,12 @@ jobs:
       - name: Build
         run: npm run build
 
+      # Blocking, but only on high and critical. A moderate advisory can
+      # land against a transitive production dependency at any time, often
+      # with no fix published yet, and that should not stop an unrelated
+      # change from shipping - the advisory job below still reports it.
       - name: Audit production dependencies
-        run: npm audit --omit=dev --audit-level=moderate
+        run: npm audit --omit=dev --audit-level=high
 
   audit-all:
     runs-on: ubuntu-latest
