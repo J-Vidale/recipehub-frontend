@@ -8,57 +8,57 @@
 -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://recipehub-frontend-cgip.onrender.com/</loc>
+    <loc>__SITE_URL__/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://recipehub-frontend-cgip.onrender.com/explore</loc>
+    <loc>__SITE_URL__/explore</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://recipehub-frontend-cgip.onrender.com/popular-meals</loc>
+    <loc>__SITE_URL__/popular-meals</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://recipehub-frontend-cgip.onrender.com/cuisines</loc>
+    <loc>__SITE_URL__/cuisines</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://recipehub-frontend-cgip.onrender.com/ingredients</loc>
+    <loc>__SITE_URL__/ingredients</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://recipehub-frontend-cgip.onrender.com/random-meal</loc>
+    <loc>__SITE_URL__/random-meal</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://recipehub-frontend-cgip.onrender.com/login</loc>
+    <loc>__SITE_URL__/login</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://recipehub-frontend-cgip.onrender.com/register</loc>
+    <loc>__SITE_URL__/register</loc>
     <changefreq>yearly</changefreq>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://recipehub-frontend-cgip.onrender.com/terms</loc>
+    <loc>__SITE_URL__/terms</loc>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>
   <url>
-    <loc>https://recipehub-frontend-cgip.onrender.com/privacy</loc>
+    <loc>__SITE_URL__/privacy</loc>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>
   <url>
-    <loc>https://recipehub-frontend-cgip.onrender.com/accessibility</loc>
+    <loc>__SITE_URL__/accessibility</loc>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>

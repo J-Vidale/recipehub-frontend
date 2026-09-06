@@ -20,8 +20,7 @@ const UserProfile = () => {
   const [startingConversation, setStartingConversation] = useState(false);
   const [profile, setProfile] = useState(null);
   const [recipes, setRecipes] = useState([]);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(false);
+  const [nextCursor, setNextCursor] = useState(null);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
@@ -35,13 +34,12 @@ const UserProfile = () => {
       try {
         const [profileRes, recipesRes] = await Promise.all([
           API.get(`/users/${id}`),
-          API.get(`/recipes/user/${id}`, { params: { page: 1 } }),
+          API.get(`/recipes/user/${id}`, { params: {} }),
         ]);
         if (cancelled) return;
         setProfile(profileRes.data);
         setRecipes(recipesRes.data.recipes);
-        setPage(1);
-        setHasMore(recipesRes.data.hasMore);
+        setNextCursor(recipesRes.data.nextCursor);
       } catch (err) {
         console.error("Failed to load profile:", err);
         if (!cancelled) setError("Couldn't load this profile.");
@@ -59,11 +57,9 @@ const UserProfile = () => {
   const loadMore = async () => {
     setLoadingMore(true);
     try {
-      const nextPage = page + 1;
-      const res = await API.get(`/recipes/user/${id}`, { params: { page: nextPage } });
+      const res = await API.get(`/recipes/user/${id}`, { params: { cursor: nextCursor } });
       setRecipes((prev) => [...prev, ...res.data.recipes]);
-      setPage(nextPage);
-      setHasMore(res.data.hasMore);
+      setNextCursor(res.data.nextCursor);
     } catch (err) {
       console.error("Failed to load more recipes:", err);
     } finally {
@@ -174,7 +170,7 @@ const UserProfile = () => {
                 <RecipeCard key={recipe._id} recipe={{ ...recipe, user: profile }} />
               ))}
             </div>
-            {hasMore && (
+            {nextCursor && (
               <div className="flex justify-center mt-6">
                 <button
                   onClick={loadMore}

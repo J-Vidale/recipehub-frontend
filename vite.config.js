@@ -2,11 +2,13 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
+import seoFiles from './vite-plugin-seo-files.js'
 
 export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
+    seoFiles(),
   ],
   build: {
     // Explicit rather than relying on the default: production builds must
