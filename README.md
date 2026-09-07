@@ -86,7 +86,11 @@ You can deploy this frontend to [Render](https://render.com/) or any static site
 accounts they need, the rewrite rule a static site needs so deep links
 work, and what to change when attaching a custom domain.
 
-The short version:
+The short version: **New → Blueprint** on Render, pointed at this repo.
+`render.yaml` carries the build command, the publish directory, the rewrite
+and the response headers, and Render prompts for `VITE_API_URL`.
+
+By hand instead:
 
 1. Push your code to GitHub.
 2. Create a new Static Site on Render, connect your repo.
@@ -97,6 +101,10 @@ The short version:
    a route like `/explore` directly returns a 404, even though the same
    link works from inside the app.
 7. Deploy
+
+Then set `CORS_ORIGINS` on the API service to this site's origin, or the
+browser will refuse every response it gets. `/status` on the deployed site
+checks all of this and names whichever variable is wrong.
 
 ---
 

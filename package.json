@@ -1,6 +1,9 @@
 {
   "name": "recipehub-frontend",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=20.19 <23"
+  },
   "description": "RecipeHub web client - discover, share and save recipes from real home cooks.",
   "private": true,
   "type": "module",

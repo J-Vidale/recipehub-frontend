@@ -35,7 +35,10 @@ name, API key and API secret from the dashboard into the API service as
 
 ## 3. Render, API service
 
-New → **Web Service**, pointed at `recipehub-backend`.
+Both repositories carry a `render.yaml`, so **New → Blueprint** pointed at
+`recipehub-backend` fills in every setting below and prompts only for the
+values it cannot know. The tables are the same thing done by hand, for any
+other host or if you would rather see each field.
 
 | Setting | Value |
 | --- | --- |
@@ -50,18 +53,27 @@ with notes:
 | Variable | Notes |
 | --- | --- |
 | `MONGO_URI` | From step 1 |
-| `JWT_SECRET` | Generate with `openssl rand -base64 48`. Changing it logs everyone out |
+| `JWT_SECRET` | Generate with `openssl rand -base64 48`. Changing it logs everyone out. The blueprint generates one for you |
 | `CLOUDINARY_CLOUD_NAME` | From step 2 |
 | `CLOUDINARY_API_KEY` | From step 2 |
 | `CLOUDINARY_API_SECRET` | From step 2 |
 | `NODE_ENV` | `production` |
+| `CORS_ORIGINS` | The web client's origin — you will not know it until step 4, so come back for this in step 5 |
 
 Once it is live, note the service URL. It will look like
 `https://recipehub-backend-xxxx.onrender.com`.
 
+**Read the first lines of the log.** The service prints the environment,
+the browser origins it will accept and whether monitoring and caching are
+on, then names any variable that is missing or obviously wrong — including
+an Atlas connection string still carrying its password placeholder, which
+is the usual reason a first deploy answers `bad auth`. If the database is
+unreachable the service stays up and keeps saying so rather than dying, so
+the log and the health endpoint both stay available while you fix it.
+
 ## 4. Render, web client
 
-New → **Static Site**, pointed at `recipehub-frontend`.
+**New → Blueprint** pointed at `recipehub-frontend`, or by hand:
 
 | Setting | Value |
 | --- | --- |
@@ -72,22 +84,52 @@ Environment variables:
 
 | Variable | Notes |
 | --- | --- |
-| `VITE_API_URL` | The API URL from step 3, **with `/api` on the end** |
+| `VITE_API_URL` | The API URL from step 3, with `/api` on the end |
 
 `VITE_API_URL` has no production default. Left unset, the built site calls
-`http://localhost:5000/api` and fails for every visitor.
+`http://localhost:5000/api` and fails for every visitor. Leaving `/api` off
+the end is fine — it is added — but the host has to be right. Vite bakes
+the value into the JavaScript at build time, so changing it later needs a
+new build, not a restart.
 
 ### Client-side routing
 
 A static site serves files, so a visitor opening `/explore` directly asks
 for a file that does not exist and gets a 404 — even though the link works
-fine from inside the app. Add a rewrite under **Redirects/Rewrites**:
+fine from inside the app. That is what makes this easy to ship and slow to
+notice: it breaks only for people arriving from outside, on a shared link,
+a bookmark, a search result or a refresh.
+
+The blueprint includes the rewrite. By hand, add it under
+**Redirects/Rewrites**:
 
 | Source | Destination | Action |
 | --- | --- | --- |
 | `/*` | `/index.html` | Rewrite |
 
-## 5. Free-tier sleep
+The blueprint also sets `X-Content-Type-Options`, `X-Frame-Options`,
+`Referrer-Policy` and `Permissions-Policy`, which a static site does not
+get otherwise. Configuring by hand, add them under **Headers**.
+
+## 5. Let the API talk to the site
+
+The API only answers browsers whose origin it has been told to accept, and
+this is the step that is easy to miss: nothing fails at deploy time, the
+site simply behaves as though it has no backend, with the only clue in the
+browser console.
+
+Set `CORS_ORIGINS` on the **API** service to the web client's origin from
+step 4 — scheme and host, no trailing path:
+
+```
+CORS_ORIGINS=https://recipehub-frontend-xxxx.onrender.com
+```
+
+Add the `www` variant too if you use one, comma separated. The API needs a
+redeploy afterwards. Then open `https://your-site/status`, which checks
+this directly.
+
+## 6. Free-tier sleep
 
 A free Render web service sleeps after about 15 minutes idle and takes
 roughly 30 seconds to wake. The site says so while it happens: once a
@@ -138,14 +180,14 @@ the monthly instance hours are shared.
 3. Set `VITE_SITE_URL` on the static site to the new origin, no trailing
    slash. This is what canonical tags, Open Graph, the JSON-LD,
    `robots.txt`, `sitemap.xml` and `llms.txt` are all built from.
-4. Set `CORS_ORIGINS` on the **API** service to the same origin, plus the
-   `www` variant if you use one:
+4. Update `CORS_ORIGINS` on the **API** service to the same origin, plus
+   the `www` variant if you use one:
    `https://recipehub.com,https://www.recipehub.com`
 
-Step 4 is the one that is easy to miss and hard to diagnose. Without it
-the API refuses the browser's preflight and the Socket.IO handshake, and
-the site looks like it has no backend at all — with the only clue in the
-browser console.
+Step 4 is step 5 again, for the new origin, and it is the one that is easy
+to miss. Without it the API refuses the browser's preflight and the
+Socket.IO handshake, and the site looks like it has no backend at all —
+with the only clue in the browser console.
 
 Both services need a redeploy afterwards; the frontend because Vite bakes
 `VITE_*` values in at build time.
@@ -182,7 +224,7 @@ private messages and a login form.
 ### Redis
 
 `REDIS_URL` on the API service. Without it the app runs uncached, which is
-fine at small scale; the startup log says so.
+fine at small scale; the startup summary reports the cache as off.
 
 ---
 
@@ -204,6 +246,8 @@ Then:
   private window
 - Open `/explore` in a new tab directly, to confirm the rewrite in step 4
   is working
+- Register, then open a second browser and register again, to confirm the
+  two accounts stay separate
 
 ## Running it locally
 
