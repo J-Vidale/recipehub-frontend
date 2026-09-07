@@ -2,13 +2,18 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useAuth } from "./AuthContext";
 import { getStored } from "../lib/storage";
+import { normaliseApiBase, originOf } from "../lib/apiBase";
 
 const SocketContext = createContext(null);
 
-// Socket.IO's own path lives at the server root, not under /api - derive
-// the base origin from the same env var api.js uses so there's only one
-// place that knows the backend's URL.
-const SOCKET_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace(/\/api\/?$/, "");
+// Socket.IO's own path lives at the server root, not under /api. This used
+// to strip the suffix with its own regex, which meant a VITE_API_URL in an
+// unexpected shape was interpreted one way here and another way in the API
+// client. Both now go through the same pair of functions.
+//
+// Empty means the site and the API share an origin, and io() connects to
+// the page's own origin when given nothing.
+const SOCKET_URL = originOf(normaliseApiBase(import.meta.env.VITE_API_URL)) || undefined;
 
 export const SocketProvider = ({ children }) => {
   const { user } = useAuth();

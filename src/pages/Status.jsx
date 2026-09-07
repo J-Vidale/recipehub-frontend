@@ -68,7 +68,7 @@ const CHECKS = [
 
 const HINTS = {
   reachable: [
-    "VITE_API_URL on the web service must be the API's URL with /api on the end.",
+    "VITE_API_URL on the web service must be the API's own URL. Leaving /api off the end is fine - it is added - but a wrong host is not.",
     "It has no production default: unset, the built site calls localhost.",
     "On free hosting the first request after a quiet spell can take ~30s. Try again once.",
   ],

@@ -10,16 +10,18 @@
 
 import { getStored, removeStored } from "../lib/storage";
 import { requestStarted, requestFinished } from "../lib/requestActivity";
+import { normaliseApiBase, originOf } from "../lib/apiBase";
 
-// Same default as before the axios removal, and the same value
-// SocketContext derives its origin from - production sets VITE_API_URL.
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+// Unset, this is localhost - there is no useful production default, and
+// pretending otherwise would hide a missing variable behind a wrong one.
+// SocketContext derives its origin from the same value.
+const BASE_URL = normaliseApiBase(import.meta.env.VITE_API_URL);
 
-// The API's own origin, i.e. BASE_URL without the trailing /api. The health
+// The API's own origin, i.e. BASE_URL without its path. The health
 // endpoint lives at the root rather than under /api, and the status page
 // needs to name the configured URL in its output.
 export const API_BASE_URL = BASE_URL;
-export const API_ORIGIN = BASE_URL.replace(/\/api\/?$/, "");
+export const API_ORIGIN = originOf(BASE_URL);
 
 // Mirrors axios's error shape so existing `err.response?.data?.message`
 // handling keeps working unchanged.
