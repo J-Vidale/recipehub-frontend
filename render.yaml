@@ -1,0 +1,68 @@
+# Render Blueprint for the RecipeHub web client.
+#
+# Render reads this when you create a service with New -> Blueprint and
+# point it at this repository. Configuring a static site by hand in the
+# dashboard works exactly as well, but two of the settings below are easy
+# to miss and hard to diagnose afterwards: the rewrite, without which any
+# URL opened directly is a 404, and VITE_API_URL, without which the built
+# site calls localhost.
+#
+# The API is a separate service in a separate repository, with its own
+# render.yaml. Deploy that one first - this needs its URL.
+#
+# Full reference: https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: recipehub-web
+    runtime: static
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+
+    # A static site serves files, so a visitor opening /explore directly
+    # asks for a file that does not exist. The same link works from inside
+    # the app, because the router handles it without a request - which is
+    # what makes this fail only for people arriving from outside: a shared
+    # link, a bookmark, a search result, a refresh.
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+    # The API sets its own headers with helmet; a static site has none
+    # unless they are declared here.
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /*
+        name: Permissions-Policy
+        value: camera=(), microphone=(), geolocation=()
+
+    envVars:
+      # The API's URL. Vite bakes this into the JavaScript at build time,
+      # so changing it needs a fresh build, not just a restart.
+      #
+      # There is no production default: unset, the built site calls
+      # localhost and fails for every visitor. /api on the end is added if
+      # you leave it off, but the host has to be right.
+      - key: VITE_API_URL
+        sync: false
+
+      # Optional, and left out of the prompt on purpose - add them in the
+      # dashboard when they apply:
+      #   VITE_SITE_URL     - the site's real origin once a custom domain is
+      #                       attached. Canonical tags, Open Graph, the
+      #                       JSON-LD, robots.txt, sitemap.xml and llms.txt
+      #                       are all built from it.
+      #   VITE_CONTACT_EMAIL, VITE_CONTACT_PHONE - shown in the footer and
+      #                       on the legal pages; both blank renders no
+      #                       contact block rather than a placeholder.
+      #   VITE_SENTRY_DSN   - browser error reporting, from a React project
+      #                       at sentry.io.
