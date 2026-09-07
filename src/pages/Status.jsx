@@ -17,6 +17,11 @@ const CHECKS = [
   {
     id: "reachable",
     label: "API reachable",
+    // A browser reports a CORS refusal as an ordinary network failure, on
+    // purpose, so a page cannot probe what it is not allowed to read. That
+    // makes the generic "no answer" wording wrong for the check below,
+    // where the request plainly did arrive somewhere.
+    networkDetail: "No answer from the server.",
     // The health endpoint sits at the API's root, outside /api, and needs
     // neither auth nor the database - so it isolates "can we reach the
     // server at all" from everything downstream of it.
@@ -37,6 +42,8 @@ const CHECKS = [
   {
     id: "cors",
     label: "Browser allowed to read the response",
+    networkDetail:
+      "The browser refused to hand over the reply. If the check above passed, the server answered and was not permitted to share it.",
     run: async () => {
       await API.get("/categories");
       return { detail: "The browser was given permission to read the reply." };
@@ -45,6 +52,7 @@ const CHECKS = [
   {
     id: "database",
     label: "Database connected",
+    networkDetail: "No usable answer from the server.",
     run: async () => {
       const { data } = await API.get("/recipes", { params: { limit: 1 } });
       const count = Array.isArray(data?.recipes) ? data.recipes.length : 0;
@@ -93,7 +101,7 @@ const Status = () => {
           [check.id]: {
             state: "fail",
             detail: isNetworkError(error)
-              ? "No answer from the server."
+              ? check.networkDetail
               : `The server answered ${error?.response?.status ?? "with an error"}: ${error.message}`,
           },
         }));
