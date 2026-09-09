@@ -5,6 +5,7 @@ import { useToast } from "../context/ToastContext";
 import IngredientFields from "../components/IngredientFields";
 import CategoryAutocomplete from "../components/CategoryAutocomplete";
 import Seo from "../components/Seo";
+import { asArray } from "../lib/apiShape";
 
 const EditRecipe = () => {
   const { id } = useParams();
@@ -27,7 +28,7 @@ const EditRecipe = () => {
           instructions: res.data.instructions,
           category: res.data.category || "",
         });
-        setIngredients(res.data.ingredients || []);
+        setIngredients(asArray(res.data?.ingredients));
       } catch (err) {
         console.error("Failed to fetch recipe:", err);
         setError("Couldn't load this recipe. It may have been deleted.");
@@ -79,7 +80,7 @@ const EditRecipe = () => {
         noindex
       />
       <div className="card">
-        <h1 className="text-2xl font-bold text-green-700 mb-6">Edit Recipe</h1>
+        <h1 className="page-title mb-6">Edit Recipe</h1>
         {submitError && <p className="text-red-600 text-sm mb-4">{submitError}</p>}
         <form onSubmit={handleSubmit} className="space-y-4">
           <input

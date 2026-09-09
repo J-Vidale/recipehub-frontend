@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import API from "../services/api";
+import { asArray } from "../lib/apiShape";
 
 const DEBOUNCE_MS = 300;
 
@@ -27,7 +28,10 @@ const SearchBar = () => {
       setLoading(true);
       try {
         const res = await API.get("/search", { params: { q: trimmed, limit: 5 } });
-        setResults(res.data);
+        setResults({
+          recipes: asArray(res.data?.recipes),
+          users: asArray(res.data?.users),
+        });
         setOpen(true);
       } catch (err) {
         console.error("Search failed:", err);

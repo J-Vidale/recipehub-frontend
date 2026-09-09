@@ -3,6 +3,7 @@
 // one place so every page that pulls external meal/drink data goes
 // through the same fetch/parse shape instead of duplicating it.
 
+import { asArray } from "../lib/apiShape";
 import { cached } from "../lib/apiCache";
 
 // How long each kind of response stays good for. The reference catalogues
@@ -36,13 +37,13 @@ export const fetchMealsByCategory = (category, limit = 12) =>
   cached(`meals-category:${category}:${limit}`, LISTING_TTL, async () => {
     const res = await fetch(`${MEAL_BASE}/filter.php?c=${encodeURIComponent(category)}`);
     const data = await readJson(res);
-    return (data.meals || []).slice(0, limit);
+    return asArray(data.meals).slice(0, limit);
   });
 
 export const fetchMealsByLetter = async (letter) => {
   const res = await fetch(`${MEAL_BASE}/search.php?f=${letter}`);
   const data = await readJson(res);
-  return data.meals || [];
+  return asArray(data.meals);
 };
 
 // Not every letter has meals starting with it - tries a handful of
@@ -63,7 +64,7 @@ export const fetchDrinksByCategory = (category, limit = 12) =>
   cached(`drinks-category:${category}:${limit}`, LISTING_TTL, async () => {
     const res = await fetch(`${COCKTAIL_BASE}/filter.php?c=${encodeURIComponent(category)}`);
     const data = await readJson(res);
-    return (data.drinks || []).slice(0, limit);
+    return (asArray(data.drinks)).slice(0, limit);
   });
 
 export const fetchDrinkById = async (id) => {
@@ -112,7 +113,7 @@ export const fetchCuisines = () =>
   cached("cuisines", CATALOGUE_TTL, async () => {
     const res = await fetch(`${MEAL_BASE}/list.php?a=list`);
     const data = await readJson(res);
-    return (data.meals || [])
+    return asArray(data.meals)
       .map((row) => row.strArea)
       .filter((area) => area && area !== "Unknown")
       .sort((a, b) => a.localeCompare(b));
@@ -122,7 +123,7 @@ export const fetchMealsByArea = (area, limit = 60) =>
   cached(`meals-area:${area}:${limit}`, LISTING_TTL, async () => {
     const res = await fetch(`${MEAL_BASE}/filter.php?a=${encodeURIComponent(area)}`);
     const data = await readJson(res);
-    return (data.meals || []).slice(0, limit);
+    return asArray(data.meals).slice(0, limit);
   });
 
 // Around 575 ingredients, each with a short description. One request, so
@@ -131,7 +132,7 @@ export const fetchIngredients = () =>
   cached("ingredients", CATALOGUE_TTL, async () => {
     const res = await fetch(`${MEAL_BASE}/list.php?i=list`);
     const data = await readJson(res);
-    return (data.meals || [])
+    return asArray(data.meals)
       .filter((row) => row.strIngredient)
       .map((row) => ({
         name: row.strIngredient,
@@ -146,7 +147,7 @@ export const fetchMealsByIngredient = (ingredient, limit = 60) =>
   cached(`meals-ingredient:${ingredient}:${limit}`, LISTING_TTL, async () => {
     const res = await fetch(`${MEAL_BASE}/filter.php?i=${encodeURIComponent(ingredient)}`);
     const data = await readJson(res);
-    return (data.meals || []).slice(0, limit);
+    return asArray(data.meals).slice(0, limit);
   });
 
 // Ingredient photos live on a predictable path rather than behind an
@@ -161,5 +162,5 @@ export const ingredientImage = (name, small = true) =>
 export const fetchDrinksByAlcoholic = async (kind, limit = 24) => {
   const res = await fetch(`${COCKTAIL_BASE}/filter.php?a=${encodeURIComponent(kind)}`);
   const data = await readJson(res);
-  return (data.drinks || []).slice(0, limit);
+  return (asArray(data.drinks)).slice(0, limit);
 };
