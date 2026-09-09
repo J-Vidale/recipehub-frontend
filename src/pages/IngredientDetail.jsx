@@ -54,7 +54,7 @@ const IngredientDetail = () => {
           />
         )}
         <div>
-          <h1 className="text-3xl font-bold text-green-700 mb-1">Recipes with {ingredient}</h1>
+          <h1 className="page-title mb-1">Recipes with {ingredient}</h1>
           {status === "ready" && (
             <p className="text-gray-600">
               {meals.length} {meals.length === 1 ? "dish uses" : "dishes use"} {ingredient}.

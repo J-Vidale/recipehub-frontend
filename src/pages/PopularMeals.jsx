@@ -44,7 +44,7 @@ const PopularMeals = () => {
         description="Browse popular dishes by category - beef, chicken, dessert, seafood, vegetarian and pasta - plus cocktails and everyday drinks, with photos and full recipes."
       />
       <Breadcrumbs items={[{ label: "Home", to: "/" }, { label: "Popular meals and drinks" }]} />
-      <h1 className="text-3xl font-bold text-green-700 mb-8 text-center">Popular Meals &amp; Drinks</h1>
+      <h1 className="page-title mb-8">Popular Meals &amp; Drinks</h1>
       {loading ? (
         <div className="space-y-8">
           {Array.from({ length: 3 }).map((_, i) => (

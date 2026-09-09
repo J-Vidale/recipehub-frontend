@@ -48,7 +48,7 @@ function Login() {
         description="Log in to RecipeHub to publish your recipes, save the dishes you want to cook, and follow other home cooks."
       />
       <div className="card w-full max-w-md">
-        <h1 className="text-2xl font-bold text-green-700 mb-6 text-center">Log in to RecipeHub</h1>
+        <h1 className="card-title mb-6 text-center">Log in to RecipeHub</h1>
         {error && (
           <p className="form-error" role="alert">
             {error}

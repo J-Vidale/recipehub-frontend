@@ -123,7 +123,7 @@ const UserProfile = () => {
               <span className="avatar avatar-lg">{profile.username?.[0]?.toUpperCase()}</span>
             )}
             <div>
-              <h1 className="text-2xl font-bold text-green-700">{profile.username}</h1>
+              <h1 className="content-title">{profile.username}</h1>
               <div className="flex gap-4 text-gray-600 text-sm mt-2">
                 <span><strong>{profile.recipeCount}</strong> recipes</span>
                 <span><strong>{profile.followerCount}</strong> followers</span>

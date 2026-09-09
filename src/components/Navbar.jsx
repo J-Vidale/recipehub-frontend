@@ -95,8 +95,8 @@ function Navbar() {
             </>
           ) : (
             <>
-              <Link to="/login" className="navbar-link">Login</Link>
-              <Link to="/register" className="btn-primary">Register</Link>
+              <Link to="/login" className="navbar-link">Log in</Link>
+              <Link to="/register" className="btn-primary">Create account</Link>
             </>
           )}
         </div>
@@ -148,8 +148,8 @@ function Navbar() {
           </>
         ) : (
           <div className="navbar__panel-auth">
-            <Link to="/login" className="btn-secondary flex-1">Login</Link>
-            <Link to="/register" className="btn-primary flex-1">Register</Link>
+            <Link to="/login" className="btn-secondary flex-1">Log in</Link>
+            <Link to="/register" className="btn-primary flex-1">Create account</Link>
           </div>
         )}
       </div>

@@ -46,7 +46,7 @@ const Feed = () => {
   return (
     <div className="page-container max-w-xl">
       <Seo title="Your Feed" description="The latest recipes from the cooks you follow on RecipeHub." noindex />
-      <h1 className="text-3xl font-bold text-green-700 mb-8 text-center">Your Feed</h1>
+      <h1 className="page-title mb-8">Your Feed</h1>
       {loading ? (
         <p className="text-center text-gray-600">Loading...</p>
       ) : error ? (

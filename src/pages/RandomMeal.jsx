@@ -54,7 +54,7 @@ const RandomMeal = () => {
           title="Random Meal"
           description="Not sure what to cook? Get a randomly picked recipe with photo, ingredients and step-by-step instructions."
         />
-        <h1 className="text-2xl font-bold text-green-700 mb-3">Random Meal</h1>
+        <h1 className="content-title mb-3">Random Meal</h1>
         {error ? (
           <>
             <p className="text-red-600 mb-4">{error}</p>
@@ -90,7 +90,7 @@ const RandomMeal = () => {
             decoding="async"
           />
         </div>
-        <h1 className="text-2xl font-bold text-green-700 mb-3">{meal.strMeal}</h1>
+        <h1 className="content-title mb-3">{meal.strMeal}</h1>
         <div className="flex gap-2 mb-4">
           <span className="recipe-card__badge" style={{ position: "static" }}>{meal.strCategory}</span>
           <span className="recipe-card__badge" style={{ position: "static" }}>{meal.strArea}</span>

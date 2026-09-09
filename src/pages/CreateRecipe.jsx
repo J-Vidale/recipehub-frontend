@@ -48,7 +48,7 @@ const CreateRecipe = () => {
         noindex
       />
       <div className="card">
-        <h1 className="text-2xl font-bold text-green-700 mb-6">Create a Recipe</h1>
+        <h1 className="page-title mb-6">Create a Recipe</h1>
         {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
         <form onSubmit={handleSubmit} className="space-y-4">
           <input

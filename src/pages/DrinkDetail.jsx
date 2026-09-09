@@ -63,7 +63,7 @@ function DrinkDetail() {
             decoding="async"
           />
         </div>
-        <h1 className="text-2xl font-bold text-green-700 mb-3">{drink.strDrink}</h1>
+        <h1 className="content-title mb-3">{drink.strDrink}</h1>
         <div className="flex gap-2 mb-4">
           {drink.strCategory && (
             <span className="recipe-card__badge" style={{ position: "static" }}>{drink.strCategory}</span>

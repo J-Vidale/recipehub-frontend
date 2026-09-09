@@ -40,7 +40,7 @@ const SearchResults = () => {
         description={`RecipeHub search results for "${q}".`}
         noindex
       />
-      <h1 className="text-2xl font-bold text-green-700 mb-6">
+      <h1 className="page-title mb-6">
         Search results for "{q}"
       </h1>
 

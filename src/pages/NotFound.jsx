@@ -15,7 +15,7 @@ const NotFound = () => {
       />
 
       <UtensilsIcon size="3.5rem" className="text-green-700 mb-4" />
-      <h1 className="text-4xl font-bold text-green-700 mb-3">
+      <h1 className="card-title mb-3">
         This page isn't on the menu
       </h1>
       <p className="text-gray-600 mb-8 max-w-md">

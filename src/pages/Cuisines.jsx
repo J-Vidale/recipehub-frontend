@@ -45,7 +45,7 @@ const Cuisines = () => {
       />
       <Breadcrumbs items={[{ label: "Home", to: "/" }, { label: "Cuisines" }]} />
 
-      <h1 className="text-3xl font-bold text-green-700 mb-2">Browse by cuisine</h1>
+      <h1 className="page-title mb-2">Browse by cuisine</h1>
       <p className="text-gray-600 mb-8 max-w-2xl">
         Pick a country or region to see the dishes filed under it.
       </p>

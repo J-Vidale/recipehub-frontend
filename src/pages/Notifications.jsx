@@ -103,7 +103,7 @@ const Notifications = () => {
         noindex
       />
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold text-green-700">Notifications</h1>
+        <h1 className="page-title">Notifications</h1>
         {notifications.some((n) => !n.read) && (
           <button onClick={handleMarkAllAsRead} className="text-sm text-green-700 hover:underline">
             Mark all as read

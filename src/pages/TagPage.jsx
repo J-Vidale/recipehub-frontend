@@ -55,7 +55,7 @@ const TagPage = () => {
           { label: `#${tag}` },
         ]}
       />
-      <h1 className="text-2xl font-bold text-green-700 mb-6 text-center">#{tag}</h1>
+      <h1 className="page-title mb-6">#{tag}</h1>
       {loading ? (
         <p className="text-center text-gray-600">Loading...</p>
       ) : error ? (

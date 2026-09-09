@@ -66,7 +66,7 @@ function Register() {
         description="Join RecipeHub to publish your own recipes with photos, follow other home cooks, and save the dishes you want to make next."
       />
       <div className="card w-full max-w-md">
-        <h1 className="text-2xl font-bold text-green-700 mb-6 text-center">Create your account</h1>
+        <h1 className="card-title mb-6 text-center">Create your account</h1>
         {error && (
           <p className="form-error" role="alert">
             {error}

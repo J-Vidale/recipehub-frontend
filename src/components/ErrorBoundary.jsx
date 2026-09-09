@@ -32,7 +32,7 @@ class ErrorBoundary extends React.Component {
     if (this.state.hasError) {
       return (
         <div className="page-container flex flex-col items-center justify-center text-center">
-          <h1 className="text-3xl font-bold text-green-700 mb-4">
+          <h1 className="card-title mb-4">
             Something went wrong
           </h1>
           <p className="text-gray-600 mb-6">

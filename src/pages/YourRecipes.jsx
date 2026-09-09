@@ -71,7 +71,7 @@ const YourRecipes = () => {
   return (
     <div className="page-container max-w-6xl">
       <Seo title="Your Recipes" description="Manage the recipes you have published on RecipeHub." noindex />
-      <h1 className="text-3xl font-bold text-green-700 mb-6">Your Recipes</h1>
+      <h1 className="page-title mb-6">Your Recipes</h1>
       {loading ? (
         <p className="text-gray-600">Loading...</p>
       ) : error ? (

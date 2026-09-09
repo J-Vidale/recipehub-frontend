@@ -133,7 +133,7 @@ const RecipeDetail = () => {
             ))}
           </div>
         )}
-        <h1 className="text-3xl font-bold text-green-700 mb-2">
+        <h1 className="content-title mb-2">
           {recipe.title}
         </h1>
         {recipe.user?.username && (
