@@ -1,7 +1,22 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { UtensilsIcon } from "./icons";
+import { UtensilsIcon, HeartIcon, CommentIcon } from "./icons";
 import { recipeCardImage, avatarImage } from "../lib/images";
+
+// Counts are shown only once there are some. A grid of brand-new recipes
+// each stamped "0 likes, 0 comments" reads as a site nobody uses, which is
+// exactly the wrong thing to say on a site that is new rather than
+// unloved. A missing count says nothing; a zero says something false.
+const Stat = ({ icon, count, singular }) => {
+  if (!Number.isFinite(count) || count <= 0) return null;
+  return (
+    <span className="recipe-card__stat">
+      {icon}
+      <span aria-hidden="true">{count}</span>
+      <span className="sr-only">{`${count} ${singular}${count === 1 ? "" : "s"}`}</span>
+    </span>
+  );
+};
 
 // The shared recipe tile used by every grid in the app (Explore, tag
 // pages, search, feed, profiles). Photo-forward - a food app's cards
@@ -33,7 +48,7 @@ const RecipeCard = ({ recipe, actions }) => {
           {recipe.category && <span className="recipe-card__badge">{recipe.category}</span>}
         </div>
         <div className="recipe-card__body">
-          <h3 className="font-semibold text-gray-900 leading-snug">{recipe.title}</h3>
+          <h3 className="recipe-card__title">{recipe.title}</h3>
           {recipe.user?.username && (
             <div className="recipe-card__author">
               {recipe.user.avatarUrl ? (
@@ -44,6 +59,10 @@ const RecipeCard = ({ recipe, actions }) => {
               <span>{recipe.user.username}</span>
             </div>
           )}
+          <div className="recipe-card__stats">
+            <Stat icon={<HeartIcon />} count={recipe.likeCount} singular="like" />
+            <Stat icon={<CommentIcon />} count={recipe.commentCount} singular="comment" />
+          </div>
         </div>
       </Link>
       {actions && <div className="recipe-card__actions">{actions}</div>}

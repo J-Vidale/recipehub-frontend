@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import API from "../services/api";
 import Seo from "../components/Seo";
 import Reveal from "../components/Reveal";
+import RecipeCard from "../components/RecipeCard";
+import { asArray } from "../lib/apiShape";
 import { SITE_NAME, SITE_URL, SITE_DESCRIPTION } from "../lib/site";
 
 const structuredData = {
@@ -36,7 +39,31 @@ const STARTING_POINTS = [
   },
 ];
 
+const LATEST_COUNT = 4;
+
 const Home = () => {
+  const [latest, setLatest] = useState([]);
+
+  // The home page used to be a headline and four links to other pages: a
+  // site about food with no food on it. These are the same recipes Explore
+  // opens with, so the request is one the visitor was likely to make in a
+  // moment anyway.
+  useEffect(() => {
+    let cancelled = false;
+    API.get("/recipes", { params: { sort: "newest", limit: LATEST_COUNT } })
+      .then((res) => {
+        if (!cancelled) setLatest(asArray(res.data?.recipes).slice(0, LATEST_COUNT));
+      })
+      // Silent on purpose. The rest of the page is a working introduction
+      // to the site without this, and a red banner across the front page
+      // because a secondary strip did not load is worse than the strip
+      // simply not being there.
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <>
       <Seo
@@ -97,6 +124,36 @@ const Home = () => {
           ))}
         </ul>
       </section>
+
+      {/* Nothing is reserved for this while it loads, and nothing is shown
+          if it comes back empty. A new site genuinely has no recipes yet,
+          and four skeleton cards that resolve into "no recipes" says less
+          than the four routes above already say. */}
+      {latest.length > 0 && (
+        <section className="page-container max-w-5xl pt-0">
+          <Reveal>
+            <div className="section-heading">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                  Latest from the community
+                </h2>
+                <p className="text-gray-600">The most recent recipes members have posted.</p>
+              </div>
+              <Link to="/explore" className="section-heading__link">
+                See all recipes <span aria-hidden="true">&rarr;</span>
+              </Link>
+            </div>
+          </Reveal>
+
+          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mt-6">
+            {latest.map((recipe, index) => (
+              <Reveal key={recipe._id} delay={index * 70}>
+                <RecipeCard recipe={recipe} />
+              </Reveal>
+            ))}
+          </div>
+        </section>
+      )}
     </>
   );
 };
