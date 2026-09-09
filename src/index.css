@@ -1222,17 +1222,36 @@ body {
     box-shadow: 0 12px 24px -12px rgb(0 0 0 / 0.45);
   }
 
-  /* A soft highlight that shifts on hover, so the tile has some depth
-     without needing an image behind it. */
+  /* Two layers under the label: a scrim, then a soft highlight that gives
+     the tile some depth without needing an image behind it.
+
+     The scrim buys headroom rather than fixing a failure. Tile colours are
+     generated from a hue, and measured across all 28 the thinnest margin
+     was 4.96:1 - over the 4.5:1 that 16px bold text needs, but only just,
+     and only because the label happens to sit low on the gradient. On the
+     lighter stop the same white is 3.8:1, so a shorter tile, a wider grid
+     or a change to the hue formula could spend that margin without anyone
+     noticing. Darkening the foot takes the worst case to 8.3:1 and makes
+     it independent of where the label lands.
+
+     Listed first because the first background layer paints on top: the
+     highlight must not lift the label's background back up. */
   .tile::after {
     content: "";
     position: absolute;
     inset: 0;
-    background: radial-gradient(
-      120% 80% at 20% 0%,
-      rgb(255 255 255 / 0.22),
-      transparent 60%
-    );
+    background:
+      linear-gradient(
+        to top,
+        rgb(0 0 0 / 0.45),
+        rgb(0 0 0 / 0.3) 35%,
+        transparent 70%
+      ),
+      radial-gradient(
+        120% 80% at 20% 0%,
+        rgb(255 255 255 / 0.22),
+        transparent 60%
+      );
     opacity: 0.9;
     transition: opacity 0.18s ease;
   }
