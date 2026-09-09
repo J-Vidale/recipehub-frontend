@@ -3,6 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import API from "../services/api";
 import RecipeCard from "../components/RecipeCard";
 import Seo from "../components/Seo";
+import { asArray } from '../lib/apiShape';
 
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
@@ -20,7 +21,7 @@ const SearchResults = () => {
     setLoading(true);
     setError(null);
     API.get("/search", { params: { q, limit: 25 } })
-      .then((res) => setResults(res.data))
+      .then((res) => setResults({ recipes: asArray(res.data?.recipes), users: asArray(res.data?.users) }))
       .catch((err) => {
         console.error("Search failed:", err);
         setError("Couldn't load search results. Please try again.");

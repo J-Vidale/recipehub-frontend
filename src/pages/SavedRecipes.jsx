@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import API from "../services/api";
 import RecipeCard from "../components/RecipeCard";
 import Seo from "../components/Seo";
+import { asArray } from '../lib/apiShape';
 
 const SavedRecipes = () => {
   const [savedRecipes, setSavedRecipes] = useState([]);
@@ -12,7 +13,7 @@ const SavedRecipes = () => {
     const fetchSavedRecipes = async () => {
       try {
         const res = await API.get("/recipes/saved");
-        setSavedRecipes(res.data);
+        setSavedRecipes(asArray(res.data));
       } catch (err) {
         console.error("Failed to fetch saved recipes:", err);
         setError("Couldn't load your saved recipes. Please try again.");

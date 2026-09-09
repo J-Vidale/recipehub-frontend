@@ -7,6 +7,7 @@ import RecipeCard from "../components/RecipeCard";
 import Seo from "../components/Seo";
 import { avatarImage } from "../lib/images";
 import { CameraIcon } from "../components/icons";
+import { asArray } from '../lib/apiShape';
 
 const MAX_AVATAR_BYTES = 8 * 1024 * 1024;
 
@@ -26,7 +27,7 @@ const Profile = () => {
         if (authUser && authUser._id) {
           setUser(authUser);
           const recipesRes = await API.get("/recipes/mine");
-          setRecipes(recipesRes.data.recipes || []);
+          setRecipes(asArray(recipesRes.data?.recipes));
         } else {
           setRecipes([]);
         }

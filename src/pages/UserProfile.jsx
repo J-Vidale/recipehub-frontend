@@ -11,6 +11,7 @@ import Seo from "../components/Seo";
 import { avatarImage } from "../lib/images";
 import Breadcrumbs from "../components/Breadcrumbs";
 import { absoluteUrl } from "../lib/site";
+import { asArray, asCursor } from '../lib/apiShape';
 
 const UserProfile = () => {
   const { id } = useParams();
@@ -38,7 +39,7 @@ const UserProfile = () => {
         ]);
         if (cancelled) return;
         setProfile(profileRes.data);
-        setRecipes(recipesRes.data.recipes);
+        setRecipes(asArray(recipesRes.data?.recipes));
         setNextCursor(recipesRes.data.nextCursor);
       } catch (err) {
         console.error("Failed to load profile:", err);
@@ -58,8 +59,8 @@ const UserProfile = () => {
     setLoadingMore(true);
     try {
       const res = await API.get(`/recipes/user/${id}`, { params: { cursor: nextCursor } });
-      setRecipes((prev) => [...prev, ...res.data.recipes]);
-      setNextCursor(res.data.nextCursor);
+      setRecipes((prev) => [...prev, ...asArray(res.data?.recipes)]);
+      setNextCursor(asCursor(res.data?.nextCursor));
     } catch (err) {
       console.error("Failed to load more recipes:", err);
     } finally {

@@ -4,6 +4,7 @@ import API from "../services/api";
 import { useSocket } from "../context/SocketContext";
 import Seo from "../components/Seo";
 import { avatarImage } from "../lib/images";
+import { asArray } from '../lib/apiShape';
 
 const Messages = () => {
   const [conversations, setConversations] = useState([]);
@@ -13,7 +14,7 @@ const Messages = () => {
 
   const fetchConversations = () => {
     API.get("/conversations")
-      .then((res) => setConversations(res.data.conversations))
+      .then((res) => setConversations(asArray(res.data?.conversations)))
       .catch((err) => {
         console.error("Failed to fetch conversations:", err);
         setError("Couldn't load your messages. Please try again.");

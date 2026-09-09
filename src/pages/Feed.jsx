@@ -5,6 +5,7 @@ import LikeButton from "../components/LikeButton";
 import { UtensilsIcon } from "../components/icons";
 import { recipeCardImage, avatarImage } from "../lib/images";
 import Seo from "../components/Seo";
+import { asArray, asCursor } from '../lib/apiShape';
 
 const Feed = () => {
   const [recipes, setRecipes] = useState([]);
@@ -17,8 +18,8 @@ const Feed = () => {
     const fetchFeed = async () => {
       try {
         const res = await API.get("/recipes/feed");
-        setRecipes(res.data.recipes);
-        setNextCursor(res.data.nextCursor);
+        setRecipes(asArray(res.data?.recipes));
+        setNextCursor(asCursor(res.data?.nextCursor));
       } catch (err) {
         console.error("Error fetching feed:", err);
         setError("Couldn't load your feed. Please try again.");
@@ -33,8 +34,8 @@ const Feed = () => {
     setLoadingMore(true);
     try {
       const res = await API.get("/recipes/feed", { params: { cursor: nextCursor } });
-      setRecipes((prev) => [...prev, ...res.data.recipes]);
-      setNextCursor(res.data.nextCursor);
+      setRecipes((prev) => [...prev, ...asArray(res.data?.recipes)]);
+      setNextCursor(asCursor(res.data?.nextCursor));
     } catch (err) {
       console.error("Error fetching more feed items:", err);
     } finally {
