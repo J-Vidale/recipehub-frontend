@@ -1,10 +1,31 @@
 @import "tailwindcss";
 
+/* One display face, self-hosted rather than linked from a font CDN: a
+   third-party stylesheet in the critical path is a second connection to
+   open and a second thing that can be slow. Variable, so weight 400 to 800
+   costs one file rather than five. Body text stays on the system stack -
+   it is already on the reader's machine, and a recipe is read, not
+   admired. */
+@import "@fontsource-variable/bricolage-grotesque";
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: var(--font-text);
   line-height: 1.5;
   font-weight: 400;
   color-scheme: light;
+
+  /* --- Type ---------------------------------------------------------- */
+  --font-display: "Bricolage Grotesque Variable", var(--font-text);
+  --font-text: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  /* Fluid, so the jump from phone to desktop is a ramp rather than three
+     breakpoints. The floor is the size that has to stay readable on a
+     360px screen; the ceiling is where a headline stops gaining presence
+     and starts shouting. */
+  --step-display: clamp(2.5rem, 1.9rem + 2.9vw, 3.75rem);
+  --step-title: clamp(1.75rem, 1.35rem + 1.9vw, 2.75rem);
+  --step-section: clamp(1.375rem, 1.2rem + 0.85vw, 1.875rem);
+  --step-lede: clamp(1rem, 0.96rem + 0.25vw, 1.1875rem);
 
   /* A single source of truth for the app's palette - every custom class
      below reads from these instead of hardcoding hex values, so changing
@@ -14,21 +35,47 @@
   --color-brand: #15803d;
   --color-brand-dark: #14532d;
   --color-brand-light: #dcfce7;
-  --color-accent: #d97706;
+  --color-accent: #b45309;
   --color-accent-light: #fef3c7;
-  --color-ink: #1f2937;
-  --color-muted: #6b7280;
+
+  /* Neutrals carry a little warmth so a photograph of food does not sit on
+     a screen that looks like a spreadsheet. Warmth only - not a cream
+     background, which would tint every dish on the page. */
+  --color-ink: #1c1a17;
+  --color-ink-soft: #46423c;
+  --color-muted: #6f6a63;
   --color-surface: #ffffff;
-  --color-bg: #f7f8f6;
-  --color-border: #e5e7eb;
+  --color-bg: #faf9f7;
+  --color-border: #e7e3dd;
+  --color-border-strong: #d6d1c8;
+  /* 3.26:1 on white. A card's edge is decoration and can be faint; an
+     input's edge is the only thing telling you where the field starts, so
+     it has to meet the contrast rule for a UI boundary. */
+  --color-border-input: #948e81;
   --color-danger: #dc2626;
   --color-danger-dark: #b91c1c;
 
+  /* --- Shape --------------------------------------------------------- */
+  /* Three radii and no others. Anything that looked "about right" at 0.6
+     or 0.875rem now picks the nearest of these on purpose. */
+  --radius-card: 14px;
+  --radius-control: 10px;
+  --radius-pill: 9999px;
+
+  /* --- Motion -------------------------------------------------------- */
+  /* The browser's built-in curves are too gentle to read as deliberate.
+     These are the standard strong pair: out for anything arriving, in-out
+     for anything already on screen that moves. Nothing uses ease-in - it
+     holds still at the exact moment the eye is watching hardest. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --dur-press: 120ms;
+  --dur-hover: 180ms;
+  --dur-enter: 260ms;
+
   --gradient-brand: linear-gradient(135deg, #16a34a 0%, #15803d 55%, #14532d 100%);
-  --gradient-hero: radial-gradient(circle at 15% 20%, rgba(22, 163, 74, 0.16), transparent 55%),
-    radial-gradient(circle at 85% 15%, rgba(217, 119, 6, 0.14), transparent 50%),
-    linear-gradient(180deg, #f0faf3 0%, var(--color-bg) 65%);
-  --gradient-placeholder: linear-gradient(135deg, #dcfce7 0%, #fef3c7 100%);
+  --gradient-hero: linear-gradient(180deg, #f4f6f2 0%, var(--color-bg) 70%);
+  --gradient-placeholder: linear-gradient(135deg, #e8ede4 0%, #f3ece1 100%);
 
   /* A small consistent elevation scale instead of one-off shadow values
      per component - flat resting state, a mid step for cards, a strong
@@ -83,8 +130,22 @@ body {
   min-height: 100vh;
   background: var(--color-bg);
   color: var(--color-ink);
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: var(--font-text);
   margin: 0;
+}
+
+/* Headings are the display face and the ink colour. They used to be the
+   brand green at every level on every page, which spent the one loud
+   colour on the thing that is already the largest object on screen and
+   left nothing to mark the button you are meant to press. */
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
 }
 
 /* App shell: a flex column so the routed page grows to fill the viewport
@@ -105,8 +166,8 @@ body {
   background: var(--color-bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-border);
-  border-radius: 4px;
+  background: var(--color-border-strong);
+  border-radius: var(--radius-pill);
 }
 
 @layer base {
@@ -134,7 +195,7 @@ body {
   [tabindex]:focus-visible {
     outline: 2px solid var(--color-brand);
     outline-offset: 2px;
-    border-radius: 0.25rem;
+    border-radius: var(--radius-control);
   }
 
   /* RouteTransition focuses the main landmark after each navigation so
@@ -163,7 +224,7 @@ body {
     color: #fff;
     font-weight: 600;
     border-radius: 0 0 0.375rem 0.375rem;
-    transition: top 0.15s ease;
+    transition: top var(--dur-hover) var(--ease-out);
   }
 
   .skip-link:focus,
@@ -196,7 +257,7 @@ body {
      bottom of the viewport without forcing a full extra screen of
      scroll before the footer becomes reachable. */
   .page-container {
-    padding: 2.5rem 1rem;
+    padding: 2.5rem 1.5rem;
     margin: 0 auto;
     width: 100%;
   }
@@ -243,7 +304,7 @@ body {
     align-items: center;
     gap: 0.35rem;
     white-space: nowrap;
-    transition: color 0.15s ease;
+    transition: color var(--dur-hover) var(--ease-out);
   }
   .navbar-link:hover {
     color: var(--color-brand);
@@ -298,7 +359,7 @@ body {
     color: var(--color-ink);
     min-width: 2.75rem;
     min-height: 2.75rem;
-    border-radius: 0.5rem;
+    border-radius: var(--radius-control);
   }
   .navbar__badge:hover { color: var(--color-brand); }
   @media (min-width: 1024px) {
@@ -333,7 +394,7 @@ body {
     background: none;
     color: var(--color-ink);
     cursor: pointer;
-    border-radius: 0.5rem;
+    border-radius: var(--radius-control);
   }
   .navbar__toggle:hover { background: var(--color-brand-light); }
 
@@ -364,7 +425,7 @@ body {
     font-size: 0.95rem;
     font-weight: 500;
     color: var(--color-ink);
-    border-radius: 0.4rem;
+    border-radius: var(--radius-control);
   }
   .navbar__panel-link:hover {
     color: var(--color-brand);
@@ -390,7 +451,7 @@ body {
   .card {
     background: var(--color-surface);
     border: 1px solid var(--color-border);
-    border-radius: 1rem;
+    border-radius: var(--radius-card);
     box-shadow: var(--shadow-sm);
     padding: 1.75rem;
   }
@@ -398,7 +459,7 @@ body {
   .card-sm {
     background: var(--color-surface);
     border: 1px solid var(--color-border);
-    border-radius: 0.75rem;
+    border-radius: var(--radius-card);
     box-shadow: var(--shadow-sm);
     padding: 1rem;
   }
@@ -409,7 +470,9 @@ body {
      explicit affordance on every one. Motion is skipped entirely for
      users who've asked for reduced motion. */
   .card-hover {
-    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    transition: transform var(--dur-hover) var(--ease-out),
+      box-shadow var(--dur-hover) var(--ease-out),
+      border-color var(--dur-hover) var(--ease-out);
   }
   .card-hover:hover,
   .card-hover:focus-visible {
@@ -462,7 +525,7 @@ body {
     height: 100%;
     object-fit: cover;
     display: block;
-    transition: transform 0.25s ease;
+    transition: transform 400ms var(--ease-out);
   }
   .recipe-card:hover .recipe-card__media img {
     transform: scale(1.04);
@@ -510,7 +573,7 @@ body {
      title used to add a line of empty space to all of its neighbours. */
   .recipe-card__title {
     font-weight: 600;
-    color: #111827;
+    color: var(--color-ink);
     line-height: 1.375;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -548,7 +611,7 @@ body {
   .detail-hero {
     width: 100%;
     aspect-ratio: 16 / 9;
-    border-radius: 1rem;
+    border-radius: var(--radius-card);
     overflow: hidden;
     background: var(--gradient-placeholder);
     margin-bottom: 1.5rem;
@@ -579,7 +642,7 @@ body {
     width: 4.5rem;
     height: 4.5rem;
     object-fit: cover;
-    border-radius: 0.6rem;
+    border-radius: var(--radius-control);
     flex-shrink: 0;
     cursor: pointer;
     border: 2px solid transparent;
@@ -618,12 +681,12 @@ body {
     justify-content: space-between;
     gap: 0.75rem;
     padding: 0.75rem 0.9rem;
-    border-radius: 0.7rem;
+    border-radius: var(--radius-control);
     font-size: 0.9rem;
     font-weight: 500;
     box-shadow: var(--shadow-lg);
     border: 1px solid transparent;
-    animation: toast-in 0.18s ease-out;
+    animation: toast-in 220ms var(--ease-out);
   }
   @media (prefers-reduced-motion: reduce) {
     .toast { animation: none; }
@@ -831,7 +894,7 @@ body {
   }
   .rail__card-media {
     aspect-ratio: 4 / 3;
-    border-radius: 0.75rem;
+    border-radius: var(--radius-card);
     overflow: hidden;
     background: var(--gradient-placeholder);
   }
@@ -857,7 +920,7 @@ body {
     position: relative;
     width: 100%;
     aspect-ratio: 16 / 9;
-    border-radius: 1rem;
+    border-radius: var(--radius-card);
     overflow: hidden;
     background: #000;
     margin-bottom: 1.5rem;
@@ -880,51 +943,132 @@ body {
     align-items: center;
     justify-content: center;
     gap: 0.4rem;
-    border-radius: 0.6rem;
-    padding: 0.6rem 1.25rem;
-    font-size: 0.925rem;
+    border-radius: var(--radius-control);
+    padding: 0.65rem 1.25rem;
+    font-size: 0.9375rem;
     font-weight: 600;
+    letter-spacing: -0.01em;
     border: none;
     cursor: pointer;
-    transition: background-color 0.15s ease, opacity 0.15s ease, transform 0.05s ease, box-shadow 0.15s ease;
+    /* Named properties rather than a blanket transition, and the press is
+       its own faster duration: the button should answer the finger before
+       it answers the eye. */
+    transition: background-color var(--dur-hover) var(--ease-out),
+      box-shadow var(--dur-hover) var(--ease-out),
+      opacity var(--dur-hover) var(--ease-out),
+      transform var(--dur-press) var(--ease-out);
   }
-  .btn-primary:active,
-  .btn-secondary:active,
-  .btn-danger:active {
-    transform: translateY(1px);
+
+  /* A press is a scale, not a nudge downwards. Scaling takes the label and
+     the icon with it, so the whole control compresses the way a physical
+     key does; translateY(1px) only slid it, which reads as a wobble. */
+  .btn-primary:active:not(:disabled),
+  .btn-secondary:active:not(:disabled),
+  .btn-danger:active:not(:disabled) {
+    transform: scale(0.97);
   }
+
   .btn-primary:disabled,
   .btn-secondary:disabled,
   .btn-danger:disabled {
-    opacity: 0.6;
+    opacity: 0.55;
     cursor: not-allowed;
     transform: none;
   }
 
   .btn-primary {
-    background: var(--gradient-brand);
+    background: var(--color-brand);
     color: #fff;
-    box-shadow: 0 2px 8px rgba(21, 128, 61, 0.25);
-  }
-  .btn-primary:hover:not(:disabled) {
-    box-shadow: 0 4px 14px rgba(21, 128, 61, 0.35);
-    filter: brightness(1.05);
+    /* Tinted to the button rather than a grey drop shadow, so the
+       elevation reads as belonging to the green rather than sitting under
+       it. */
+    box-shadow: 0 1px 2px rgba(20, 83, 45, 0.24), 0 4px 12px rgba(20, 83, 45, 0.14);
   }
 
   .btn-secondary {
-    background: #f1f2f0;
+    background: transparent;
     color: var(--color-ink);
-  }
-  .btn-secondary:hover:not(:disabled) {
-    background: #e5e7e3;
+    box-shadow: inset 0 0 0 1px var(--color-border-strong);
   }
 
   .btn-danger {
     background: var(--color-danger);
     color: #fff;
+    box-shadow: 0 1px 2px rgba(153, 27, 27, 0.24);
   }
-  .btn-danger:hover:not(:disabled) {
-    background: var(--color-danger-dark);
+
+  /* Hover only where there is a pointer that can hover. On a touch screen
+     a tap counts as a hover and the state sticks afterwards, leaving a
+     button that looks permanently half-pressed. */
+  @media (hover: hover) and (pointer: fine) {
+    .btn-primary:hover:not(:disabled) {
+      background: #16a34a;
+      box-shadow: 0 2px 4px rgba(20, 83, 45, 0.24), 0 8px 20px rgba(20, 83, 45, 0.2);
+    }
+    .btn-secondary:hover:not(:disabled) {
+      background: rgba(28, 26, 23, 0.04);
+      box-shadow: inset 0 0 0 1px var(--color-ink-soft);
+    }
+    .btn-danger:hover:not(:disabled) {
+      background: var(--color-danger-dark);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .btn-primary:active:not(:disabled),
+    .btn-secondary:active:not(:disabled),
+    .btn-danger:active:not(:disabled) {
+      transform: none;
+    }
+  }
+
+  /* --- Headings ------------------------------------------------------
+     Every page used to open with the same line: a bold green heading,
+     centred. Twenty-five of them. That does three things wrong at once -
+     it spends the one loud colour on the largest object on screen, it
+     centres text that is followed by left-aligned content, and it gives
+     every page in the app the same opening bar. These three classes
+     replace it: chrome titles sit left in ink, content titles carry the
+     name of the thing, card titles stay centred because a card is its own
+     small centred world. */
+  .page-title {
+    font-family: var(--font-display);
+    font-size: var(--step-title);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    color: var(--color-ink);
+    text-wrap: balance;
+  }
+
+  .content-title {
+    font-family: var(--font-display);
+    font-size: var(--step-section);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+    text-wrap: balance;
+  }
+
+  .card-title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+    text-align: center;
+  }
+
+  /* The sentence under a page title. Held to a readable measure rather
+     than the full width of the page, which is what makes a subtitle read
+     as a subtitle. */
+  .page-lede {
+    font-size: var(--step-lede);
+    line-height: 1.55;
+    color: var(--color-ink-soft);
+    max-width: 56ch;
   }
 
   /* Form fields: one consistent look for every input/textarea/select in
@@ -932,13 +1076,14 @@ body {
   .input {
     display: block;
     width: 100%;
-    border: 1px solid var(--color-border);
-    border-radius: 0.6rem;
+    border: 1px solid var(--color-border-input);
+    border-radius: var(--radius-control);
     padding: 0.65rem 0.85rem;
     font-size: 0.95rem;
     background: var(--color-surface);
     color: var(--color-ink);
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    transition: border-color var(--dur-hover) var(--ease-out),
+      box-shadow var(--dur-hover) var(--ease-out);
   }
   .input:focus {
     outline: none;
@@ -990,7 +1135,7 @@ body {
     color: var(--color-danger-dark);
     background: color-mix(in srgb, var(--color-danger) 8%, transparent);
     border: 1px solid color-mix(in srgb, var(--color-danger) 25%, transparent);
-    border-radius: 0.6rem;
+    border-radius: var(--radius-control);
     padding: 0.6rem 0.8rem;
     margin-bottom: 1rem;
   }
@@ -1082,7 +1227,7 @@ body {
     );
     background-size: 400% 100%;
     animation: skeleton-shimmer 1.4s ease infinite;
-    border-radius: 0.5rem;
+    border-radius: var(--radius-control);
   }
   @media (prefers-reduced-motion: reduce) {
     .skeleton {
@@ -1104,7 +1249,7 @@ body {
     overflow-y: auto;
     background: var(--color-surface);
     border: 1px solid var(--color-border);
-    border-radius: 0.75rem;
+    border-radius: var(--radius-card);
     box-shadow: var(--shadow-lg);
   }
   .combobox-group-label {
@@ -1162,7 +1307,7 @@ body {
   .reveal {
     opacity: 0;
     transform: translateY(0.75rem);
-    transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+    transition: opacity 420ms var(--ease-out), transform 420ms var(--ease-out);
     will-change: opacity, transform;
   }
 
@@ -1202,7 +1347,7 @@ body {
     align-items: flex-end;
     min-height: 7rem;
     padding: 0.875rem;
-    border-radius: 0.75rem;
+    border-radius: var(--radius-card);
     overflow: hidden;
     color: #fff;
     font-weight: 700;
@@ -1212,7 +1357,8 @@ body {
       hsl(var(--tile-hue) 55% 34%),
       hsl(calc(var(--tile-hue) + 18) 48% 24%)
     );
-    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    transition: transform var(--dur-hover) var(--ease-out),
+      box-shadow var(--dur-hover) var(--ease-out);
   }
 
   .tile:hover,
@@ -1293,7 +1439,7 @@ body {
      screen when the data lands - there is nothing to wait for, only an
      order to arrive in. */
   .meal-grid__item {
-    animation: card-in 0.35s ease-out backwards;
+    animation: card-in 360ms var(--ease-out) backwards;
     animation-delay: var(--stagger-delay, 0ms);
   }
 
@@ -1302,8 +1448,8 @@ body {
     flex-direction: column;
     height: 100%;
     background-color: #fff;
-    border: 1px solid var(--color-border, #e5e7eb);
-    border-radius: 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
     overflow: hidden;
     text-decoration: none;
     color: inherit;
@@ -1323,7 +1469,7 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.3s ease;
+    transition: transform 400ms var(--ease-out);
   }
 
   .meal-grid__card:hover .meal-grid__media img {
@@ -1367,8 +1513,8 @@ body {
     height: 100%;
     padding: 0.875rem 0.5rem;
     background-color: #fff;
-    border: 1px solid var(--color-border, #e5e7eb);
-    border-radius: 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
     text-align: center;
     text-decoration: none;
     color: inherit;
@@ -1439,102 +1585,216 @@ body {
 
 @layer components {
   /* --- Home hero ------------------------------------------------------
-     The hero used to be a full-height centred box with nothing under it,
-     so the page ended at the fold. It is now a band with content below,
-     and the height comes from padding rather than a viewport unit (100vh
-     heroes cut themselves off on a phone in landscape). */
+     Split, not centred, and weighted towards the copy.
+
+     What was here before: a centred column over two blurred blobs that
+     drifted on a 26-second loop. Both are stock moves - the centred hero
+     and the ambient gradient blob are the two most-repeated shapes on the
+     web right now - and the drift was motion with nothing to say. The
+     right-hand column now carries the newest real recipe on the site,
+     which is the one thing a recipe site can put in a hero that an
+     illustration cannot fake.
+
+     Height comes from padding rather than a viewport unit: a 100vh hero
+     cuts itself off on a phone held sideways. */
   .hero--home {
     position: relative;
     overflow: hidden;
-    padding: 4.5rem 1.5rem 5rem;
-    text-align: center;
+    padding: 3.5rem 1.5rem 4rem;
     isolation: isolate;
   }
-
-  .hero__backdrop {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
+  .hero--home > .hero__grid {
+    padding: 0;
   }
 
-  .hero__blob {
-    position: absolute;
-    display: block;
-    border-radius: 9999px;
-    filter: blur(56px);
-    opacity: 0.5;
-  }
-
-  .hero__blob--one {
-    width: 26rem;
-    height: 26rem;
-    top: -9rem;
-    left: -7rem;
-    background: radial-gradient(circle, #86efac, transparent 70%);
-    animation: blob-drift-a 26s ease-in-out infinite alternate;
-  }
-
-  .hero__blob--two {
-    width: 22rem;
-    height: 22rem;
-    bottom: -8rem;
-    right: -5rem;
-    background: radial-gradient(circle, #fde68a, transparent 70%);
-    animation: blob-drift-b 32s ease-in-out infinite alternate;
-  }
-
-  .hero__content {
-    position: relative;
-    max-width: 42rem;
+  .hero__grid {
+    display: grid;
+    gap: 2.5rem;
+    align-items: center;
+    /* Same 72rem and same 1.5rem gutter as .page-container + max-w-6xl
+       below it, so the hero copy and every section heading under it start
+       on one left edge rather than two. */
+    max-width: 72rem;
     margin: 0 auto;
   }
 
+  .hero__content {
+    max-width: 34rem;
+  }
+
+  /* The only eyebrow in the app. It is here because the headline alone
+     does not say what kind of recipes these are, and nowhere else,
+     because a small caps label above every section is how a page starts
+     looking generated. */
   .hero__eyebrow {
-    display: inline-block;
-    margin-bottom: 1.25rem;
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    background-color: var(--color-brand-light);
-    color: var(--color-brand);
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
+    margin: 0 0 1rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
+    color: var(--color-brand-dark);
   }
 
   .hero__title {
-    margin-bottom: 1.25rem;
-    font-size: clamp(2.25rem, 6vw, 3rem);
+    margin: 0 0 1.25rem;
+    font-family: var(--font-display);
+    font-size: var(--step-display);
     font-weight: 700;
-    line-height: 1.1;
-    color: #111827;
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+    color: var(--color-ink);
   }
 
   .hero__lede {
-    max-width: 32rem;
-    margin: 0 auto 2.25rem;
-    font-size: 1.125rem;
-    line-height: 1.6;
-    color: #4b5563;
+    max-width: 34ch;
+    margin: 0 0 2rem;
+    font-size: var(--step-lede);
+    line-height: 1.55;
+    color: var(--color-ink-soft);
   }
 
   .hero__actions {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    align-items: stretch;
     gap: 0.75rem;
-    flex-wrap: wrap;
   }
 
-  /* The drift is ambient rather than informative, so reduced motion stops
-     it outright. The gradients stay: they carry no meaning that motion was
-     adding, and removing them would change the design, not just the
-     animation. */
+  @media (min-width: 30rem) {
+    .hero__actions {
+      flex-direction: row;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+  }
+
+  .btn-lg {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  .hero__feature {
+    min-width: 0;
+  }
+
+  @media (min-width: 64rem) {
+    .hero--home {
+      padding: 5rem 1.5rem 5.5rem;
+    }
+    /* Not 50/50. Equal halves read as a template; giving the copy the
+       larger share says which one is the argument and which one is the
+       evidence. */
+    .hero__grid {
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 4rem;
+    }
+  }
+
+  /* --- Featured recipe ------------------------------------------------ */
+  .featured {
+    display: block;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: var(--shadow-md);
+    transition: transform var(--dur-hover) var(--ease-out),
+      box-shadow var(--dur-hover) var(--ease-out);
+  }
+
+  .featured__media {
+    aspect-ratio: 4 / 3;
+    background: var(--gradient-placeholder);
+    overflow: hidden;
+  }
+
+  .featured__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 400ms var(--ease-out);
+  }
+
+  .featured__placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-brand-dark);
+    opacity: 0.4;
+  }
+
+  .featured__body {
+    padding: 1.25rem 1.25rem 1.375rem;
+  }
+
+  .featured__label {
+    margin: 0 0 0.35rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .featured__title {
+    margin: 0 0 0.75rem;
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+  }
+
+  .featured__meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    font-size: 0.875rem;
+    color: var(--color-muted);
+  }
+
+  .featured__author,
+  .featured__stat {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  /* Lifting on hover is the card saying it is a link. It only happens
+     where there is a pointer that can hover: on a phone the state would
+     latch after a tap and leave the card floating. */
+  @media (hover: hover) and (pointer: fine) {
+    .featured:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+    }
+    .featured:hover .featured__media img {
+      transform: scale(1.03);
+    }
+  }
+
+  .featured:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 3px;
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .hero__blob--one,
-    .hero__blob--two {
-      animation: none;
+    .featured,
+    .featured__media img {
+      transition: box-shadow var(--dur-hover) var(--ease-out);
+    }
+    .featured:hover {
+      transform: none;
+    }
+    .featured:hover .featured__media img {
+      transform: none;
     }
   }
 
@@ -1567,8 +1827,6 @@ body {
 
   .start-grid {
     display: grid;
-    /* Explicit rather than auto-fit: with four cards, auto-fit settled on
-       three columns at desktop and left one stranded on its own row. */
     grid-template-columns: 1fr;
     gap: 1rem;
     list-style: none;
@@ -1577,96 +1835,91 @@ body {
   }
 
   @media (min-width: 40rem) {
-    /* A section title with a link to the fuller version of the same thing,
-     side by side on a wide screen and stacked on a narrow one. */
-  .section-heading {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  .section-heading__link {
-    color: var(--color-brand-dark);
-    font-weight: 600;
-    font-size: 0.9375rem;
-    text-decoration: none;
-    white-space: nowrap;
-  }
-  .section-heading__link:hover {
-    text-decoration: underline;
-  }
-  @media (min-width: 40rem) {
-    .section-heading {
-      flex-direction: row;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 1.5rem;
-    }
-  }
-
-  .start-grid {
+    .start-grid {
       grid-template-columns: repeat(2, 1fr);
     }
   }
 
+  /* Four cells for four routes, two wide and two narrow, laid out as
+     wide+narrow then narrow+wide. Four identical boxes in a row is the
+     shape every generated page reaches for, and it also claims all four
+     destinations matter equally, which is not true. Exactly as many cells
+     as there are links, so none is left blank. */
   @media (min-width: 64rem) {
-    /* A section title with a link to the fuller version of the same thing,
-     side by side on a wide screen and stacked on a narrow one. */
-  .section-heading {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  .section-heading__link {
-    color: var(--color-brand-dark);
-    font-weight: 600;
-    font-size: 0.9375rem;
-    text-decoration: none;
-    white-space: nowrap;
-  }
-  .section-heading__link:hover {
-    text-decoration: underline;
-  }
-  @media (min-width: 40rem) {
-    .section-heading {
-      flex-direction: row;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 1.5rem;
+    .start-grid {
+      grid-template-columns: repeat(3, 1fr);
     }
-  }
-
-  .start-grid {
-      grid-template-columns: repeat(4, 1fr);
+    .start-grid__wide {
+      grid-column: span 2;
     }
   }
 
   .start-card {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 0.375rem;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-content: start;
+    gap: 0.375rem 1rem;
     height: 100%;
     padding: 1.25rem;
     background-color: var(--color-surface);
     border: 1px solid var(--color-border);
-    border-radius: 0.875rem;
+    border-radius: var(--radius-card);
     text-decoration: none;
     color: inherit;
   }
 
-  .start-card:hover {
-    color: inherit;
+  /* Its own hover rather than the shared .card-hover: these four are
+     navigation, not content, so they lift less and tint their border
+     instead of growing a shadow. */
+  .start-card {
+    transition: border-color var(--dur-hover) var(--ease-out),
+      background-color var(--dur-hover) var(--ease-out),
+      transform var(--dur-hover) var(--ease-out);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .start-card:hover {
+      color: inherit;
+      border-color: var(--color-brand);
+      background-color: #fff;
+      transform: translateY(-2px);
+    }
+  }
+
+  .start-card:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .start-card:hover {
+      transform: none;
+    }
+  }
+
+  /* The wide pair carries a tint so the grid is not four white rectangles.
+     Brand green at 4%: enough to read as a different surface, not enough
+     to compete with a photograph elsewhere on the page. */
+  .start-card--wide {
+    background-color: color-mix(in srgb, var(--color-brand) 4%, var(--color-surface));
+    border-color: color-mix(in srgb, var(--color-brand) 16%, var(--color-border));
   }
 
   .start-card__title {
+    grid-column: 1;
+    font-family: var(--font-display);
+    font-size: 1.0625rem;
     font-weight: 700;
-    color: #111827;
+    letter-spacing: -0.01em;
+    color: var(--color-ink);
   }
 
   .start-card__body {
+    grid-column: 1 / -1;
     font-size: 0.9375rem;
     line-height: 1.5;
-    color: #4b5563;
+    color: var(--color-ink-soft);
   }
 
   /* The arrow nudges right on hover. Small, and it only moves on the axis
@@ -1678,10 +1931,13 @@ body {
      at the top, the shorter cards ended in a stretch of nothing. At the
      bottom it lands on the same line in every card, and the uneven text
      above it reads as text rather than as a mistake. */
+  /* On the title's line, at the end of it. Pushed to the foot of the card
+     it left a band of empty space under two lines of text, and made the
+     row as tall as its emptiest card. */
   .start-card__cue {
-    margin-top: auto;
-    padding-top: 0.75rem;
-    align-self: flex-end;
+    grid-column: 2;
+    grid-row: 1;
+    align-self: center;
     color: var(--color-brand);
     font-size: 1.125rem;
     line-height: 1;
@@ -1704,24 +1960,6 @@ body {
   }
 }
 
-@keyframes blob-drift-a {
-  from {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  to {
-    transform: translate3d(2.5rem, 1.5rem, 0) scale(1.08);
-  }
-}
-
-@keyframes blob-drift-b {
-  from {
-    transform: translate3d(0, 0, 0) scale(1.05);
-  }
-  to {
-    transform: translate3d(-2rem, -1.75rem, 0) scale(1);
-  }
-}
-
 @layer components {
   /* --- Nutrition panel ------------------------------------------------ */
   .nutrition {
@@ -1729,21 +1967,21 @@ body {
     padding: 1.25rem;
     background-color: var(--color-surface);
     border: 1px solid var(--color-border);
-    border-radius: 0.875rem;
+    border-radius: var(--radius-card);
   }
 
   .nutrition__heading {
     margin-bottom: 0.875rem;
     font-size: 1.125rem;
     font-weight: 700;
-    color: #111827;
+    color: var(--color-ink);
   }
 
   .nutrition__subheading {
     margin: 1.5rem 0 0.625rem;
     font-size: 1rem;
     font-weight: 700;
-    color: #111827;
+    color: var(--color-ink);
   }
 
   /* The scroll lives on a wrapper so the table itself can be a real table
@@ -1773,7 +2011,7 @@ body {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: #6b7280;
+    color: var(--color-muted);
   }
 
   .nutrition__table td:first-child {
@@ -1788,7 +2026,7 @@ body {
     margin-top: 0.75rem;
     font-size: 0.8125rem;
     line-height: 1.5;
-    color: #6b7280;
+    color: var(--color-muted);
   }
 
   .nutrition__servings {
@@ -1821,7 +2059,7 @@ body {
     gap: 0.125rem;
     padding: 0.75rem;
     background-color: var(--color-brand-light);
-    border-radius: 0.625rem;
+    border-radius: var(--radius-control);
     text-align: center;
   }
 
@@ -1844,7 +2082,7 @@ body {
   .macro__label {
     font-size: 0.75rem;
     font-weight: 600;
-    color: #4b5563;
+    color: var(--color-ink-soft);
   }
 
   .allergen-list {
@@ -1865,7 +2103,7 @@ body {
     padding: 0.5rem 0.75rem;
     background-color: #fef3c7;
     border: 1px solid #fcd34d;
-    border-radius: 0.5rem;
+    border-radius: var(--radius-control);
   }
 
   .allergen__label {
@@ -1925,13 +2163,13 @@ body {
     padding: 1rem;
     background-color: var(--color-surface);
     border: 1px solid var(--color-border);
-    border-radius: 0.75rem;
+    border-radius: var(--radius-card);
     font-size: 0.875rem;
   }
 
   .status-config dt {
     font-weight: 700;
-    color: #4b5563;
+    color: var(--color-ink-soft);
   }
 
   .status-config dd {
@@ -1939,7 +2177,7 @@ body {
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 0.8125rem;
     word-break: break-all;
-    color: #111827;
+    color: var(--color-ink);
   }
 
   .status-list {
@@ -1958,7 +2196,7 @@ body {
     padding: 0.875rem 1rem;
     background-color: var(--color-surface);
     border: 1px solid var(--color-border);
-    border-radius: 0.75rem;
+    border-radius: var(--radius-card);
   }
 
   .status-item__state {
@@ -1972,7 +2210,7 @@ body {
     font-weight: 700;
     font-size: 0.875rem;
     background-color: #e5e7eb;
-    color: #4b5563;
+    color: var(--color-ink-soft);
   }
 
   .status-item--pass .status-item__state {
@@ -1991,13 +2229,13 @@ body {
 
   .status-item__label {
     font-weight: 600;
-    color: #111827;
+    color: var(--color-ink);
   }
 
   .status-item__detail {
     margin-top: 0.125rem;
     font-size: 0.875rem;
-    color: #4b5563;
+    color: var(--color-ink-soft);
   }
 
   .status-hints {
@@ -2005,7 +2243,7 @@ body {
     padding: 1.25rem;
     background-color: #fffbeb;
     border: 1px solid #fcd34d;
-    border-radius: 0.75rem;
+    border-radius: var(--radius-card);
   }
 
   .status-hints ul {

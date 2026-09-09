@@ -44,7 +44,7 @@ const CuisineDetail = () => {
         ]}
       />
 
-      <h1 className="text-3xl font-bold text-green-700 mb-2">{cuisine} recipes</h1>
+      <h1 className="page-title mb-2">{cuisine} recipes</h1>
       {status === "ready" && (
         <p className="text-gray-600 mb-8">
           {count} {count === 1 ? "dish" : "dishes"} filed under {cuisine}.

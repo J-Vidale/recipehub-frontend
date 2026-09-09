@@ -34,10 +34,53 @@ describe("asCursor", () => {
   });
 });
 
-// A source scan, because the failure it guards against only shows up at
-// runtime with an unusual response: `setThings(res.data.things)` renders
-// fine every day and throws the one time the shape is off, replacing the
-// page with the error boundary.
+// A structural scan rather than a list of known key names.
+//
+// The first version of this test looked for `data.recipes`, `data.tags`
+// and friends, which missed `setComments(res.data)` on the recipe page -
+// the API returns a bare array there, so the assignment names no key at
+// all. That one crashed the whole recipe page, comments and method and
+// ingredients with it, whenever the response was not an array.
+//
+// The rule this checks instead: if a piece of state is declared as a
+// list, everything assigned to it has to be one.
+describe("state declared as a list is only ever assigned a list", () => {
+  it("wraps every assignment in asArray", async () => {
+    const { readdir, readFile } = await import("node:fs/promises");
+    const offences = [];
+
+    for (const dir of ["src/pages", "src/components", "src/context"]) {
+      const url = new URL(`../${dir}/`, import.meta.url);
+      for (const name of await readdir(url)) {
+        if (!/\.jsx?$/.test(name)) continue;
+        const source = await readFile(new URL(name, url), "utf8");
+
+        // const [things, setThings] = useState([])
+        const setters = [...source.matchAll(/const \[\s*\w+\s*,\s*(set\w+)\s*\]\s*=\s*useState\(\s*\[\s*\]\s*\)/g)]
+          .map((m) => m[1]);
+
+        for (const setter of setters) {
+          const calls = [...source.matchAll(new RegExp(`${setter}\\(([^\n]*)`, "g"))];
+          for (const call of calls) {
+            const arg = call[1];
+            if (arg.includes("asArray(")) continue;
+            if (/^\s*\(/.test(arg) || arg.startsWith("prev")) continue; // functional update
+            if (/^\s*\[\s*\]/.test(arg)) continue; // reset to empty
+            // Only response bodies. A value built locally, or returned by
+            // a helper that guarantees its own shape, is not this rule's
+            // business.
+            if (!/\bres\.data\b|\bdata\./.test(arg)) continue;
+            const line = source.slice(0, call.index).split("\n").length;
+            offences.push(`${dir}/${name}:${line}  ${setter}(${arg.trim()}`);
+          }
+        }
+      }
+    }
+
+    expect(offences, `unguarded list assignments:\n${offences.join("\n")}`).toEqual([]);
+  });
+});
+
 describe("no page reads a list straight out of a response", () => {
   const LIST_KEYS =
     "recipes|tags|notifications|messages|conversations|users|curated|community";

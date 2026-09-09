@@ -63,7 +63,7 @@ const Explore = () => {
         description="Browse every recipe shared by the RecipeHub community, newest first, and jump into the hashtags people are cooking with right now."
       />
       <Breadcrumbs items={[{ label: "Home", to: "/" }, { label: "Explore" }]} />
-      <h1 className="text-3xl font-bold text-green-700 mb-4 text-center">Explore Recipes</h1>
+      <h1 className="page-title mb-4">Explore Recipes</h1>
       {popularTags.length > 0 && (
         <div className="flex flex-wrap justify-center gap-2 mb-8">
           {popularTags.map(({ tag, count }) => (

@@ -31,6 +31,25 @@ describe("the image at the top of a detail page", () => {
   });
 });
 
+// The front page's largest paint is the featured recipe's photograph, so
+// the same rule applies there: eager, high priority, and the only image on
+// the page claiming it.
+describe("the featured recipe on the front page", () => {
+  it("is eager and high priority", async () => {
+    const { readFile } = await import("node:fs/promises");
+    const source = await readFile(
+      new URL("../src/components/FeaturedRecipe.jsx", import.meta.url),
+      "utf8"
+    );
+    const tags = imageTags(source);
+    expect(tags.length).toBeGreaterThan(0);
+    const hero = tags.find((tag) => /fetchPriority="high"/.test(tag));
+    expect(hero, "no high-priority image in FeaturedRecipe").toBeTruthy();
+    expect(hero).not.toMatch(/loading="lazy"/);
+    expect(tags.filter((tag) => /fetchPriority="high"/.test(tag))).toHaveLength(1);
+  });
+});
+
 describe("everything else", () => {
   // Only one image per page may claim high priority; naming several tells
   // the browser nothing, since the point is which one comes first.

@@ -151,7 +151,7 @@ const Profile = () => {
             </span>
           </button>
           <div className="flex-1">
-            <h2 className="text-2xl font-bold text-green-700 mb-1">{user.username}</h2>
+            <h2 className="content-title mb-1">{user.username}</h2>
             <p className="text-gray-600 text-sm mb-3">{user.email}</p>
             {user.avatarUrl && (
               <button

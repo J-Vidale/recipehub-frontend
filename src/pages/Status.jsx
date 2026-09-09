@@ -128,7 +128,7 @@ const Status = () => {
         noindex
       />
 
-      <h1 className="text-3xl font-bold text-green-700 mb-2">Connection status</h1>
+      <h1 className="page-title mb-2">Connection status</h1>
       <p className="text-gray-600 mb-8">
         Whether this site can reach its API, and what to change if it cannot.
       </p>

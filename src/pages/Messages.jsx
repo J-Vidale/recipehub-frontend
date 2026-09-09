@@ -39,7 +39,7 @@ const Messages = () => {
   return (
     <div className="page-container max-w-2xl">
       <Seo title="Messages" description="Your direct message conversations on RecipeHub." noindex />
-      <h1 className="text-2xl font-bold text-green-700 mb-6">Messages</h1>
+      <h1 className="page-title mb-6">Messages</h1>
       {loading ? (
         <p className="text-gray-600">Loading...</p>
       ) : error ? (

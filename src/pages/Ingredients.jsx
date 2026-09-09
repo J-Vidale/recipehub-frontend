@@ -75,7 +75,7 @@ const Ingredients = () => {
       />
       <Breadcrumbs items={[{ label: "Home", to: "/" }, { label: "Ingredients" }]} />
 
-      <h1 className="text-3xl font-bold text-green-700 mb-2">Browse by ingredient</h1>
+      <h1 className="page-title mb-2">Browse by ingredient</h1>
       <p className="text-gray-600 mb-6 max-w-2xl">
         Find something you already have, and see what you can make with it.
       </p>

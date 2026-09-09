@@ -5,6 +5,7 @@ import { useToast } from "../context/ToastContext";
 import { useAuth } from "../context/AuthContext";
 import { HeartIcon, PinIcon } from "./icons";
 import { avatarImage } from "../lib/images";
+import { asArray } from "../lib/apiShape";
 
 const CommentAvatar = ({ user }) =>
   user.avatarUrl ? (
@@ -75,7 +76,7 @@ const CommentSection = ({ recipeId, recipeOwnerId, pinnedCommentId }) => {
     const fetchComments = async () => {
       try {
         const res = await API.get(`/recipes/${recipeId}/comments`);
-        setComments(res.data);
+        setComments(asArray(res.data));
       } catch (err) {
         console.error("Failed to fetch comments:", err);
         setError("Couldn't load comments.");
