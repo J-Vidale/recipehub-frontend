@@ -915,6 +915,52 @@ body {
   .input::placeholder {
     color: var(--color-muted);
   }
+  /* A field that failed validation reads as wrong before anything is
+     announced: the border carries it, and the message below is tied to the
+     input with aria-describedby so it is read out on focus too. Colour is
+     never the only signal - the message is always there as well. */
+  .input--invalid,
+  .input--invalid:focus {
+    border-color: var(--color-danger);
+  }
+  .input--invalid:focus {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-danger) 20%, transparent);
+  }
+
+  /* Label, input, and whichever of hint or error applies. The hint is
+     replaced by the error rather than shown alongside it, so the field
+     never grows a third line and shift the button under the cursor. */
+  .field__label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-ink);
+    margin-bottom: 0.3rem;
+  }
+  .field__hint,
+  .field__error {
+    font-size: 0.8rem;
+    line-height: 1.35;
+    margin-top: 0.35rem;
+  }
+  .field__hint {
+    color: var(--color-muted);
+  }
+  .field__error {
+    color: var(--color-danger-dark);
+  }
+
+  /* The one error that belongs to the form rather than to a field: a
+     refused login, an unreachable server. */
+  .form-error {
+    font-size: 0.875rem;
+    color: var(--color-danger-dark);
+    background: color-mix(in srgb, var(--color-danger) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-danger) 25%, transparent);
+    border-radius: 0.6rem;
+    padding: 0.6rem 0.8rem;
+    margin-bottom: 1rem;
+  }
 
   /* Avatars: a circular image, or a colored initial-letter fallback when
      no profile picture is set - same size scale used everywhere a user

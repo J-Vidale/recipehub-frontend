@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import Seo from "../components/Seo";
+import Field from "../components/Field";
 import { isNetworkError } from "../services/api";
 
 function Login() {
@@ -20,6 +21,7 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
     setSubmitting(true);
     try {
       await contextLogin(formData.username, formData.password);
@@ -47,28 +49,33 @@ function Login() {
       />
       <div className="card w-full max-w-md">
         <h1 className="text-2xl font-bold text-green-700 mb-6 text-center">Log in to RecipeHub</h1>
-        {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
+        {error && (
+          <p className="form-error" role="alert">
+            {error}
+          </p>
+        )}
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
+          {/* Nothing is validated here beyond being filled in: the rules
+              only apply to a new account, and telling someone their
+              existing password is the wrong shape would be both wrong and
+              a hint about what is stored. */}
+          <Field
+            label="Username"
             name="username"
-            placeholder="Username"
             value={formData.username}
             onChange={handleChange}
-            className="input"
-            required
+            autoComplete="username"
           />
-          <input
-            type="password"
+          <Field
+            label="Password"
             name="password"
-            placeholder="Password"
+            type="password"
             value={formData.password}
             onChange={handleChange}
-            className="input"
-            required
+            autoComplete="current-password"
           />
           <button type="submit" disabled={submitting} className="btn-primary w-full">
-            {submitting ? "Logging in..." : "Log In"}
+            {submitting ? "Logging in..." : "Log in"}
           </button>
         </form>
         <p className="text-sm text-gray-600 text-center mt-4">
