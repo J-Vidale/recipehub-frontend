@@ -4,6 +4,7 @@ import API from "../services/api";
 import { useToast } from "../context/ToastContext";
 import RecipeCard from "../components/RecipeCard";
 import Seo from "../components/Seo";
+import { asArray } from '../lib/apiShape';
 
 const YourRecipes = () => {
   const toast = useToast();
@@ -17,7 +18,7 @@ const YourRecipes = () => {
     const fetchRecipes = async () => {
       try {
         const res = await API.get("/recipes/mine");
-        setRecipes(res.data.recipes || []);
+        setRecipes(asArray(res.data?.recipes));
       } catch (error) {
         console.error("Error fetching recipes:", error.message);
         setError("Couldn't load your recipes. Please try again.");
@@ -29,7 +30,7 @@ const YourRecipes = () => {
     const fetchSaved = async () => {
       try {
         const res = await API.get("/recipes/saved");
-        setSavedIds(res.data.map((r) => r._id));
+        setSavedIds(asArray(res.data).map((r) => r._id));
       } catch {
         setSavedIds([]);
       }

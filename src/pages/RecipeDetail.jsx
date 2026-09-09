@@ -15,6 +15,7 @@ import Breadcrumbs from "../components/Breadcrumbs";
 import { UtensilsIcon } from "../components/icons";
 import { recipeHeroImage, recipeThumbImage, avatarImage } from "../lib/images";
 import { communityRecipeSchema } from "../lib/structuredData";
+import { asArray } from '../lib/apiShape';
 
 const RecipeDetail = () => {
   const { id } = useParams();
@@ -44,14 +45,14 @@ const RecipeDetail = () => {
   useEffect(() => {
     if (!recipe?.user?._id) return;
     API.get(`/recipes/user/${recipe.user._id}`, { params: { page: 1, limit: 8 } })
-      .then((res) => setMoreFromUser(res.data.recipes.filter((r) => r._id !== recipe._id)))
+      .then((res) => setMoreFromUser(asArray(res.data?.recipes).filter((r) => r._id !== recipe._id)))
       .catch((err) => console.error("Failed to fetch more recipes from this user:", err));
   }, [recipe]);
 
   useEffect(() => {
     if (!recipe || !user) return; // Only logged-in users have a saved list to check
     API.get("/recipes/saved").then((res) => {
-      setIsSaved(res.data.some((r) => r._id === recipe._id));
+      setIsSaved(asArray(res.data).some((r) => r._id === recipe._id));
     }).catch((err) => {
       console.error("Failed to check saved status:", err);
     });

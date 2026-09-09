@@ -4,6 +4,7 @@ import API from "../services/api";
 import RecipeCard from "../components/RecipeCard";
 import Seo from "../components/Seo";
 import Breadcrumbs from "../components/Breadcrumbs";
+import { asArray, asCursor } from '../lib/apiShape';
 
 const TagPage = () => {
   const { tag } = useParams();
@@ -18,8 +19,8 @@ const TagPage = () => {
     setError(null);
     API.get(`/recipes/tag/${tag}`, { params: {} })
       .then((res) => {
-        setRecipes(res.data.recipes);
-        setNextCursor(res.data.nextCursor);
+        setRecipes(asArray(res.data?.recipes));
+        setNextCursor(asCursor(res.data?.nextCursor));
       })
       .catch((err) => {
         console.error("Failed to load tag:", err);
@@ -32,8 +33,8 @@ const TagPage = () => {
     setLoadingMore(true);
     try {
       const res = await API.get(`/recipes/tag/${tag}`, { params: { cursor: nextCursor } });
-      setRecipes((prev) => [...prev, ...res.data.recipes]);
-      setNextCursor(res.data.nextCursor);
+      setRecipes((prev) => [...prev, ...asArray(res.data?.recipes)]);
+      setNextCursor(asCursor(res.data?.nextCursor));
     } catch (err) {
       console.error("Failed to load more:", err);
     } finally {

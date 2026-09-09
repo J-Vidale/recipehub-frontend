@@ -5,6 +5,7 @@ import API from '../services/api';
 import RecipeCard from '../components/RecipeCard';
 import Seo from '../components/Seo';
 import Breadcrumbs from '../components/Breadcrumbs';
+import { asArray, asCursor } from '../lib/apiShape';
 
 const Explore = () => {
   const [recipes, setRecipes] = useState([]);
@@ -26,8 +27,8 @@ const Explore = () => {
         // capped at the first twenty. It also matches what this page says
         // it shows.
         const res = await API.get('/recipes', { params: { sort: 'newest' } });
-        setRecipes(res.data.recipes);
-        setNextCursor(res.data.nextCursor);
+        setRecipes(asArray(res.data?.recipes));
+        setNextCursor(asCursor(res.data?.nextCursor));
       } catch (err) {
         console.error('Error fetching recipes:', err);
         setError("Couldn't load recipes. Please try again.");
@@ -38,7 +39,7 @@ const Explore = () => {
     fetchAllRecipes();
 
     API.get('/tags/popular', { params: { limit: 10 } })
-      .then((res) => setPopularTags(res.data.tags))
+      .then((res) => setPopularTags(asArray(res.data?.tags)))
       .catch((err) => console.error('Failed to fetch popular tags:', err));
   }, []);
 
@@ -46,8 +47,8 @@ const Explore = () => {
     setLoadingMore(true);
     try {
       const res = await API.get('/recipes', { params: { sort: 'newest', cursor: nextCursor } });
-      setRecipes((prev) => [...prev, ...res.data.recipes]);
-      setNextCursor(res.data.nextCursor);
+      setRecipes((prev) => [...prev, ...asArray(res.data?.recipes)]);
+      setNextCursor(asCursor(res.data?.nextCursor));
     } catch (err) {
       console.error('Error fetching more recipes:', err);
     } finally {

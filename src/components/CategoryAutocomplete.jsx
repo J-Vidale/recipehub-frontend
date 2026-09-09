@@ -1,5 +1,6 @@
 import React, { useEffect, useId, useRef, useState } from "react";
 import API from "../services/api";
+import { asArray } from '../lib/apiShape';
 
 const DEBOUNCE_MS = 250;
 
@@ -26,8 +27,8 @@ const CategoryAutocomplete = ({ value, onChange, placeholder = "e.g. Chicken, or
     debounceRef.current = setTimeout(() => {
       API.get("/categories/suggest", { params: { q: value || "" } })
         .then((res) => {
-          setCurated(res.data.curated || []);
-          setCommunity(res.data.community || []);
+          setCurated(asArray(res.data?.curated));
+          setCommunity(asArray(res.data?.community));
         })
         .catch((err) => console.error("Failed to fetch category suggestions:", err));
     }, DEBOUNCE_MS);

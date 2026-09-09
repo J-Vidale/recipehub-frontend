@@ -4,6 +4,7 @@ import API from "../services/api";
 import { useSocket } from "../context/SocketContext";
 import Seo from "../components/Seo";
 import { avatarImage } from "../lib/images";
+import { asArray, asCursor } from '../lib/apiShape';
 
 const describeNotification = (n) => {
   const actorName = n.actor?.username || "Someone";
@@ -51,8 +52,8 @@ const Notifications = () => {
     const fetchNotifications = async () => {
       try {
         const res = await API.get("/notifications");
-        setNotifications(res.data.notifications);
-        setNextCursor(res.data.nextCursor);
+        setNotifications(asArray(res.data?.notifications));
+        setNextCursor(asCursor(res.data?.nextCursor));
       } catch (err) {
         console.error("Failed to fetch notifications:", err);
         setError("Couldn't load your notifications. Please try again.");
@@ -67,8 +68,8 @@ const Notifications = () => {
     setLoadingMore(true);
     try {
       const res = await API.get("/notifications", { params: { cursor: nextCursor } });
-      setNotifications((prev) => [...prev, ...res.data.notifications]);
-      setNextCursor(res.data.nextCursor);
+      setNotifications((prev) => [...prev, ...asArray(res.data?.notifications)]);
+      setNextCursor(asCursor(res.data?.nextCursor));
     } catch (err) {
       console.error("Failed to load more notifications:", err);
     } finally {

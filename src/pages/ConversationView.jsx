@@ -6,6 +6,7 @@ import { useAuth } from "../context/AuthContext";
 import { useSocket } from "../context/SocketContext";
 import Seo from "../components/Seo";
 import { ArrowLeftIcon } from "../components/icons";
+import { asArray } from '../lib/apiShape';
 
 const ConversationView = () => {
   const { id } = useParams();
@@ -26,7 +27,7 @@ const ConversationView = () => {
       .then((res) => {
         // Backend returns newest-first (cursor-pagination order); a chat
         // thread reads oldest-to-newest top-to-bottom.
-        setMessages([...res.data.messages].reverse());
+        setMessages([...asArray(res.data?.messages)].reverse());
       })
       .catch((err) => {
         console.error("Failed to fetch messages:", err);
