@@ -3,6 +3,7 @@ import MealRail from '../components/MealRail';
 import Seo from '../components/Seo';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { fetchSomeMeals, youtubeEmbedUrl } from '../utils/mealdb';
+import { externalUrl } from '../lib/externalUrl';
 
 const RandomMeal = () => {
   const [meal, setMeal] = useState(null);
@@ -69,6 +70,7 @@ const RandomMeal = () => {
   }
 
   const embedUrl = youtubeEmbedUrl(meal.strYoutube);
+  const sourceUrl = externalUrl(meal.strSource);
 
   return (
     <div className="page-container max-w-2xl">
@@ -110,9 +112,15 @@ const RandomMeal = () => {
           <button onClick={fetchRandomMeal} disabled={loading} className="btn-primary">
             {loading ? "Shuffling..." : "Shuffle again"}
           </button>
-          <a href={meal.strSource} target="_blank" rel="noreferrer" className="text-green-700 hover:underline">
-            Recipe Source
-          </a>
+          {/* Rendered only when there is a source, and only when that
+              source is an http(s) address: this arrives from TheMealDB.
+              It used to render an <a> with no href at all when the field
+              was empty, which is a link to nowhere. */}
+          {sourceUrl && (
+            <a href={sourceUrl} target="_blank" rel="noreferrer" className="text-green-700 hover:underline">
+              Recipe Source
+            </a>
+          )}
         </div>
       </div>
 
