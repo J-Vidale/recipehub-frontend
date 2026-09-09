@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import { renderTemplate } from "../vite-plugin-seo-files.js";
+import { renderTemplate, apiHints } from "../vite-plugin-seo-files.js";
 
 const root = join(import.meta.dirname, "..");
 const templates = readdirSync(join(root, "seo"));
@@ -78,5 +78,36 @@ describe("rendered output for a custom domain", () => {
     const sitemap = renderTemplate(readTemplate("sitemap.xml"), SITE);
     expect(sitemap).toContain(`${SITE}/cuisines`);
     expect(sitemap).toContain(`${SITE}/ingredients`);
+  });
+});
+
+// Connection hints for the API, written at build time because the origin
+// is only known then. A preconnect earns its socket only if the page will
+// really talk to that host - pointing one at localhost from a production
+// build would just be a wasted DNS lookup and a misleading line in the
+// document head.
+describe("apiHints", () => {
+  it("preconnects and pre-resolves a real API origin", () => {
+    const hints = apiHints("https://api.example.com");
+    expect(hints).toContain('rel="preconnect" href="https://api.example.com"');
+    expect(hints).toContain('rel="dns-prefetch" href="https://api.example.com"');
+    // The API is a different origin and the requests carry credentials, so
+    // the speculative connection has to be opened the same way or it is
+    // not the one that gets reused.
+    expect(hints).toContain("crossorigin");
+  });
+
+  it.each([
+    ["nothing configured", ""],
+    ["the API on this same origin", ""],
+    ["a developer's machine", "http://localhost:5000"],
+    ["the loopback address", "http://127.0.0.1:5000"],
+    ["IPv6 loopback", "http://[::1]:5000"],
+  ])("emits no hint for %s", (_label, origin) => {
+    expect(apiHints(origin)).toBe("");
+  });
+
+  it("is not fooled by a host that merely starts with localhost", () => {
+    expect(apiHints("https://localhost-api.example.com")).not.toBe("");
   });
 });

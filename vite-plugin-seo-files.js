@@ -1,5 +1,6 @@
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
+import { normaliseApiBase, originOf } from "./src/lib/apiBase.js";
 
 // robots.txt, sitemap.xml and llms.txt all have to state the site's real
 // public origin, and they used to hardcode the Render URL. That made
@@ -13,6 +14,22 @@ import { join } from "node:path";
 
 const TEMPLATE_DIR = "seo";
 const PLACEHOLDER = /__SITE_URL__/g;
+const API_HINTS_PLACEHOLDER = /<!-- __API_HINTS__ -->/g;
+
+// A preconnect only earns its socket when it points at a host the page
+// will really talk to. An origin that is empty (the API shares this site's
+// origin, so the connection already exists) or a loopback address (a
+// developer's machine, or a production build with VITE_API_URL unset) gets
+// no hint at all rather than a misleading one.
+const LOOPBACK = /^https?:\/\/(localhost|127\.\d+\.\d+\.\d+|\[::1\])(:|$)/;
+
+export const apiHints = (origin) => {
+  if (!origin || LOOPBACK.test(origin)) return "";
+  return [
+    `<link rel="preconnect" href="${origin}" crossorigin />`,
+    `<link rel="dns-prefetch" href="${origin}" />`,
+  ].join("\n    ");
+};
 
 const CONTENT_TYPES = {
   ".txt": "text/plain; charset=utf-8",
@@ -35,6 +52,7 @@ const listTemplates = (root) => {
 export default function seoFiles() {
   let root = process.cwd();
   let siteUrl = "";
+  let apiOrigin = "";
 
   const resolveSiteUrl = (env) =>
     (env.VITE_SITE_URL || "https://recipehub-frontend-cgip.onrender.com").replace(/\/+$/, "");
@@ -45,6 +63,9 @@ export default function seoFiles() {
     configResolved(config) {
       root = config.root;
       siteUrl = resolveSiteUrl(config.env);
+      // The same derivation the app uses, so the host that is preconnected
+      // is the host that is called.
+      apiOrigin = originOf(normaliseApiBase(config.env.VITE_API_URL));
     },
 
     // Serve them in dev so the files can actually be checked before deploy.
@@ -63,7 +84,9 @@ export default function seoFiles() {
     // reads, and what the browser sees before React mounts and <Seo>
     // rewrites them per route, so they have to follow the same origin.
     transformIndexHtml(html) {
-      return html.replace(PLACEHOLDER, siteUrl);
+      return html
+        .replace(PLACEHOLDER, siteUrl)
+        .replace(API_HINTS_PLACEHOLDER, apiHints(apiOrigin));
     },
 
     // Emitted as assets rather than written after the fact, so they are

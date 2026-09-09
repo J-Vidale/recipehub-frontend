@@ -54,10 +54,13 @@ function DrinkDetail() {
       />
       <div className="card">
         <div className="detail-hero">
+          {/* Above the fold and the page's largest paint: fetched at high
+              priority rather than lazily. See MealDetail. */}
           <img
             src={drink.strDrinkThumb}
             alt={`${drink.strDrink}${drink.strGlass ? ` served in a ${drink.strGlass.toLowerCase()}` : ""}`}
-            loading="lazy"
+            fetchPriority="high"
+            decoding="async"
           />
         </div>
         <h1 className="text-2xl font-bold text-green-700 mb-3">{drink.strDrink}</h1>
