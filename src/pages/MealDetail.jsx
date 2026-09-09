@@ -68,10 +68,15 @@ function MealDetail() {
       />
       <div className="card">
         <div className="detail-hero">
+          {/* The largest thing on the page, and what its load time is
+              measured by. Lazy-loading it kept it out of the browser's
+              preload scan, so the fetch only started once the layout had
+              run - the opposite of what an image already in view wants. */}
           <img
             src={meal.strMealThumb}
             alt={`${meal.strMeal}, a ${meal.strArea} ${meal.strCategory.toLowerCase()} dish`}
-            loading="lazy"
+            fetchPriority="high"
+            decoding="async"
           />
         </div>
         <h1 className="text-2xl font-bold text-green-700 mb-3">{meal.strMeal}</h1>

@@ -109,7 +109,12 @@ const RecipeDetail = () => {
       <div className="card">
         <div className="detail-hero">
           {activeMedia ? (
-            <img src={recipeHeroImage(activeMedia.url)} alt={recipe.title} decoding="async" />
+            <img
+              src={recipeHeroImage(activeMedia.url)}
+              alt={recipe.title}
+              fetchPriority="high"
+              decoding="async"
+            />
           ) : (
             <div className="detail-hero__placeholder" aria-hidden="true"><UtensilsIcon size="4rem" /></div>
           )}

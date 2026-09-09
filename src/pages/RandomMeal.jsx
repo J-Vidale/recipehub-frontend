@@ -79,7 +79,14 @@ const RandomMeal = () => {
       <Breadcrumbs items={[{ label: "Home", to: "/" }, { label: "Random meal" }]} />
       <div className="card">
         <div className="detail-hero">
-          <img src={meal.strMealThumb} alt={`${meal.strMeal}, a ${meal.strArea} ${meal.strCategory.toLowerCase()} dish`} loading="lazy" />
+          {/* Above the fold and the page's largest paint: fetched at high
+              priority rather than lazily. See MealDetail. */}
+          <img
+            src={meal.strMealThumb}
+            alt={`${meal.strMeal}, a ${meal.strArea} ${meal.strCategory.toLowerCase()} dish`}
+            fetchPriority="high"
+            decoding="async"
+          />
         </div>
         <h1 className="text-2xl font-bold text-green-700 mb-3">{meal.strMeal}</h1>
         <div className="flex gap-2 mb-4">

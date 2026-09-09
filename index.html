@@ -15,6 +15,21 @@
     <link rel="canonical" href="__SITE_URL__/" />
     <meta name="theme-color" content="#15803d" />
 
+    <!-- Opening a connection takes a DNS lookup, a TCP handshake and a TLS
+         handshake before a single byte of the request is sent, and the
+         browser only starts that when it finds the first request to the
+         host - which for the API is after the JavaScript has loaded and
+         run. Starting it now overlaps that setup with the download.
+
+         The API's hint is written at build time from VITE_API_URL, and
+         omitted when there is nothing useful to point at. -->
+    <!-- __API_HINTS__ -->
+    <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
+    <!-- Recipe pages fetch dishes and drinks straight from these two.
+         Resolving the name early is most of the win and costs no socket. -->
+    <link rel="dns-prefetch" href="https://www.themealdb.com" />
+    <link rel="dns-prefetch" href="https://www.thecocktaildb.com" />
+
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
