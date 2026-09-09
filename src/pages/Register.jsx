@@ -2,35 +2,58 @@ import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import Seo from "../components/Seo";
+import Field from "../components/Field";
 import { isNetworkError } from "../services/api";
+import {
+  validateUsername,
+  validateEmail,
+  validatePassword,
+  USERNAME_HINT,
+  MIN_PASSWORD_LENGTH,
+} from "../lib/credentials";
 
 function Register() {
   const { login, register } = useContext(AuthContext);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ username: "", email: "", password: "" });
+  const [fieldErrors, setFieldErrors] = useState({});
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    // Clear the field's error as soon as it is being addressed, rather
+    // than leaving it under a field that has since changed.
+    setFieldErrors((prev) => (prev[name] ? { ...prev, [name]: null } : prev));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(""); // clear previous error
+    setError("");
+
+    // Checked here first purely to save the round trip: on free hosting
+    // the API may be asleep, and hearing "usernames need three characters"
+    // after thirty seconds of waiting is a poor way to find out. The
+    // server checks all of this again and has the final say.
+    const errors = {
+      username: validateUsername(formData.username),
+      email: validateEmail(formData.email),
+      password: validatePassword(formData.password),
+    };
+    if (errors.username || errors.email || errors.password) {
+      setFieldErrors(errors);
+      return;
+    }
+
+    setFieldErrors({});
     setSubmitting(true);
     try {
-      await register(formData.username, formData.email, formData.password);
-      // After successful registration, log in the user
-      await login(formData.username, formData.password); // Use username, not email
+      await register(formData.username.trim(), formData.email.trim(), formData.password);
+      await login(formData.username.trim(), formData.password);
       navigate("/profile");
     } catch (err) {
-      setError(
-        isNetworkError(err) ? err.message : err.message || "Registration failed"
-      );
+      setError(isNetworkError(err) ? err.message : err.message || "Registration failed");
     } finally {
       setSubmitting(false);
     }
@@ -44,37 +67,42 @@ function Register() {
       />
       <div className="card w-full max-w-md">
         <h1 className="text-2xl font-bold text-green-700 mb-6 text-center">Create your account</h1>
-        {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
+        {error && (
+          <p className="form-error" role="alert">
+            {error}
+          </p>
+        )}
+        <form onSubmit={handleSubmit} noValidate className="space-y-4">
+          <Field
+            label="Username"
             name="username"
-            placeholder="Username"
             value={formData.username}
             onChange={handleChange}
-            className="input"
-            required
+            error={fieldErrors.username}
+            hint={USERNAME_HINT}
+            autoComplete="username"
           />
-          <input
-            type="email"
+          <Field
+            label="Email"
             name="email"
-            placeholder="Email"
+            type="email"
             value={formData.email}
             onChange={handleChange}
-            className="input"
-            required
+            error={fieldErrors.email}
+            autoComplete="email"
           />
-          <input
-            type="password"
+          <Field
+            label="Password"
             name="password"
-            placeholder="Password"
+            type="password"
             value={formData.password}
             onChange={handleChange}
-            className="input"
-            required
+            error={fieldErrors.password}
+            hint={`At least ${MIN_PASSWORD_LENGTH} characters.`}
+            autoComplete="new-password"
           />
           <button type="submit" disabled={submitting} className="btn-primary w-full">
-            {submitting ? "Registering..." : "Register"}
+            {submitting ? "Creating your account..." : "Create account"}
           </button>
         </form>
         <p className="text-sm text-gray-600 text-center mt-4">
