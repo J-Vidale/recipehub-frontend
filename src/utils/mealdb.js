@@ -90,9 +90,12 @@ export const extractIngredients = (item, max = 20) => {
 
 // TheMealDB stores a normal watch URL (youtube.com/watch?v=XXXX); the
 // embeddable player needs youtube.com/embed/XXXX instead.
+// The id is matched against YouTube's own alphabet rather than "anything
+// up to the next &". The old pattern would happily carry a slash, a quote
+// or a space out of a third party's response and into a src attribute.
 export const youtubeEmbedUrl = (watchUrl) => {
-  if (!watchUrl) return null;
-  const match = watchUrl.match(/[?&]v=([^&]+)/);
+  if (typeof watchUrl !== "string") return null;
+  const match = watchUrl.match(/[?&]v=([A-Za-z0-9_-]{6,32})(?:&|$)/);
   if (!match) return null;
   return `https://www.youtube.com/embed/${match[1]}`;
 };

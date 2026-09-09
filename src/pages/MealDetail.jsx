@@ -5,6 +5,7 @@ import Seo from "../components/Seo";
 import Breadcrumbs from "../components/Breadcrumbs";
 import { mealRecipeSchema } from "../lib/structuredData";
 import { fetchMealsByCategory, extractIngredients, youtubeEmbedUrl } from "../utils/mealdb";
+import { externalUrl } from "../lib/externalUrl";
 import NutritionPanel from "../components/NutritionPanel";
 
 function MealDetail() {
@@ -50,6 +51,7 @@ function MealDetail() {
 
   const ingredients = extractIngredients(meal);
   const embedUrl = youtubeEmbedUrl(meal.strYoutube);
+  const youtubeUrl = externalUrl(meal.strYoutube);
 
   return (
     <div className="page-container max-w-2xl">
@@ -112,8 +114,10 @@ function MealDetail() {
 
         <NutritionPanel ingredients={ingredients} />
 
-        {!embedUrl && meal.strYoutube && (
-          <a href={meal.strYoutube} target="_blank" rel="noreferrer" className="btn-primary inline-flex">
+        {/* The address comes from TheMealDB, so it is a link only if it
+            is one. See lib/externalUrl. */}
+        {!embedUrl && youtubeUrl && (
+          <a href={youtubeUrl} target="_blank" rel="noreferrer" className="btn-primary inline-flex">
             Watch on YouTube
           </a>
         )}
