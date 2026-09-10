@@ -48,15 +48,15 @@ const Feed = () => {
       <Seo title="Your Feed" description="The latest recipes from the cooks you follow on RecipeHub." noindex />
       <h1 className="page-title mb-8">Your Feed</h1>
       {loading ? (
-        <p className="text-center text-gray-600">Loading...</p>
+        <p className="text-center text-soft">Loading...</p>
       ) : error ? (
-        <p className="text-center text-red-600">{error}</p>
+        <p className="text-center text-danger">{error}</p>
       ) : recipes.length === 0 ? (
-        <div className="card text-center text-gray-600">
+        <div className="card text-center text-soft">
           <p className="mb-4">
             No recipes yet from people you follow.
           </p>
-          <Link to="/explore" className="text-green-700 underline">
+          <Link to="/explore" className="text-brand underline">
             Explore recipes to find people to follow
           </Link>
         </div>
@@ -97,10 +97,10 @@ const Feed = () => {
                     {recipe.category && <span className="recipe-card__badge">{recipe.category}</span>}
                   </Link>
                   <div className="p-4">
-                    <Link to={`/recipes/${recipe._id}`} className="text-lg font-semibold text-gray-900 hover:underline">
+                    <Link to={`/recipes/${recipe._id}`} className="text-lg font-semibold text-strong hover:underline">
                       {recipe.title}
                     </Link>
-                    <p className="text-gray-600 text-sm mt-1 mb-3">{recipe.instructions?.slice(0, 150)}...</p>
+                    <p className="text-soft text-sm mt-1 mb-3">{recipe.instructions?.slice(0, 150)}...</p>
                     <LikeButton
                       recipeId={recipe._id}
                       initialLikeCount={recipe.likeCount || 0}

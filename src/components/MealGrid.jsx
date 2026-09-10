@@ -16,7 +16,7 @@ const MAX_STAGGER_STEPS = 12;
 
 const MealGrid = ({ items, linkTo, emptyMessage = "Nothing here yet." }) => {
   if (!items || items.length === 0) {
-    return <p className="text-gray-600">{emptyMessage}</p>;
+    return <p className="text-soft">{emptyMessage}</p>;
   }
 
   return (

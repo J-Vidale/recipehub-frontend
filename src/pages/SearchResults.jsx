@@ -45,11 +45,11 @@ const SearchResults = () => {
       </h1>
 
       {loading ? (
-        <p className="text-gray-600">Loading...</p>
+        <p className="text-soft">Loading...</p>
       ) : error ? (
-        <p className="text-red-600">{error}</p>
+        <p className="text-danger">{error}</p>
       ) : !hasResults ? (
-        <p className="text-gray-600">No results found.</p>
+        <p className="text-soft">No results found.</p>
       ) : (
         <div className="space-y-8">
           {results.users.length > 0 && (
@@ -63,7 +63,7 @@ const SearchResults = () => {
                     className="card-sm card-hover"
                   >
                     <p className="font-semibold">{u.username}</p>
-                    <p className="text-sm text-gray-500">{u.followerCount} followers</p>
+                    <p className="text-sm text-muted">{u.followerCount} followers</p>
                   </Link>
                 ))}
               </div>

@@ -57,13 +57,13 @@ const RandomMeal = () => {
         <h1 className="content-title mb-3">Random Meal</h1>
         {error ? (
           <>
-            <p className="text-red-600 mb-4">{error}</p>
+            <p className="text-danger mb-4">{error}</p>
             <button onClick={fetchRandomMeal} disabled={loading} className="btn-primary">
               {loading ? "Trying again..." : "Try again"}
             </button>
           </>
         ) : (
-          <p className="text-gray-600">Finding you something to cook...</p>
+          <p className="text-soft">Finding you something to cook...</p>
         )}
       </div>
     );
@@ -107,7 +107,7 @@ const RandomMeal = () => {
             />
           </div>
         )}
-        <p className="text-gray-600 mb-4 whitespace-pre-line">{meal.strInstructions}</p>
+        <p className="text-soft mb-4 whitespace-pre-line">{meal.strInstructions}</p>
         <div className="flex items-center gap-3 mb-2">
           <button onClick={fetchRandomMeal} disabled={loading} className="btn-primary">
             {loading ? "Shuffling..." : "Shuffle again"}
@@ -117,7 +117,7 @@ const RandomMeal = () => {
               It used to render an <a> with no href at all when the field
               was empty, which is a link to nowhere. */}
           {sourceUrl && (
-            <a href={sourceUrl} target="_blank" rel="noreferrer" className="text-green-700 hover:underline">
+            <a href={sourceUrl} target="_blank" rel="noreferrer" className="text-brand hover:underline">
               Recipe Source
             </a>
           )}

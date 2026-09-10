@@ -70,9 +70,9 @@ const Explore = () => {
             <Link
               key={tag}
               to={`/tag/${tag}`}
-              className="card-sm card-hover px-3 py-1 text-sm text-green-700"
+              className="card-sm card-hover px-3 py-1 text-sm text-brand"
             >
-              #{tag} <span className="text-gray-400">{count}</span>
+              #{tag} <span className="text-muted">{count}</span>
             </Link>
           ))}
         </div>
@@ -90,7 +90,7 @@ const Explore = () => {
           ))}
         </div>
       ) : error ? (
-        <p className="text-center text-red-600">{error}</p>
+        <p className="text-center text-danger">{error}</p>
       ) : (
         <>
           <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">

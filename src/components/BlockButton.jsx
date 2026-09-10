@@ -37,7 +37,7 @@ const BlockButton = ({ userId, onBlockedChange }) => {
     <button
       onClick={handleToggle}
       disabled={busy}
-      className="text-xs text-gray-500 hover:text-red-600 disabled:opacity-60"
+      className="text-xs text-muted hover:text-danger disabled:opacity-60"
     >
       {blocked ? "Unblock" : "Block"}
     </button>

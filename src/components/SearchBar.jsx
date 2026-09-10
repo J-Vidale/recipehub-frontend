@@ -78,20 +78,20 @@ const SearchBar = () => {
       {open && (
         <div className="absolute mt-1 w-72 card p-0 shadow-lg z-50 max-h-96 overflow-y-auto">
           {loading ? (
-            <p className="p-3 text-sm text-gray-500">Searching...</p>
+            <p className="p-3 text-sm text-muted">Searching...</p>
           ) : !hasResults ? (
-            <p className="p-3 text-sm text-gray-500">No results for "{query.trim()}"</p>
+            <p className="p-3 text-sm text-muted">No results for "{query.trim()}"</p>
           ) : (
             <>
               {results.users.length > 0 && (
                 <div>
-                  <p className="px-3 pt-2 text-xs font-semibold text-gray-400 uppercase">People</p>
+                  <p className="px-3 pt-2 text-xs font-semibold text-muted uppercase">People</p>
                   {results.users.map((u) => (
                     <Link
                       key={u._id}
                       to={`/users/${u._id}`}
                       onClick={() => setOpen(false)}
-                      className="block px-3 py-2 hover:bg-gray-50 text-sm"
+                      className="block px-3 py-2 hover:surface-2 text-sm"
                     >
                       {u.username}
                     </Link>
@@ -100,13 +100,13 @@ const SearchBar = () => {
               )}
               {results.recipes.length > 0 && (
                 <div>
-                  <p className="px-3 pt-2 text-xs font-semibold text-gray-400 uppercase">Recipes</p>
+                  <p className="px-3 pt-2 text-xs font-semibold text-muted uppercase">Recipes</p>
                   {results.recipes.map((r) => (
                     <Link
                       key={r._id}
                       to={`/recipes/${r._id}`}
                       onClick={() => setOpen(false)}
-                      className="block px-3 py-2 hover:bg-gray-50 text-sm"
+                      className="block px-3 py-2 hover:surface-2 text-sm"
                     >
                       {r.title}
                     </Link>
@@ -115,7 +115,7 @@ const SearchBar = () => {
               )}
               <button
                 onClick={handleSubmit}
-                className="w-full text-left px-3 py-2 text-sm text-green-700 hover:bg-gray-50 border-t"
+                className="w-full text-left px-3 py-2 text-sm text-brand hover:surface-2 border-t"
               >
                 See all results for "{query.trim()}"
               </button>

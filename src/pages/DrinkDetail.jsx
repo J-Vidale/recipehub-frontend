@@ -32,8 +32,8 @@ function DrinkDetail() {
       .catch((err) => console.error("Failed to fetch related drinks:", err));
   }, [drink?.strCategory, id]);
 
-  if (loading) return <p className="page-container text-center text-gray-600">Loading drink...</p>;
-  if (error) return <p className="page-container text-center text-red-600">{error}</p>;
+  if (loading) return <p className="page-container text-center text-soft">Loading drink...</p>;
+  if (error) return <p className="page-container text-center text-danger">{error}</p>;
 
   const ingredients = extractIngredients(drink, 15);
 
@@ -77,7 +77,7 @@ function DrinkDetail() {
         </div>
 
         <h3 className="font-semibold text-lg mb-2">Ingredients</h3>
-        <ul className="list-disc list-inside text-gray-700 space-y-1 mb-4">
+        <ul className="list-disc list-inside text-strong space-y-1 mb-4">
           {ingredients.map(({ ingredient, measure }, i) => (
             <li key={i}>
               {ingredient}{measure ? ` - ${measure}` : ""}
@@ -86,7 +86,7 @@ function DrinkDetail() {
         </ul>
 
         <h3 className="font-semibold text-lg mb-2">Instructions</h3>
-        <p className="text-gray-600 whitespace-pre-line mb-4">{drink.strInstructions}</p>
+        <p className="text-soft whitespace-pre-line mb-4">{drink.strInstructions}</p>
       </div>
 
       <MealRail

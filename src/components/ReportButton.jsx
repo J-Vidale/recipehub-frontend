@@ -30,14 +30,14 @@ const ReportButton = ({ targetType, targetId }) => {
   };
 
   if (submitted) {
-    return <span className="text-xs text-gray-500">Reported. Thanks for letting us know.</span>;
+    return <span className="text-xs text-muted">Reported. Thanks for letting us know.</span>;
   }
 
   return (
     <div>
       <button
         onClick={() => setOpen(!open)}
-        className="text-xs text-gray-500 hover:text-red-600"
+        className="text-xs text-muted hover:text-danger"
       >
         Report
       </button>

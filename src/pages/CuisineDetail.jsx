@@ -46,7 +46,7 @@ const CuisineDetail = () => {
 
       <h1 className="page-title mb-2">{cuisine} recipes</h1>
       {status === "ready" && (
-        <p className="text-gray-600 mb-8">
+        <p className="text-soft mb-8">
           {count} {count === 1 ? "dish" : "dishes"} filed under {cuisine}.
         </p>
       )}
@@ -60,13 +60,13 @@ const CuisineDetail = () => {
       )}
 
       {status === "error" && (
-        <p className="text-gray-600">
+        <p className="text-soft">
           These recipes could not be loaded just now. Try again in a moment.
         </p>
       )}
 
       {status === "empty" && (
-        <p className="text-gray-600">
+        <p className="text-soft">
           No dishes are filed under {cuisine}.{" "}
           <Link to="/cuisines" className="underline">
             Pick another cuisine

@@ -33,7 +33,7 @@ const LikeButton = ({ recipeId, initialLikeCount, initialLikedByMe = false }) =>
 
   if (!user) {
     return (
-      <Link to="/login" className="inline-flex items-center gap-1 text-gray-600 hover:text-green-700">
+      <Link to="/login" className="inline-flex items-center gap-1 text-soft hover:text-brand">
         <HeartIcon /> {likeCount} {likeCount === 1 ? "like" : "likes"}
       </Link>
     );
@@ -44,7 +44,7 @@ const LikeButton = ({ recipeId, initialLikeCount, initialLikedByMe = false }) =>
       onClick={handleToggle}
       disabled={busy}
       className={`inline-flex items-center gap-1 px-3 py-1.5 rounded disabled:opacity-60 ${
-        likedByMe ? "bg-pink-100 text-pink-700" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+        likedByMe ? "bg-pink-100 text-pink-700" : "surface-2 text-strong hover:surface-2"
       }`}
     >
       <HeartIcon filled={likedByMe} />

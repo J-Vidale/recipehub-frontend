@@ -43,7 +43,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const Status = lazy(() => import("./pages/Status"));
 
 const RouteFallback = () => (
-  <div className="p-8 text-center text-gray-500">Loading...</div>
+  <div className="p-8 text-center text-muted">Loading...</div>
 );
 
 const MAIN_ID = "main-content";

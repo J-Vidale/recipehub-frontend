@@ -56,7 +56,7 @@ const IngredientDetail = () => {
         <div>
           <h1 className="page-title mb-1">Recipes with {ingredient}</h1>
           {status === "ready" && (
-            <p className="text-gray-600">
+            <p className="text-soft">
               {meals.length} {meals.length === 1 ? "dish uses" : "dishes use"} {ingredient}.
             </p>
           )}
@@ -72,13 +72,13 @@ const IngredientDetail = () => {
       )}
 
       {status === "error" && (
-        <p className="text-gray-600">
+        <p className="text-soft">
           These recipes could not be loaded just now. Try again in a moment.
         </p>
       )}
 
       {status === "empty" && (
-        <p className="text-gray-600">
+        <p className="text-soft">
           No dishes are recorded with {ingredient}.{" "}
           <Link to="/ingredients" className="underline">
             Pick another ingredient

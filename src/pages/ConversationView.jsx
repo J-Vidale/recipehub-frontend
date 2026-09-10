@@ -70,19 +70,19 @@ const ConversationView = () => {
     }
   };
 
-  if (loading) return <div className="page-container text-center text-gray-600">Loading...</div>;
-  if (error) return <div className="page-container text-center text-red-600">{error}</div>;
+  if (loading) return <div className="page-container text-center text-soft">Loading...</div>;
+  if (error) return <div className="page-container text-center text-danger">{error}</div>;
 
   return (
     <div className="page-container max-w-2xl flex flex-col">
       <Seo title="Conversation" description="Your private conversation on RecipeHub." noindex />
       <h1 className="sr-only">Conversation</h1>
-      <Link to="/messages" className="text-sm text-green-700 hover:underline mb-4">
+      <Link to="/messages" className="text-sm text-brand hover:underline mb-4">
         <ArrowLeftIcon /> Back to messages
       </Link>
       <div className="card flex-1 mb-4 overflow-y-auto max-h-[60vh] space-y-2">
         {messages.length === 0 ? (
-          <p className="text-gray-500 text-center">No messages yet. Say hello!</p>
+          <p className="text-muted text-center">No messages yet. Say hello!</p>
         ) : (
           messages.map((m) => {
             const isMine = m.sender === user._id || m.sender?._id === user._id;
@@ -90,7 +90,7 @@ const ConversationView = () => {
               <div key={m._id} className={`flex ${isMine ? "justify-end" : "justify-start"}`}>
                 <div
                   className={`max-w-[75%] px-3 py-2 rounded-lg text-sm ${
-                    isMine ? "bg-green-600 text-white" : "bg-gray-100 text-gray-800"
+                    isMine ? "bubble-mine" : "surface-2 text-strong"
                   }`}
                 >
                   {m.text}

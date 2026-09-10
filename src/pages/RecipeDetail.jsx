@@ -78,8 +78,8 @@ const RecipeDetail = () => {
     }
   };
 
-  if (error) return <div className="page-container text-center text-red-600">{error}</div>;
-  if (!recipe) return <div className="page-container text-center text-gray-600">Loading...</div>;
+  if (error) return <div className="page-container text-center text-danger">{error}</div>;
+  if (!recipe) return <div className="page-container text-center text-soft">Loading...</div>;
 
   const media = recipe.media || [];
   const activeMedia = media[activeMediaIndex];
@@ -143,13 +143,13 @@ const RecipeDetail = () => {
             ) : (
               <span className="avatar avatar-xs">{recipe.user.username[0]?.toUpperCase()}</span>
             )}
-            <span className="text-sm text-gray-500 hover:underline">by {recipe.user.username}</span>
+            <span className="text-sm text-muted hover:underline">by {recipe.user.username}</span>
           </Link>
         )}
-        <HashtagText text={recipe.instructions} className="text-gray-700 mb-4" />
+        <HashtagText text={recipe.instructions} className="text-strong mb-4" />
         <div className="mb-4">
           <h2 className="font-semibold text-lg mb-2">Ingredients</h2>
-          <ul className="list-disc list-inside text-gray-700 space-y-1">
+          <ul className="list-disc list-inside text-strong space-y-1">
             {recipe.ingredients.map((item, index) => (
               <li key={index}>
                 {item.name} - {item.amount}

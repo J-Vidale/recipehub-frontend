@@ -33,7 +33,7 @@ const ShareButton = ({ recipeId, initialShareCount, initialSharedByMe = false })
 
   if (!user) {
     return (
-      <Link to="/login" className="inline-flex items-center gap-1 text-gray-600 hover:text-green-700">
+      <Link to="/login" className="inline-flex items-center gap-1 text-soft hover:text-brand">
         <ShareIcon /> {shareCount} {shareCount === 1 ? "share" : "shares"}
       </Link>
     );
@@ -44,7 +44,7 @@ const ShareButton = ({ recipeId, initialShareCount, initialSharedByMe = false })
       onClick={handleToggle}
       disabled={busy}
       className={`inline-flex items-center gap-1 px-3 py-1.5 rounded disabled:opacity-60 ${
-        sharedByMe ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+        sharedByMe ? "surface-brand text-brand" : "surface-2 text-strong"
       }`}
     >
       <ShareIcon />

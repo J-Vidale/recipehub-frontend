@@ -49,7 +49,7 @@ const CreateRecipe = () => {
       />
       <div className="card">
         <h1 className="page-title mb-6">Create a Recipe</h1>
-        {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
+        {error && <p className="text-danger text-sm mb-4">{error}</p>}
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"
@@ -61,7 +61,7 @@ const CreateRecipe = () => {
             required
           />
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Category (optional)</label>
+            <label className="block text-sm font-medium text-strong mb-1">Category (optional)</label>
             <CategoryAutocomplete
               value={formData.category}
               onChange={(category) => setFormData((prev) => ({ ...prev, category }))}

@@ -21,7 +21,7 @@ const CommentLikeButton = ({ commentId, initialLikeCount, initialLikedByMe }) =>
   const [busy, setBusy] = useState(false);
 
   if (!user) {
-    return <span className="text-xs text-gray-500">{likeCount} {likeCount === 1 ? "like" : "likes"}</span>;
+    return <span className="text-xs text-muted">{likeCount} {likeCount === 1 ? "like" : "likes"}</span>;
   }
 
   const handleToggle = async () => {
@@ -48,7 +48,7 @@ const CommentLikeButton = ({ commentId, initialLikeCount, initialLikedByMe }) =>
     <button
       onClick={handleToggle}
       disabled={busy}
-      className={`text-xs disabled:opacity-60 ${likedByMe ? "text-pink-700 font-medium" : "text-gray-500 hover:text-gray-700"}`}
+      className={`text-xs disabled:opacity-60 ${likedByMe ? "text-pink-700 font-medium" : "text-muted hover:text-strong"}`}
     >
       <HeartIcon filled={likedByMe} /> {likeCount} {likeCount === 1 ? "like" : "likes"}
     </button>
@@ -172,7 +172,7 @@ const CommentSection = ({ recipeId, recipeOwnerId, pinnedCommentId }) => {
         {!comment.parentComment && user && (
           <button
             onClick={() => setReplyingTo(replyingTo === comment._id ? null : comment._id)}
-            className="text-xs text-gray-500 hover:text-gray-700"
+            className="text-xs text-muted hover:text-strong"
           >
             Reply
           </button>
@@ -180,7 +180,7 @@ const CommentSection = ({ recipeId, recipeOwnerId, pinnedCommentId }) => {
         {!comment.parentComment && isRecipeOwner && (
           <button
             onClick={() => handlePinToggle(comment._id)}
-            className="text-xs text-gray-500 hover:text-gray-700"
+            className="text-xs text-muted hover:text-strong"
           >
             {pinnedId === comment._id ? "Unpin" : "Pin"}
           </button>
@@ -188,7 +188,7 @@ const CommentSection = ({ recipeId, recipeOwnerId, pinnedCommentId }) => {
         {canDelete && (
           <button
             onClick={() => handleDelete(comment._id)}
-            className="text-xs text-red-500 hover:text-red-700"
+            className="text-xs text-danger hover:text-danger"
           >
             Delete
           </button>
@@ -198,7 +198,7 @@ const CommentSection = ({ recipeId, recipeOwnerId, pinnedCommentId }) => {
   };
 
   return (
-    <div className="mt-8 pt-6 border-t border-gray-200">
+    <div className="mt-8 pt-6 border-t border-soft">
       <h2 className="font-semibold text-lg mb-3">Comments</h2>
 
       {user ? (
@@ -216,29 +216,29 @@ const CommentSection = ({ recipeId, recipeOwnerId, pinnedCommentId }) => {
           </button>
         </form>
       ) : (
-        <p className="mb-4 text-sm text-gray-600">
-          <Link to="/login" className="text-green-700 underline">Log in</Link> to comment.
+        <p className="mb-4 text-sm text-soft">
+          <Link to="/login" className="text-brand underline">Log in</Link> to comment.
         </p>
       )}
 
       {loading ? (
-        <p className="text-gray-500">Loading comments...</p>
+        <p className="text-muted">Loading comments...</p>
       ) : error ? (
-        <p className="text-red-600">{error}</p>
+        <p className="text-danger">{error}</p>
       ) : orderedTopLevel.length === 0 ? (
-        <p className="text-gray-500">No comments yet. Be the first!</p>
+        <p className="text-muted">No comments yet. Be the first!</p>
       ) : (
         <ul className="space-y-4">
           {orderedTopLevel.map((comment) => (
-            <li key={comment._id} className={pinnedId === comment._id ? "card-sm bg-yellow-50" : ""}>
+            <li key={comment._id} className={pinnedId === comment._id ? "card-sm surface-notice" : ""}>
               {pinnedId === comment._id && (
-                <p className="text-xs font-medium text-yellow-700 mb-1 inline-flex items-center gap-1"><PinIcon /> Pinned</p>
+                <p className="text-xs font-medium text-notice mb-1 inline-flex items-center gap-1"><PinIcon /> Pinned</p>
               )}
               <div className="flex items-start gap-2">
                 <CommentAvatar user={comment.user} />
                 <div className="flex-1">
                   <p>
-                    <Link to={`/users/${comment.user._id}`} className="font-semibold text-green-700">
+                    <Link to={`/users/${comment.user._id}`} className="font-semibold text-brand">
                       {comment.user.username}
                     </Link>{" "}
                     {comment.text}
@@ -266,13 +266,13 @@ const CommentSection = ({ recipeId, recipeOwnerId, pinnedCommentId }) => {
                   )}
 
                   {repliesFor(comment._id).length > 0 && (
-                    <ul className="ml-2 mt-3 space-y-3 border-l-2 border-gray-200 pl-3">
+                    <ul className="ml-2 mt-3 space-y-3 border-l-2 border-soft pl-3">
                       {repliesFor(comment._id).map((reply) => (
                         <li key={reply._id} className="flex items-start gap-2">
                           <CommentAvatar user={reply.user} />
                           <div>
                             <p>
-                              <Link to={`/users/${reply.user._id}`} className="font-semibold text-green-700">
+                              <Link to={`/users/${reply.user._id}`} className="font-semibold text-brand">
                                 {reply.user.username}
                               </Link>{" "}
                               {reply.text}

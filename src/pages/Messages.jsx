@@ -41,11 +41,11 @@ const Messages = () => {
       <Seo title="Messages" description="Your direct message conversations on RecipeHub." noindex />
       <h1 className="page-title mb-6">Messages</h1>
       {loading ? (
-        <p className="text-gray-600">Loading...</p>
+        <p className="text-soft">Loading...</p>
       ) : error ? (
-        <p className="text-red-600">{error}</p>
+        <p className="text-danger">{error}</p>
       ) : conversations.length === 0 ? (
-        <p className="text-gray-600">No conversations yet.</p>
+        <p className="text-soft">No conversations yet.</p>
       ) : (
         <ul className="space-y-2">
           {conversations.map((c) => (
@@ -58,7 +58,7 @@ const Messages = () => {
                 )}
                 <div className="min-w-0">
                   <p className="font-semibold">{c.otherUser?.username}</p>
-                  <p className="text-sm text-gray-600 truncate">{c.lastMessageText}</p>
+                  <p className="text-sm text-soft truncate">{c.lastMessageText}</p>
                 </div>
               </Link>
             </li>
