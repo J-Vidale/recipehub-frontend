@@ -37,7 +37,7 @@ const ReportButton = ({ targetType, targetId }) => {
     <div>
       <button
         onClick={() => setOpen(!open)}
-        className="text-xs text-muted hover:text-danger"
+        className="tap-target text-xs text-muted hover:text-danger"
       >
         Report
       </button>

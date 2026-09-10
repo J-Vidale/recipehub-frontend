@@ -336,6 +336,19 @@ h3,
     top: 0;
   }
 
+  /* WCAG 2.5.8 asks for 24x24 CSS px of target on a touch screen. A
+     control drawn as small text (Reply, Report, Pin) reads at 16px tall,
+     which is a miss on a phone. The padding is vertical only, so the label
+     keeps its size and the row keeps its rhythm - the finger gets more
+     room without the design getting louder. Links sitting inside a
+     sentence are exempt under the same rule and are left alone. */
+  .tap-target {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    min-height: 24px;
+  }
+
   /* Inline SVG icons sit on the text baseline like a glyph would, and
      never shrink inside a flex row. */
   .icon {
@@ -828,6 +841,9 @@ h3,
   }
   .breadcrumbs a {
     color: var(--color-muted);
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
   }
   .breadcrumbs a:hover {
     color: var(--color-brand);
@@ -895,6 +911,17 @@ h3,
     gap: 0.35rem;
     font-size: 0.8125rem;
     color: var(--color-muted);
+  }
+  /* Only the nav columns. The "Recipe sources" list puts its links inside
+     sentences, where the inline exception applies and stretching them
+     would just break the line. */
+  .site-footer nav ul {
+    gap: 0;
+  }
+  .site-footer nav ul a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
   }
   .site-footer__legal {
     max-width: 72rem;
@@ -1978,6 +2005,10 @@ h3,
     font-size: 0.9375rem;
     text-decoration: none;
     white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    min-height: 24px;
   }
   .section-heading__link:hover {
     text-decoration: underline;

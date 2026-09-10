@@ -48,7 +48,7 @@ const CommentLikeButton = ({ commentId, initialLikeCount, initialLikedByMe }) =>
     <button
       onClick={handleToggle}
       disabled={busy}
-      className={`text-xs disabled:opacity-60 ${likedByMe ? "text-pink-700 font-medium" : "text-muted hover:text-strong"}`}
+      className={`tap-target text-xs disabled:opacity-60 ${likedByMe ? "text-pink-700 font-medium" : "text-muted hover:text-strong"}`}
     >
       <HeartIcon filled={likedByMe} /> {likeCount} {likeCount === 1 ? "like" : "likes"}
     </button>
@@ -172,7 +172,7 @@ const CommentSection = ({ recipeId, recipeOwnerId, pinnedCommentId }) => {
         {!comment.parentComment && user && (
           <button
             onClick={() => setReplyingTo(replyingTo === comment._id ? null : comment._id)}
-            className="text-xs text-muted hover:text-strong"
+            className="tap-target text-xs text-muted hover:text-strong"
           >
             Reply
           </button>
@@ -180,7 +180,7 @@ const CommentSection = ({ recipeId, recipeOwnerId, pinnedCommentId }) => {
         {!comment.parentComment && isRecipeOwner && (
           <button
             onClick={() => handlePinToggle(comment._id)}
-            className="text-xs text-muted hover:text-strong"
+            className="tap-target text-xs text-muted hover:text-strong"
           >
             {pinnedId === comment._id ? "Unpin" : "Pin"}
           </button>
@@ -188,7 +188,7 @@ const CommentSection = ({ recipeId, recipeOwnerId, pinnedCommentId }) => {
         {canDelete && (
           <button
             onClick={() => handleDelete(comment._id)}
-            className="text-xs text-danger hover:text-danger"
+            className="tap-target text-xs text-danger hover:text-danger"
           >
             Delete
           </button>
