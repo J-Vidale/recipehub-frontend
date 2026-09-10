@@ -45,6 +45,27 @@ services:
         name: Permissions-Policy
         value: camera=(), microphone=(), geolocation=()
 
+      # Caching, which a deploy depends on getting right in both
+      # directions.
+      #
+      # Everything under /assets carries a content hash in its filename, so
+      # a given URL's contents can never change. It can be held forever,
+      # and holding it is what makes a repeat visit cost almost nothing.
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+
+      # index.html is the opposite case and the more important one: it is
+      # the file that names which hashed assets to fetch. Cached, a visitor
+      # keeps asking for the previous build's files after a deploy has
+      # removed them - and the reload the app performs to recover would
+      # fetch the same stale copy and change nothing. no-cache still lets
+      # the browser store it; it just has to ask first, which is all this
+      # needs.
+      - path: /index.html
+        name: Cache-Control
+        value: no-cache
+
     envVars:
       # The API's URL. Vite bakes this into the JavaScript at build time,
       # so changing it needs a fresh build, not just a restart.
