@@ -11,6 +11,26 @@ const DEBOUNCE_MS = 250;
 // just fills the text, and whatever the user has typed is still what
 // gets submitted if they never pick one. Actual moderation of a custom
 // value happens server-side; this only offers suggestions.
+// Both halves of the suggestion response, reduced to what this component
+// can actually render. Strings and {name} objects are both accepted for
+// each, because the two halves have historically differed and a client
+// that dies over it is worse than one that shows fewer suggestions.
+const nameOf = (entry) => {
+  if (typeof entry === "string") return entry.trim();
+  if (entry && typeof entry.name === "string") return entry.name.trim();
+  return "";
+};
+
+const toNames = (value) => asArray(value).map(nameOf).filter(Boolean);
+
+const toCounted = (value) =>
+  asArray(value)
+    .map((entry) => ({
+      name: nameOf(entry),
+      count: Number.isFinite(entry?.count) ? entry.count : null,
+    }))
+    .filter((entry) => entry.name);
+
 const CategoryAutocomplete = ({ value, onChange, placeholder = "e.g. Chicken, or your own recipe name" }) => {
   const [open, setOpen] = useState(false);
   const [curated, setCurated] = useState([]);
@@ -20,15 +40,25 @@ const CategoryAutocomplete = ({ value, onChange, placeholder = "e.g. Chicken, or
   const containerRef = useRef(null);
   const listboxId = useId();
 
-  const options = [...curated.map((name) => ({ name, group: "curated" })), ...community.map((c) => ({ name: c.name, count: c.count, group: "community" }))];
+  const options = [
+    ...curated.map((name) => ({ name, group: "curated" })),
+    ...community.map((c) => ({ name: c.name, count: c.count, group: "community" })),
+  ];
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
       API.get("/categories/suggest", { params: { q: value || "" } })
         .then((res) => {
-          setCurated(asArray(res.data?.curated));
-          setCommunity(asArray(res.data?.community));
+          // asArray promises a list; it promises nothing about what is in
+          // it. The curated half is a list of strings and the community
+          // half a list of {name, count}, and every option's name is later
+          // lower-cased to compare against what has been typed - so one
+          // entry of the wrong shape threw inside render and replaced the
+          // whole Create Recipe page with the error boundary. Normalising
+          // here means an unusable entry is dropped rather than fatal.
+          setCurated(toNames(res.data?.curated));
+          setCommunity(toCounted(res.data?.community));
         })
         .catch((err) => console.error("Failed to fetch category suggestions:", err));
     }, DEBOUNCE_MS);
