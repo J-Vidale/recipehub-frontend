@@ -68,8 +68,16 @@ const UserProfile = () => {
     }
   };
 
-  const handleFollowerCountChange = (delta) => {
-    setProfile((prev) => (prev ? { ...prev, followerCount: prev.followerCount + delta } : prev));
+  // A settled count from the server replaces the number outright; a delta
+  // is the optimistic guess made before it answered, and only adjusts.
+  const handleFollowerCountChange = (change) => {
+    setProfile((prev) => {
+      if (!prev) return prev;
+      if (Number.isFinite(change?.count)) {
+        return { ...prev, followerCount: change.count };
+      }
+      return { ...prev, followerCount: prev.followerCount + (change?.delta ?? 0) };
+    });
   };
 
   const handleMessage = async () => {
