@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { CloseIcon } from "./icons";
+import { MAX_INGREDIENT_FIELD_LENGTH, MAX_INGREDIENTS } from "../lib/recipeLimits";
 
 function IngredientFields({ ingredients, setIngredients }) {
   // Stable per-row identity, decoupled from array position, so React
@@ -19,7 +20,10 @@ function IngredientFields({ ingredients, setIngredients }) {
     );
   };
 
+  const atLimit = ingredients.length >= MAX_INGREDIENTS;
+
   const handleAdd = () => {
+    if (atLimit) return;
     keysRef.current = [...keysRef.current, `ing-${nextKeyId.current++}`];
     setIngredients([...ingredients, { name: "", amount: "" }]);
   };
@@ -51,6 +55,7 @@ function IngredientFields({ ingredients, setIngredients }) {
             placeholder="Plain flour"
             value={ingredient.name}
             onChange={(e) => handleChange(index, "name", e.target.value)}
+            maxLength={MAX_INGREDIENT_FIELD_LENGTH}
             className="input"
           />
           <input
@@ -59,6 +64,7 @@ function IngredientFields({ ingredients, setIngredients }) {
             placeholder="200 g"
             value={ingredient.amount}
             onChange={(e) => handleChange(index, "amount", e.target.value)}
+            maxLength={MAX_INGREDIENT_FIELD_LENGTH}
             className="input"
           />
           <button
@@ -74,10 +80,16 @@ function IngredientFields({ ingredients, setIngredients }) {
       <button
         type="button"
         onClick={handleAdd}
-        className="tap-target text-brand hover:underline text-sm mt-1"
+        disabled={atLimit}
+        className="tap-target text-brand hover:underline text-sm mt-1 disabled:opacity-60 disabled:no-underline"
       >
         + Add Ingredient
       </button>
+      {atLimit && (
+        <p className="text-xs text-muted mt-1">
+          A recipe can have up to {MAX_INGREDIENTS} ingredients.
+        </p>
+      )}
     </div>
   );
 }

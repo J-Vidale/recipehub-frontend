@@ -678,6 +678,14 @@ h3,
     font-weight: 700;
     padding: 0.2rem 0.6rem;
     border-radius: 9999px;
+    /* The category is whatever the author typed. Absolutely positioned,
+       it took its content's width and ran off the photo - a 40-character
+       category made a 605px pill inside a 270px card. It gets one line
+       and the card's width, and says the rest with an ellipsis. */
+    max-width: calc(100% - 1.2rem);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .recipe-card__body {
     padding: 1rem;
@@ -1624,6 +1632,12 @@ h3,
     z-index: 1;
     font-size: 1rem;
     line-height: 1.2;
+    /* Cuisine and ingredient names come from an upstream API, so their
+       length is not ours to set. The tile clips its corners, so a name
+       with no break opportunity in it was cut off mid-word rather than
+       wrapped. */
+    min-width: 0;
+    overflow-wrap: anywhere;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -1977,6 +1991,15 @@ h3,
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
+    /* A flex child will not shrink below its content by default, so a
+       long username pushed the byline off the card at narrow widths.
+       These two let it give way and break instead. */
+    min-width: 0;
+    max-width: 100%;
+  }
+  .featured__author > span:last-child,
+  .featured__author > a {
+    overflow-wrap: anywhere;
   }
 
   /* Lifting on hover is the card saying it is a link. It only happens
@@ -2206,6 +2229,13 @@ h3,
   .nutrition__table-scroll {
     width: 100%;
     overflow-x: auto;
+  }
+  /* An ingredient name is free text and can arrive as one unbroken run of
+     characters. Without this the cell refuses to wrap, the table grows to
+     fit it, and a two-column panel becomes a 1400px sideways scroll. */
+  .nutrition__table th,
+  .nutrition__table td {
+    overflow-wrap: anywhere;
   }
 
   .nutrition__table {

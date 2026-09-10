@@ -7,6 +7,7 @@ import CategoryAutocomplete from "../components/CategoryAutocomplete";
 import Seo from "../components/Seo";
 import { asArray } from "../lib/apiShape";
 import Field from "../components/Field";
+import { MAX_TITLE_LENGTH, MAX_INSTRUCTIONS_LENGTH } from "../lib/recipeLimits";
 
 const EditRecipe = () => {
   const { id } = useParams();
@@ -89,6 +90,7 @@ const EditRecipe = () => {
             name="title"
             value={form.title}
             onChange={handleChange}
+            maxLength={MAX_TITLE_LENGTH}
           />
           <CategoryAutocomplete
             label="Category"
@@ -102,6 +104,7 @@ const EditRecipe = () => {
             name="instructions"
             value={form.instructions}
             onChange={handleChange}
+            maxLength={MAX_INSTRUCTIONS_LENGTH}
             rows={6}
             hint="Write #hashtags anywhere in here to tag the recipe."
           />

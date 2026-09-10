@@ -80,7 +80,7 @@ const ConversationView = () => {
       <Link to="/messages" className="text-sm text-brand hover:underline mb-4">
         <ArrowLeftIcon /> Back to messages
       </Link>
-      <div className="card flex-1 mb-4 overflow-y-auto max-h-[60vh] space-y-2">
+      <div className="card flex-1 min-w-0 mb-4 overflow-y-auto max-h-[60vh] space-y-2">
         {messages.length === 0 ? (
           <p className="text-muted text-center">No messages yet. Say hello!</p>
         ) : (
@@ -89,7 +89,7 @@ const ConversationView = () => {
             return (
               <div key={m._id} className={`flex ${isMine ? "justify-end" : "justify-start"}`}>
                 <div
-                  className={`max-w-[75%] px-3 py-2 rounded-lg text-sm ${
+                  className={`max-w-[75%] px-3 py-2 rounded-lg text-sm break-words ${
                     isMine ? "bubble-mine" : "surface-2 text-strong"
                   }`}
                 >
