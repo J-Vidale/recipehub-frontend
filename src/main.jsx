@@ -7,6 +7,7 @@ import { SocketProvider } from "./context/SocketContext";
 import { ToastProvider } from "./context/ToastContext";
 import { UnreadCountsProvider } from "./context/UnreadCountsContext";
 import { initMonitoring } from "./lib/monitoring";
+import { installStaleDeployRecovery } from "./lib/staleDeploy";
 import { warmApi } from "./lib/warmApi";
 import "./index.css";
 
@@ -17,6 +18,11 @@ initMonitoring();
 // Also before the tree renders: on free hosting the API may be asleep, and
 // this is the earliest moment the thirty-second wake-up can start.
 warmApi();
+
+// Before the first render, so a chunk that went missing in a deploy is
+// caught at the fetch rather than after React has already given up on the
+// route.
+installStaleDeployRecovery();
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
