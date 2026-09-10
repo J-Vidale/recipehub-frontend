@@ -143,7 +143,7 @@ const RecipeDetail = () => {
             ) : (
               <span className="avatar avatar-xs">{recipe.user.username[0]?.toUpperCase()}</span>
             )}
-            <span className="text-sm text-muted hover:underline">by {recipe.user.username}</span>
+            <span className="text-sm text-muted hover:underline min-w-0 break-words">by {recipe.user.username}</span>
           </Link>
         )}
         <HashtagText text={recipe.instructions} className="text-strong mb-4" />

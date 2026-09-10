@@ -237,8 +237,8 @@ const CommentSection = ({ recipeId, recipeOwnerId, pinnedCommentId }) => {
               )}
               <div className="flex items-start gap-2">
                 <CommentAvatar user={comment.user} />
-                <div className="flex-1">
-                  <p>
+                <div className="flex-1 min-w-0">
+                  <p className="break-words">
                     <Link to={`/users/${comment.user._id}`} className="font-semibold text-brand">
                       {comment.user.username}
                     </Link>{" "}

@@ -116,15 +116,19 @@ const UserProfile = () => {
       />
       <div className="card mb-8">
         <div className="flex items-center justify-between flex-wrap gap-4">
-          <div className="flex items-center gap-4">
+          {/* min-w-0 on both the row and the text block: a flex child
+              defaults to min-width:auto and refuses to shrink below its
+              content, so at 320px the name and counts ran off the card
+              instead of wrapping. The counts wrap for the same reason. */}
+          <div className="flex items-center gap-4 min-w-0">
             {profile.avatarUrl ? (
               <img src={avatarImage(profile.avatarUrl, 192)} alt="" className="avatar avatar-lg" />
             ) : (
               <span className="avatar avatar-lg">{profile.username?.[0]?.toUpperCase()}</span>
             )}
-            <div>
-              <h1 className="content-title">{profile.username}</h1>
-              <div className="flex gap-4 text-soft text-sm mt-2">
+            <div className="min-w-0">
+              <h1 className="content-title break-words">{profile.username}</h1>
+              <div className="flex flex-wrap gap-x-4 gap-y-1 text-soft text-sm mt-2">
                 <span><strong>{profile.recipeCount}</strong> recipes</span>
                 <span><strong>{profile.followerCount}</strong> followers</span>
                 <span><strong>{profile.followingCount}</strong> following</span>

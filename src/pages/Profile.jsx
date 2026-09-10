@@ -151,9 +151,9 @@ const Profile = () => {
               <span>{uploadingAvatar ? "Uploading…" : user.avatarUrl ? "Change" : "Add"}</span>
             </span>
           </button>
-          <div className="flex-1">
-            <h2 className="content-title mb-1">{user.username}</h2>
-            <p className="text-soft text-sm mb-3">{user.email}</p>
+          <div className="flex-1 min-w-0">
+            <h2 className="content-title mb-1 break-words">{user.username}</h2>
+            <p className="text-soft text-sm mb-3 break-words">{user.email}</p>
             {user.avatarUrl && (
               <button
                 onClick={handleAvatarRemove}

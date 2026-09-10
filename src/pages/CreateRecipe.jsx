@@ -6,6 +6,7 @@ import IngredientFields from "../components/IngredientFields";
 import CategoryAutocomplete from "../components/CategoryAutocomplete";
 import Seo from "../components/Seo";
 import Field from "../components/Field";
+import { MAX_TITLE_LENGTH, MAX_INSTRUCTIONS_LENGTH } from "../lib/recipeLimits";
 
 const CreateRecipe = () => {
   const [formData, setFormData] = useState({
@@ -57,6 +58,7 @@ const CreateRecipe = () => {
             name="title"
             value={formData.title}
             onChange={handleChange}
+            maxLength={MAX_TITLE_LENGTH}
             placeholder="Roast chicken with lemon"
           />
           <CategoryAutocomplete
@@ -71,6 +73,7 @@ const CreateRecipe = () => {
             name="instructions"
             value={formData.instructions}
             onChange={handleChange}
+            maxLength={MAX_INSTRUCTIONS_LENGTH}
             rows={6}
             hint="Write #hashtags anywhere in here to tag the recipe."
           />
