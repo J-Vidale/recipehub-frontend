@@ -320,7 +320,11 @@ h3,
     color: var(--color-on-brand);
     font-weight: 600;
     border-radius: 0 0 0.375rem 0.375rem;
-    transition: top var(--dur-hover) var(--ease-out);
+    /* No transition. This control exists only for people navigating by
+       keyboard, it is the first thing they reach on every page, and its
+       whole purpose is to save them time - so sliding it into view over
+       180ms spends the thing it is there to give back. Animation belongs
+       on things a pointer discovers, not on the keyboard path. */
   }
 
   .skip-link:focus,
@@ -330,12 +334,6 @@ h3,
 
   .skip-link:focus {
     top: 0;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .skip-link {
-      transition: none;
-    }
   }
 
   /* Inline SVG icons sit on the text baseline like a glyph would, and
