@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import API from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import { HeartIcon } from "./icons";
+import { likeResult } from "../lib/likeResponse";
 
 const LikeButton = ({ recipeId, initialLikeCount, initialLikedByMe = false }) => {
   const { user } = useAuth();
@@ -21,8 +22,11 @@ const LikeButton = ({ recipeId, initialLikeCount, initialLikedByMe = false }) =>
       const res = previouslyLiked
         ? await API.delete(`/recipes/${recipeId}/like`)
         : await API.post(`/recipes/${recipeId}/like`, {});
-      setLikedByMe(res.data.likedByMe);
-      setLikeCount(res.data.likeCount);
+      // Only what came back usable; anything missing leaves the
+      // optimistic value in place rather than blanking the button.
+      const settled = likeResult(res.data);
+      if (settled.likedByMe !== undefined) setLikedByMe(settled.likedByMe);
+      if (settled.likeCount !== undefined) setLikeCount(settled.likeCount);
     } catch {
       setLikedByMe(previouslyLiked);
       setLikeCount(previousCount);
