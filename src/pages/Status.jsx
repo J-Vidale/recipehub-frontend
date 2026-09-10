@@ -13,6 +13,26 @@ import API, { isNetworkError, API_BASE_URL, API_ORIGIN } from "../services/api";
 // Not indexed, and it exposes nothing that is not already public: the URL
 // it calls is baked into the JavaScript every visitor downloads.
 
+/**
+ * What the health endpoint's reported database state means for the check.
+ *
+ * @param {string|undefined} state The `database` field of the health
+ *   response: "connected", "connecting", "disconnected", "disconnecting"
+ *   or "unknown". Undefined when the health endpoint could not be read.
+ * @returns {string|null} A finding to report, or null to go on and prove
+ *   the connection with a real query.
+ */
+export const databaseVerdict = (state) => {
+  // No answer to go on. The query below is then the only evidence there
+  // is, and it fails honestly on its own.
+  if (!state) return null;
+  if (state === "connected") return null;
+  if (state === "connecting") {
+    return "The API is still connecting to its database. If this does not clear, the connection string is being rejected.";
+  }
+  return `The API is running, but reports its database as ${state}.`;
+};
+
 const CHECKS = [
   {
     id: "reachable",
@@ -53,7 +73,34 @@ const CHECKS = [
     id: "database",
     label: "Database connected",
     networkDetail: "No usable answer from the server.",
+    // Asked in two parts, cheapest first. The health endpoint reports the
+    // driver's own connection state from a local integer, so it answers at
+    // once and names the problem. Without it, a wrong MONGO_URI - the most
+    // likely thing to get wrong on a first deploy - showed up only as a
+    // query that hung for mongoose's ten-second buffering timeout and then
+    // came back "the server answered 500", which is true and useless.
+    //
+    // A connected socket is still not proof the database can answer, so a
+    // real query follows when the first part passes.
     run: async () => {
+      let health = null;
+      try {
+        const res = await fetch(`${API_ORIGIN}/`, { headers: { Accept: "application/json" } });
+        if (res.ok) health = await res.json().catch(() => null);
+      } catch {
+        // The reachability check above owns that failure and will have
+        // reported it. Fall through to the query, which fails honestly.
+      }
+      const verdict = databaseVerdict(health?.database);
+      if (verdict) {
+        const error = new Error(verdict);
+        // The server did not fail here - it answered, and what it said is
+        // the finding. Wrapping that in "the server answered with an
+        // error" would describe the wrong thing.
+        error.kind = "verdict";
+        throw error;
+      }
+
       const { data } = await API.get("/recipes", { params: { limit: 1 } });
       const count = Array.isArray(data?.recipes) ? data.recipes.length : 0;
       return {
@@ -102,7 +149,12 @@ const Status = () => {
             state: "fail",
             detail: isNetworkError(error)
               ? check.networkDetail
-              : `The server answered ${error?.response?.status ?? "with an error"}: ${error.message}`,
+              // A check that reached a clear answer and did not like it
+              // already says everything; only an unexpected failure needs
+              // the "the server answered ..." framing around it.
+              : error?.kind === "verdict"
+                ? error.message
+                : `The server answered ${error?.response?.status ?? "with an error"}: ${error.message}`,
           },
         }));
       }
