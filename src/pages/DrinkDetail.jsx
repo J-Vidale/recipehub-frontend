@@ -32,8 +32,8 @@ function DrinkDetail() {
       .catch((err) => console.error("Failed to fetch related drinks:", err));
   }, [drink?.strCategory, id]);
 
-  if (loading) return <p className="page-container text-center text-soft">Loading drink...</p>;
-  if (error) return <p className="page-container text-center text-danger">{error}</p>;
+  if (loading) return <p className="page-container max-w-2xl text-center text-soft">Loading drink...</p>;
+  if (error) return <p className="page-container max-w-2xl text-center text-danger">{error}</p>;
 
   const ingredients = extractIngredients(drink, 15);
 

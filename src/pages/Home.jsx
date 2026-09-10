@@ -50,6 +50,12 @@ const FETCH_COUNT = 5;
 
 const Home = () => {
   const [latest, setLatest] = useState([]);
+  // Whether the answer is in yet, which is not the same question as
+  // whether there is anything in it. The hero holds the feature column
+  // open while the answer is outstanding, so the copy beside it does not
+  // recentre when a recipe lands. A site with genuinely no recipes gives
+  // the space back once, which is honest - there is nothing to show.
+  const [settled, setSettled] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -61,7 +67,10 @@ const Home = () => {
       // single recipe on it, and a red banner across the front page
       // because a secondary strip did not load is worse than the strip
       // not being there.
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => {
+        if (!cancelled) setSettled(true);
+      });
     return () => {
       cancelled = true;
     };
@@ -101,10 +110,25 @@ const Home = () => {
             </div>
           </div>
 
-          {featured && (
+          {featured ? (
             <div className="hero__feature">
               <FeaturedRecipe recipe={featured} />
             </div>
+          ) : (
+            !settled && (
+              <div className="hero__feature" aria-hidden="true">
+                <div className="featured featured--pending">
+                  <div className="featured__media skeleton" />
+                  <div className="featured__body">
+                    <p className="featured__label skeleton-line skeleton-line--label" />
+                    <p className="featured__title skeleton-line skeleton-line--title" />
+                    <div className="featured__meta">
+                      <span className="skeleton-line skeleton-line--meta" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )
           )}
         </div>
       </section>

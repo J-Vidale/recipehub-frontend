@@ -70,8 +70,8 @@ const ConversationView = () => {
     }
   };
 
-  if (loading) return <div className="page-container text-center text-soft">Loading...</div>;
-  if (error) return <div className="page-container text-center text-danger">{error}</div>;
+  if (loading) return <div className="page-container max-w-2xl text-center text-soft">Loading...</div>;
+  if (error) return <div className="page-container max-w-2xl text-center text-danger">{error}</div>;
 
   return (
     <div className="page-container max-w-2xl flex flex-col">

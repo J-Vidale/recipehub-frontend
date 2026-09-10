@@ -114,7 +114,7 @@ const Profile = () => {
     }
   };
 
-  if (!user) return <div className="page-container text-center text-soft">Loading profile...</div>;
+  if (!user) return <div className="page-container max-w-4xl text-center text-soft">Loading profile...</div>;
 
   return (
     <div className="page-container max-w-4xl">

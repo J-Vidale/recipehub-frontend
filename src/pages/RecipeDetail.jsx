@@ -78,8 +78,8 @@ const RecipeDetail = () => {
     }
   };
 
-  if (error) return <div className="page-container text-center text-danger">{error}</div>;
-  if (!recipe) return <div className="page-container text-center text-soft">Loading...</div>;
+  if (error) return <div className="page-container max-w-2xl text-center text-danger">{error}</div>;
+  if (!recipe) return <div className="page-container max-w-2xl text-center text-soft">Loading...</div>;
 
   const media = recipe.media || [];
   const activeMedia = media[activeMediaIndex];
