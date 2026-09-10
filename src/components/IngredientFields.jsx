@@ -74,7 +74,7 @@ function IngredientFields({ ingredients, setIngredients }) {
       <button
         type="button"
         onClick={handleAdd}
-        className="text-brand hover:underline text-sm mt-1"
+        className="tap-target text-brand hover:underline text-sm mt-1"
       >
         + Add Ingredient
       </button>
