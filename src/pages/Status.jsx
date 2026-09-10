@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Seo from "../components/Seo";
 import API, { isNetworkError, API_BASE_URL, API_ORIGIN } from "../services/api";
+import { databaseVerdict } from "../lib/statusChecks";
 
 // A page for the one job that is otherwise guesswork: finding out why the
 // site and its API are not talking to each other.
@@ -12,26 +13,6 @@ import API, { isNetworkError, API_BASE_URL, API_ORIGIN } from "../services/api";
 //
 // Not indexed, and it exposes nothing that is not already public: the URL
 // it calls is baked into the JavaScript every visitor downloads.
-
-/**
- * What the health endpoint's reported database state means for the check.
- *
- * @param {string|undefined} state The `database` field of the health
- *   response: "connected", "connecting", "disconnected", "disconnecting"
- *   or "unknown". Undefined when the health endpoint could not be read.
- * @returns {string|null} A finding to report, or null to go on and prove
- *   the connection with a real query.
- */
-export const databaseVerdict = (state) => {
-  // No answer to go on. The query below is then the only evidence there
-  // is, and it fails honestly on its own.
-  if (!state) return null;
-  if (state === "connected") return null;
-  if (state === "connecting") {
-    return "The API is still connecting to its database. If this does not clear, the connection string is being rejected.";
-  }
-  return `The API is running, but reports its database as ${state}.`;
-};
 
 const CHECKS = [
   {
