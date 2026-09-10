@@ -50,6 +50,22 @@ describe("render.yaml", () => {
     }
   });
 
+  // A deploy depends on these in both directions. Hashed assets can be
+  // held forever because their URL cannot change contents. index.html
+  // cannot be held at all: it is the file that names which hashed assets
+  // to fetch, so a cached copy keeps sending visitors after the previous
+  // build's files - and the reload the app performs to recover from that
+  // would fetch the same stale copy and change nothing.
+  it("lets hashed assets be cached forever", () => {
+    expect(blueprint).toMatch(
+      /- path: \/assets\/\*\n\s+name: Cache-Control\n\s+value: public, max-age=31536000, immutable/
+    );
+  });
+
+  it("does not let the app shell be cached", () => {
+    expect(blueprint).toMatch(/- path: \/index\.html\n\s+name: Cache-Control\n\s+value: no-cache/);
+  });
+
   it("prompts for the API URL, which has no usable default", () => {
     expect(blueprint).toMatch(/- key: VITE_API_URL\n\s+sync: false/);
   });
