@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { databaseVerdict } from "../src/pages/Status";
+import { databaseVerdict } from "../src/lib/statusChecks";
 
 // /status is the page the owner reads while wiring the two Render services
 // together, and a wrong MONGO_URI is the likeliest thing to get wrong on a
