@@ -31,7 +31,17 @@ const toCounted = (value) =>
     }))
     .filter((entry) => entry.name);
 
-const CategoryAutocomplete = ({ value, onChange, placeholder = "e.g. Chicken, or your own recipe name" }) => {
+// `label` is rendered here rather than by the caller so it can be tied to
+// the input with htmlFor. Both forms used to put a <label> above this
+// component with nothing to point at, which looks correct and announces
+// nothing.
+const CategoryAutocomplete = ({
+  value,
+  onChange,
+  label = "Category",
+  hint,
+  placeholder = "e.g. Chicken, or your own recipe name",
+}) => {
   const [open, setOpen] = useState(false);
   const [curated, setCurated] = useState([]);
   const [community, setCommunity] = useState([]);
@@ -39,6 +49,8 @@ const CategoryAutocomplete = ({ value, onChange, placeholder = "e.g. Chicken, or
   const debounceRef = useRef(null);
   const containerRef = useRef(null);
   const listboxId = useId();
+  const inputId = useId();
+  const hintId = useId();
 
   const options = [
     ...curated.map((name) => ({ name, group: "curated" })),
@@ -104,12 +116,17 @@ const CategoryAutocomplete = ({ value, onChange, placeholder = "e.g. Chicken, or
 
   return (
     <div ref={containerRef} className="relative">
+      <label className="field__label" htmlFor={inputId}>
+        {label}
+      </label>
       <input
         type="text"
         role="combobox"
+        id={inputId}
         aria-expanded={open}
         aria-controls={listboxId}
         aria-autocomplete="list"
+        aria-describedby={hint ? hintId : undefined}
         value={value}
         onChange={(e) => {
           onChange(e.target.value);
@@ -123,6 +140,12 @@ const CategoryAutocomplete = ({ value, onChange, placeholder = "e.g. Chicken, or
         className="input"
         autoComplete="off"
       />
+      {hint && (
+        <p className="field__hint" id={hintId}>
+          {hint}
+        </p>
+      )}
+
       {open && (
         <div id={listboxId} role="listbox" className="combobox-panel">
           {curated.length === 0 && community.length === 0 ? (

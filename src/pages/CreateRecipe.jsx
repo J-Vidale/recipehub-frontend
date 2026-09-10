@@ -5,6 +5,7 @@ import { useToast } from "../context/ToastContext";
 import IngredientFields from "../components/IngredientFields";
 import CategoryAutocomplete from "../components/CategoryAutocomplete";
 import Seo from "../components/Seo";
+import Field from "../components/Field";
 
 const CreateRecipe = () => {
   const [formData, setFormData] = useState({
@@ -51,34 +52,31 @@ const CreateRecipe = () => {
         <h1 className="page-title mb-6">Create a Recipe</h1>
         {error && <p className="text-danger text-sm mb-4">{error}</p>}
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
+          <Field
+            label="Title"
             name="title"
-            placeholder="Recipe Title"
             value={formData.title}
             onChange={handleChange}
-            className="input"
-            required
+            placeholder="Roast chicken with lemon"
           />
-          <div>
-            <label className="block text-sm font-medium text-strong mb-1">Category (optional)</label>
-            <CategoryAutocomplete
-              value={formData.category}
-              onChange={(category) => setFormData((prev) => ({ ...prev, category }))}
-            />
-          </div>
-          <textarea
+          <CategoryAutocomplete
+            label="Category"
+            hint="Optional. Pick a suggestion or type your own."
+            value={formData.category}
+            onChange={(category) => setFormData((prev) => ({ ...prev, category }))}
+          />
+          <Field
+            as="textarea"
+            label="Instructions"
             name="instructions"
-            placeholder="Instructions (write #hashtags to tag your recipe)"
             value={formData.instructions}
             onChange={handleChange}
             rows={6}
-            className="input"
-            required
+            hint="Write #hashtags anywhere in here to tag the recipe."
           />
           <IngredientFields ingredients={ingredients} setIngredients={setIngredients} />
           <button type="submit" disabled={submitting} className="btn-primary w-full">
-            {submitting ? "Submitting..." : "Submit"}
+            {submitting ? "Publishing..." : "Publish recipe"}
           </button>
         </form>
       </div>

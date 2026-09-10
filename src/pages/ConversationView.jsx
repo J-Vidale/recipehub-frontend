@@ -106,6 +106,7 @@ const ConversationView = () => {
           type="text"
           value={text}
           onChange={(e) => setText(e.target.value)}
+          aria-label="Type a message"
           placeholder="Type a message..."
           maxLength={2000}
           className="input flex-1"

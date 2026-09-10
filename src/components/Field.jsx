@@ -16,6 +16,7 @@ const Field = ({
   label,
   name,
   type = "text",
+  as = "input",
   value,
   onChange,
   error,
@@ -25,6 +26,7 @@ const Field = ({
   ...rest
 }) => {
   const id = useId();
+  const Control = as;
   const errorId = `${id}-error`;
   const hintId = `${id}-hint`;
   const describedBy = [error ? errorId : null, hint ? hintId : null]
@@ -36,10 +38,10 @@ const Field = ({
       <label className="field__label" htmlFor={id}>
         {label}
       </label>
-      <input
+      <Control
         id={id}
         name={name}
-        type={type}
+        {...(as === "input" ? { type } : {})}
         value={value}
         onChange={onChange}
         autoComplete={autoComplete}

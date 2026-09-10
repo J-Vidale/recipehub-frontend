@@ -66,11 +66,16 @@ const SearchBar = () => {
   return (
     <div ref={containerRef} className="relative">
       <form onSubmit={handleSubmit}>
+        {/* Named, and typed as a search field. A placeholder is not a
+            label: it is gone the moment anything is typed, and it is not
+            reliably announced as the field's name. There is no room for a
+            visible label in the navbar, which is what aria-label is for. */}
         <input
-          type="text"
+          type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => results && setOpen(true)}
+          aria-label="Search recipes or people"
           placeholder="Search recipes or people..."
           className="input text-sm py-1.5 w-48 md:w-64"
         />

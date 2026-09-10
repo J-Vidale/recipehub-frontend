@@ -6,6 +6,7 @@ import IngredientFields from "../components/IngredientFields";
 import CategoryAutocomplete from "../components/CategoryAutocomplete";
 import Seo from "../components/Seo";
 import { asArray } from "../lib/apiShape";
+import Field from "../components/Field";
 
 const EditRecipe = () => {
   const { id } = useParams();
@@ -83,29 +84,26 @@ const EditRecipe = () => {
         <h1 className="page-title mb-6">Edit Recipe</h1>
         {submitError && <p className="text-danger text-sm mb-4">{submitError}</p>}
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
+          <Field
+            label="Title"
             name="title"
             value={form.title}
             onChange={handleChange}
-            placeholder="Title"
-            className="input"
-            required
           />
-          <div>
-            <label className="block text-sm font-medium text-strong mb-1">Category (optional)</label>
-            <CategoryAutocomplete
-              value={form.category}
-              onChange={(category) => setForm((prev) => ({ ...prev, category }))}
-            />
-          </div>
-          <textarea
+          <CategoryAutocomplete
+            label="Category"
+            hint="Optional. Pick a suggestion or type your own."
+            value={form.category}
+            onChange={(category) => setForm((prev) => ({ ...prev, category }))}
+          />
+          <Field
+            as="textarea"
+            label="Instructions"
             name="instructions"
             value={form.instructions}
             onChange={handleChange}
-            placeholder="Instructions"
             rows={6}
-            className="input"
-            required
+            hint="Write #hashtags anywhere in here to tag the recipe."
           />
           <IngredientFields ingredients={ingredients} setIngredients={setIngredients} />
           <button type="submit" disabled={submitting} className="btn-primary w-full">

@@ -131,6 +131,7 @@ const Profile = () => {
             type="file"
             accept="image/*"
             onChange={handleAvatarChange}
+            aria-label="Choose a profile picture"
             className="hidden"
           />
           <button
