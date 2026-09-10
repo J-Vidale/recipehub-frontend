@@ -84,8 +84,8 @@ const UserProfile = () => {
     }
   };
 
-  if (loading) return <div className="page-container text-center text-soft">Loading profile...</div>;
-  if (error) return <div className="page-container text-center text-danger">{error}</div>;
+  if (loading) return <div className="page-container max-w-4xl text-center text-soft">Loading profile...</div>;
+  if (error) return <div className="page-container max-w-4xl text-center text-danger">{error}</div>;
   if (!profile) return null;
 
   const isOwnProfile = authUser && authUser._id === profile._id;

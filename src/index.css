@@ -246,7 +246,10 @@ h3,
 
 /* App shell: a flex column so the routed page grows to fill the viewport
    and the footer always rests below it rather than floating mid-screen
-   on short pages. */
+   on short pages.
+
+   vh rather than dvh on purpose: dvh changes as a phone's address bar
+   hides, which would trade a settled layout for a shift on every scroll. */
 #root {
   display: flex;
   flex-direction: column;
@@ -254,7 +257,18 @@ h3,
 }
 
 #root > main {
-  flex: 1;
+  flex: 1 0 auto;
+  /* Resting the footer below the content is not enough on its own. The
+     footer is around 300px tall, so on a short page - which is every page
+     while it is still loading - it was on screen, and it moved hundreds of
+     pixels when the content landed. That one move was most of a 0.66 CLS
+     on the recipe page, where 0.1 is good and 0.25 is poor, and it was the
+     same move on every route that fetches before it can draw.
+
+     Reserving a viewport's worth of main puts the footer below the fold
+     instead, and a shift you cannot see is not a shift. The navbar is
+     4.25rem, so this leaves the footer starting exactly at the fold. */
+  min-height: calc(100vh - 4.25rem);
 }
 
 ::-webkit-scrollbar {
@@ -1956,6 +1970,37 @@ h3,
 
   .featured__body {
     padding: 1.25rem 1.25rem 1.375rem;
+  }
+
+  /* The hero's feature column, held open while the newest recipe is still
+     on its way. Without it the hero row grew when the card arrived and the
+     copy beside it recentred, which was the whole of the front page's
+     layout shift. Each line takes the height of the text it stands in for,
+     so the placeholder and the card are the same height and the swap moves
+     nothing. */
+  .featured--pending {
+    cursor: default;
+  }
+  .skeleton-line {
+    display: block;
+    border-radius: var(--radius-pill);
+    background: var(--color-border);
+  }
+  .skeleton-line--label {
+    /* The heights here are the measured heights of the real card's parts,
+       not guesses at them: the label's line box, and the meta row where an
+       avatar sets the height rather than the text. */
+    height: 1.125rem;
+    width: 7rem;
+  }
+  .skeleton-line--title {
+    /* font-size 1.375rem at line-height 1.2 */
+    height: 1.65rem;
+    width: 80%;
+  }
+  .skeleton-line--meta {
+    height: 1.75rem;
+    width: 12rem;
   }
 
   .featured__label {

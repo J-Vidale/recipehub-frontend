@@ -46,8 +46,8 @@ function MealDetail() {
       .catch((err) => console.error("Failed to fetch related meals:", err));
   }, [meal?.strCategory, id]);
 
-  if (loading) return <p className="page-container text-center text-soft">Loading meal...</p>;
-  if (error) return <p className="page-container text-center text-danger">{error}</p>;
+  if (loading) return <p className="page-container max-w-2xl text-center text-soft">Loading meal...</p>;
+  if (error) return <p className="page-container max-w-2xl text-center text-danger">{error}</p>;
 
   const ingredients = extractIngredients(meal);
   const embedUrl = youtubeEmbedUrl(meal.strYoutube);

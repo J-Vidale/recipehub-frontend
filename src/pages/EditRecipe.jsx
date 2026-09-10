@@ -72,7 +72,7 @@ const EditRecipe = () => {
     );
   }
 
-  if (!recipe) return <div className="page-container text-center text-soft">Loading...</div>;
+  if (!recipe) return <div className="page-container max-w-lg text-center text-soft">Loading...</div>;
 
   return (
     <div className="page-container max-w-lg">
