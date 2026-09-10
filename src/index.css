@@ -1126,6 +1126,23 @@ h3,
     color: var(--color-on-brand);
   }
 
+  /* Ingredient rows: name, amount, remove. A grid rather than flex so the
+     headings above line up with the fields under them at every width. */
+  .ingredient-row {
+    display: grid;
+    grid-template-columns: 1fr 7rem 2rem;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  .ingredient-row--headings {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--color-muted);
+    margin-bottom: 0.25rem;
+  }
+
   /* --- Colour utilities ---------------------------------------------
      The app had two colour systems: these tokens, and 150 Tailwind
      literals scattered through the JSX (text-gray-600, bg-white,

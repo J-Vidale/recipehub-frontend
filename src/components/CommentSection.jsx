@@ -207,6 +207,7 @@ const CommentSection = ({ recipeId, recipeOwnerId, pinnedCommentId }) => {
             type="text"
             value={newText}
             onChange={(e) => setNewText(e.target.value)}
+            aria-label="Add a comment"
             placeholder="Add a comment..."
             maxLength={1000}
             className="input flex-1"
@@ -251,6 +252,7 @@ const CommentSection = ({ recipeId, recipeOwnerId, pinnedCommentId }) => {
                         type="text"
                         value={replyText}
                         onChange={(e) => setReplyText(e.target.value)}
+                        aria-label={`Reply to ${comment.user?.username || "this comment"}`}
                         placeholder="Write a reply..."
                         maxLength={1000}
                         className="input flex-1 text-sm"

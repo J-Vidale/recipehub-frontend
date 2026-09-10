@@ -46,6 +46,7 @@ const ReportButton = ({ targetType, targetId }) => {
           <textarea
             value={reason}
             onChange={(e) => setReason(e.target.value)}
+            aria-label="Why are you reporting this?"
             placeholder="Why are you reporting this?"
             maxLength={500}
             rows={3}

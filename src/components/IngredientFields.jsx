@@ -32,21 +32,34 @@ function IngredientFields({ ingredients, setIngredients }) {
   return (
     <div>
       <h3 className="text-sm font-semibold text-strong mt-2 mb-2">Ingredients</h3>
+      {/* One visible pair of column headings rather than a label on every
+          row, which would repeat "Name / Amount" down the page. Each input
+          still carries its own accessible name, numbered, so a screen
+          reader announces which row it is in. */}
+      {ingredients.length > 0 && (
+        <div className="ingredient-row ingredient-row--headings" aria-hidden="true">
+          <span>Name</span>
+          <span>Amount</span>
+          <span />
+        </div>
+      )}
       {ingredients.map((ingredient, index) => (
-        <div key={keysRef.current[index]} className="flex gap-2 mb-2">
+        <div key={keysRef.current[index]} className="ingredient-row">
           <input
             type="text"
-            placeholder="Name"
+            aria-label={`Ingredient ${index + 1} name`}
+            placeholder="Plain flour"
             value={ingredient.name}
             onChange={(e) => handleChange(index, "name", e.target.value)}
-            className="input flex-1"
+            className="input"
           />
           <input
             type="text"
-            placeholder="Amount"
+            aria-label={`Ingredient ${index + 1} amount`}
+            placeholder="200 g"
             value={ingredient.amount}
             onChange={(e) => handleChange(index, "amount", e.target.value)}
-            className="input w-28"
+            className="input"
           />
           <button
             type="button"
