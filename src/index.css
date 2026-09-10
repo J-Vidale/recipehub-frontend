@@ -12,7 +12,7 @@
   font-family: var(--font-text);
   line-height: 1.5;
   font-weight: 400;
-  color-scheme: light;
+  color-scheme: light dark;
 
   /* --- Type ---------------------------------------------------------- */
   --font-display: "Bricolage Grotesque Variable", var(--font-text);
@@ -33,10 +33,17 @@
      pairs with the green brand color for things that shouldn't read as
      an "action" (ratings, pinned/highlighted content). */
   --color-brand: #15803d;
-  --color-brand-dark: #14532d;
+  /* Brand as text: a link, a section's "see all", the eyebrow. Darker than
+     the fill so it reads at body size. In dark mode it is lighter than the
+     fill for the same reason, which is why the name is about its job
+     rather than its lightness. */
+  --color-brand-text: #14532d;
   --color-brand-light: #dcfce7;
-  --color-accent: #b45309;
-  --color-accent-light: #fef3c7;
+  --color-brand-hover: #16a34a;
+  /* Text on a brand or danger fill. It flips in dark mode, where the fill
+     is light. */
+  --color-on-brand: #ffffff;
+  --color-on-danger: #ffffff;
 
   /* Neutrals carry a little warmth so a photograph of food does not sit on
      a screen that looks like a spreadsheet. Warmth only - not a cream
@@ -45,6 +52,7 @@
   --color-ink-soft: #46423c;
   --color-muted: #6f6a63;
   --color-surface: #ffffff;
+  --color-surface-2: #f2f0eb;
   --color-bg: #faf9f7;
   --color-border: #e7e3dd;
   --color-border-strong: #d6d1c8;
@@ -54,6 +62,22 @@
   --color-border-input: #948e81;
   --color-danger: #dc2626;
   --color-danger-dark: #b91c1c;
+  --color-danger-bg: #fee2e2;
+  --color-danger-ink: #991b1b;
+  --color-danger-border: #fca5a5;
+
+  /* Amber, and only for saying "read this": an allergen, the free-tier
+     wake-up strip, the troubleshooting box. Never decoration - that is
+     what made it a second accent competing with the green. */
+  --color-notice-bg: #fef3c7;
+  --color-notice-border: #fcd34d;
+  --color-notice-ink: #78350f;
+  --color-notice-ink-soft: #92400e;
+  --color-notice-accent: #b45309;
+  --color-notice-bg-soft: #fffbeb;
+
+  --color-skeleton: #e9e6e0;
+  --color-skeleton-highlight: #f4f2ee;
 
   /* --- Shape --------------------------------------------------------- */
   /* Three radii and no others. Anything that looked "about right" at 0.6
@@ -88,6 +112,78 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Dark mode.
+ *
+ * Every colour above is a token, which is what makes this block possible:
+ * it redefines the same names and nothing else changes. Two things are not
+ * simple inversions, and both are the reason a flipped-lightness dark mode
+ * looks wrong:
+ *
+ * The brand fill goes light, so the text on it has to go dark. That is
+ * what --color-on-brand is for, and why it is a token rather than #fff.
+ *
+ * Brand-as-text goes lighter than the fill rather than darker. A link has
+ * to carry at body size against a dark ground; the same green that works
+ * as a button fill disappears as 15px text.
+ *
+ * The ground is warm rather than neutral, for the same reason it is warm
+ * in light mode: a photograph of food on a blue-grey screen looks like it
+ * has been left out overnight. It is not pure black either - pure black
+ * flattens every shadow the layout uses to separate one surface from
+ * another.
+ *
+ * Following the system rather than offering a switch: the app has no
+ * settings screen to put one in, and a reader who wants dark has already
+ * said so at the operating system.
+ */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-brand: #4ade80;
+    --color-brand-text: #6ee7a7;
+    --color-brand-light: #16351f;
+    --color-brand-hover: #86efac;
+    --color-on-brand: #08210f;
+    --color-on-danger: #2b0f0f;
+
+    --color-ink: #f3f0ea;
+    --color-ink-soft: #c6bfb3;
+    --color-muted: #a19a8d;
+    --color-surface: #1d1b16;
+    --color-surface-2: #262319;
+    --color-bg: #141310;
+    --color-border: #322e26;
+    --color-border-strong: #454034;
+    --color-border-input: #837c6d;
+
+    --color-danger: #f87171;
+    --color-danger-dark: #fca5a5;
+    --color-danger-bg: #3b1c1c;
+    --color-danger-ink: #fecaca;
+    --color-danger-border: #7f3a3a;
+
+    --color-notice-bg: #33280f;
+    --color-notice-border: #5f4a19;
+    --color-notice-ink: #fde68a;
+    --color-notice-ink-soft: #e9d08e;
+    --color-notice-accent: #fbbf24;
+    --color-notice-bg-soft: #2a2110;
+
+    --color-skeleton: #232019;
+    --color-skeleton-highlight: #2f2b22;
+
+    --gradient-brand: linear-gradient(135deg, #4ade80 0%, #22c55e 55%, #16a34a 100%);
+    --gradient-hero: linear-gradient(180deg, #1a1d17 0%, var(--color-bg) 70%);
+    --gradient-placeholder: linear-gradient(135deg, #23281f 0%, #2b2519 100%);
+
+    /* Shadows do almost nothing on a dark ground, so the elevation scale
+       leans on deeper, larger shadows plus the border to separate a card
+       from what is behind it. */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 14px 32px rgba(0, 0, 0, 0.6), 0 2px 8px rgba(0, 0, 0, 0.45);
+  }
 }
 
 * {
@@ -184,7 +280,7 @@ h3,
     text-decoration: inherit;
   }
   a:hover {
-    color: var(--color-brand-dark);
+    color: var(--color-brand-text);
   }
 
   /* A visible ring for keyboard focus on anything that isn't already an
@@ -221,7 +317,7 @@ h3,
     z-index: 60;
     padding: 0.625rem 1rem;
     background-color: var(--color-brand);
-    color: #fff;
+    color: var(--color-on-brand);
     font-weight: 600;
     border-radius: 0 0 0.375rem 0.375rem;
     transition: top var(--dur-hover) var(--ease-out);
@@ -229,7 +325,7 @@ h3,
 
   .skip-link:focus,
   .skip-link:hover {
-    color: #fff;
+    color: var(--color-on-brand);
   }
 
   .skip-link:focus {
@@ -269,10 +365,10 @@ h3,
     position: sticky;
     top: 0;
     z-index: 40;
-    background: rgba(255, 255, 255, 0.75);
+    background: color-mix(in srgb, var(--color-surface) 78%, transparent);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+    border-bottom: 1px solid var(--color-border);
   }
 
   .navbar__bar {
@@ -370,7 +466,7 @@ h3,
     top: 0.25rem;
     right: 0.25rem;
     background: var(--color-danger);
-    color: #fff;
+    color: var(--color-on-danger);
     font-size: 0.7rem;
     line-height: 1.15;
     font-weight: 700;
@@ -546,16 +642,16 @@ h3,
     justify-content: center;
     font-size: 2.5rem;
     font-weight: 700;
-    color: var(--color-brand-dark);
+    color: var(--color-brand-text);
     opacity: 0.5;
   }
   .recipe-card__badge {
     position: absolute;
     top: 0.6rem;
     left: 0.6rem;
-    background: rgba(255, 255, 255, 0.9);
+    background: color-mix(in srgb, var(--color-surface) 92%, transparent);
     backdrop-filter: blur(4px);
-    color: var(--color-brand-dark);
+    color: var(--color-brand-text);
     font-size: 0.7rem;
     font-weight: 700;
     padding: 0.2rem 0.6rem;
@@ -694,10 +790,10 @@ h3,
   .toast--success {
     background: var(--color-brand-light);
     border-color: color-mix(in srgb, var(--color-brand) 35%, transparent);
-    color: var(--color-brand-dark);
+    color: var(--color-brand-text);
   }
   .toast--error {
-    background: #fee2e2;
+    background: var(--color-danger-bg);
     border-color: color-mix(in srgb, var(--color-danger) 35%, transparent);
     color: var(--color-danger-dark);
   }
@@ -744,7 +840,7 @@ h3,
     font-weight: 600;
   }
   .breadcrumbs__sep {
-    color: var(--color-border);
+    color: var(--color-muted);
   }
 
   /* Site footer: source attribution and secondary navigation. */
@@ -775,7 +871,7 @@ h3,
     margin: 0 0 0.35rem;
   }
   .site-footer__brand:hover {
-    color: var(--color-brand-dark);
+    color: var(--color-brand-text);
     text-decoration: none;
   }
   .site-footer__note,
@@ -833,7 +929,7 @@ h3,
   .legal h1 {
     font-size: 2rem;
     font-weight: 700;
-    color: var(--color-brand-dark);
+    color: var(--color-brand-text);
     margin-bottom: 0.25rem;
   }
   .legal h2 {
@@ -844,7 +940,7 @@ h3,
   }
   .legal p,
   .legal li {
-    color: #374151;
+    color: var(--color-ink-soft);
     line-height: 1.7;
     margin-bottom: 0.75rem;
   }
@@ -978,7 +1074,7 @@ h3,
 
   .btn-primary {
     background: var(--color-brand);
-    color: #fff;
+    color: var(--color-on-brand);
     /* Tinted to the button rather than a grey drop shadow, so the
        elevation reads as belonging to the green rather than sitting under
        it. */
@@ -993,7 +1089,7 @@ h3,
 
   .btn-danger {
     background: var(--color-danger);
-    color: #fff;
+    color: var(--color-on-danger);
     box-shadow: 0 1px 2px rgba(153, 27, 27, 0.24);
   }
 
@@ -1002,11 +1098,11 @@ h3,
      button that looks permanently half-pressed. */
   @media (hover: hover) and (pointer: fine) {
     .btn-primary:hover:not(:disabled) {
-      background: #16a34a;
+      background: var(--color-brand-hover);
       box-shadow: 0 2px 4px rgba(20, 83, 45, 0.24), 0 8px 20px rgba(20, 83, 45, 0.2);
     }
     .btn-secondary:hover:not(:disabled) {
-      background: rgba(28, 26, 23, 0.04);
+      background: color-mix(in srgb, var(--color-ink) 7%, transparent);
       box-shadow: inset 0 0 0 1px var(--color-ink-soft);
     }
     .btn-danger:hover:not(:disabled) {
@@ -1020,6 +1116,61 @@ h3,
     .btn-danger:active:not(:disabled) {
       transform: none;
     }
+  }
+
+  /* Your own message in a conversation. The one place a brand fill wraps
+     running text, so it needs the paired on-brand ink rather than a fixed
+     white that would vanish once the fill goes light. */
+  .bubble-mine {
+    background-color: var(--color-brand);
+    color: var(--color-on-brand);
+  }
+
+  /* --- Colour utilities ---------------------------------------------
+     The app had two colour systems: these tokens, and 150 Tailwind
+     literals scattered through the JSX (text-gray-600, bg-white,
+     text-green-700). The literals are why dark mode could not simply be a
+     redefinition of the tokens - a fixed grey does not know the ground
+     changed underneath it.
+     These replace them. Same job, one source. */
+  .text-strong {
+    color: var(--color-ink);
+  }
+  .text-soft {
+    color: var(--color-ink-soft);
+  }
+  .text-muted {
+    color: var(--color-muted);
+  }
+  .text-brand {
+    color: var(--color-brand-text);
+  }
+  .text-danger {
+    color: var(--color-danger);
+  }
+  .text-on-brand {
+    color: var(--color-on-brand);
+  }
+  .surface {
+    background-color: var(--color-surface);
+  }
+  .surface-2 {
+    background-color: var(--color-surface-2);
+  }
+  .surface-brand {
+    background-color: var(--color-brand-light);
+  }
+  .surface-notice {
+    background-color: var(--color-notice-bg-soft);
+  }
+  .border-soft {
+    border-color: var(--color-border);
+  }
+  .border-brand {
+    border-color: color-mix(in srgb, var(--color-brand) 30%, transparent);
+  }
+  .text-notice {
+    color: var(--color-notice-ink-soft);
   }
 
   /* --- Headings ------------------------------------------------------
@@ -1149,7 +1300,7 @@ h3,
     justify-content: center;
     border-radius: 9999px;
     background: var(--color-brand-light);
-    color: var(--color-brand-dark);
+    color: var(--color-brand-text);
     font-weight: 700;
     overflow: hidden;
     flex-shrink: 0;
@@ -1200,7 +1351,7 @@ h3,
     gap: 0.15rem;
     border-radius: 9999px;
     background: rgba(15, 23, 42, 0.55);
-    color: #fff;
+    color: #ffffff; /* fixed ground, not the brand fill: white in both modes */
     font-size: 0.65rem;
     font-weight: 600;
     opacity: 0;
@@ -1222,7 +1373,7 @@ h3,
     background: linear-gradient(
       90deg,
       var(--color-border) 25%,
-      #f0f1ef 37%,
+      var(--color-skeleton-highlight) 37%,
       var(--color-border) 63%
     );
     background-size: 400% 100%;
@@ -1272,7 +1423,7 @@ h3,
   .combobox-option:hover,
   .combobox-option[aria-selected="true"] {
     background: var(--color-brand-light);
-    color: var(--color-brand-dark);
+    color: var(--color-brand-text);
   }
 }
 
@@ -1349,7 +1500,7 @@ h3,
     padding: 0.875rem;
     border-radius: var(--radius-card);
     overflow: hidden;
-    color: #fff;
+    color: #ffffff; /* fixed ground, not the brand fill: white in both modes */
     font-weight: 700;
     text-decoration: none;
     background-image: linear-gradient(
@@ -1363,7 +1514,7 @@ h3,
 
   .tile:hover,
   .tile:focus-visible {
-    color: #fff;
+    color: #ffffff; /* fixed ground, not the brand fill: white in both modes */
     transform: translateY(-3px);
     box-shadow: 0 12px 24px -12px rgb(0 0 0 / 0.45);
   }
@@ -1447,7 +1598,7 @@ h3,
     display: flex;
     flex-direction: column;
     height: 100%;
-    background-color: #fff;
+    background-color: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-card);
     overflow: hidden;
@@ -1462,7 +1613,7 @@ h3,
   .meal-grid__media {
     aspect-ratio: 4 / 3;
     overflow: hidden;
-    background-color: #f3f4f6;
+    background-color: var(--color-surface-2);
   }
 
   .meal-grid__media img {
@@ -1512,7 +1663,7 @@ h3,
     gap: 0.5rem;
     height: 100%;
     padding: 0.875rem 0.5rem;
-    background-color: #fff;
+    background-color: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-card);
     text-align: center;
@@ -1546,7 +1697,7 @@ h3,
     height: 100%;
     border-radius: 9999px;
     background-color: var(--color-brand-light);
-    color: var(--color-brand-dark);
+    color: var(--color-brand-text);
     font-size: 1.5rem;
     font-weight: 700;
   }
@@ -1632,7 +1783,7 @@ h3,
     font-weight: 600;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--color-brand-dark);
+    color: var(--color-brand-text);
   }
 
   .hero__title {
@@ -1724,7 +1875,7 @@ h3,
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--color-brand-dark);
+    color: var(--color-brand-text);
     opacity: 0.4;
   }
 
@@ -1807,7 +1958,7 @@ h3,
     gap: 0.5rem;
   }
   .section-heading__link {
-    color: var(--color-brand-dark);
+    color: var(--color-brand-text);
     font-weight: 600;
     font-size: 0.9375rem;
     text-decoration: none;
@@ -1882,7 +2033,7 @@ h3,
     .start-card:hover {
       color: inherit;
       border-color: var(--color-brand);
-      background-color: #fff;
+      background-color: var(--color-surface);
       transform: translateY(-2px);
     }
   }
@@ -2019,7 +2170,7 @@ h3,
   }
 
   .nutrition__muted {
-    color: #9ca3af;
+    color: var(--color-muted);
   }
 
   .nutrition__note {
@@ -2069,7 +2220,7 @@ h3,
     white-space: nowrap;
     font-size: 1.25rem;
     font-weight: 700;
-    color: var(--color-brand-dark);
+    color: var(--color-brand-text);
     line-height: 1.1;
   }
 
@@ -2101,20 +2252,20 @@ h3,
     flex-direction: column;
     gap: 0.125rem;
     padding: 0.5rem 0.75rem;
-    background-color: #fef3c7;
-    border: 1px solid #fcd34d;
+    background-color: var(--color-notice-bg);
+    border: 1px solid var(--color-notice-border);
     border-radius: var(--radius-control);
   }
 
   .allergen__label {
     font-size: 0.875rem;
     font-weight: 700;
-    color: #78350f;
+    color: var(--color-notice-ink);
   }
 
   .allergen__source {
     font-size: 0.75rem;
-    color: #92400e;
+    color: var(--color-notice-ink-soft);
   }
 }
 
@@ -2127,9 +2278,9 @@ h3,
     align-items: center;
     gap: 0.625rem;
     padding: 0.625rem 1rem;
-    background-color: #fef3c7;
-    border-bottom: 1px solid #fcd34d;
-    color: #78350f;
+    background-color: var(--color-notice-bg);
+    border-bottom: 1px solid var(--color-notice-border);
+    color: var(--color-notice-ink);
     font-size: 0.875rem;
     line-height: 1.4;
   }
@@ -2138,7 +2289,7 @@ h3,
     flex-shrink: 0;
     width: 0.875rem;
     height: 0.875rem;
-    border: 2px solid #d97706;
+    border: 2px solid var(--color-notice-accent);
     border-top-color: transparent;
     border-radius: 9999px;
     animation: waking-spin 0.8s linear infinite;
@@ -2149,7 +2300,7 @@ h3,
   @media (prefers-reduced-motion: reduce) {
     .waking__spinner {
       animation: none;
-      border-top-color: #d97706;
+      border-top-color: var(--color-notice-accent);
       opacity: 0.6;
     }
   }
@@ -2209,22 +2360,22 @@ h3,
     border-radius: 9999px;
     font-weight: 700;
     font-size: 0.875rem;
-    background-color: #e5e7eb;
+    background-color: var(--color-surface-2);
     color: var(--color-ink-soft);
   }
 
   .status-item--pass .status-item__state {
     background-color: var(--color-brand-light);
-    color: var(--color-brand-dark);
+    color: var(--color-brand-text);
   }
 
   .status-item--fail .status-item__state {
-    background-color: #fee2e2;
-    color: #991b1b;
+    background-color: var(--color-danger-bg);
+    color: var(--color-danger-ink);
   }
 
   .status-item--fail {
-    border-color: #fca5a5;
+    border-color: var(--color-danger-border);
   }
 
   .status-item__label {
@@ -2241,8 +2392,8 @@ h3,
   .status-hints {
     margin-top: 2rem;
     padding: 1.25rem;
-    background-color: #fffbeb;
-    border: 1px solid #fcd34d;
+    background-color: var(--color-notice-bg-soft);
+    border: 1px solid var(--color-notice-border);
     border-radius: var(--radius-card);
   }
 
@@ -2255,7 +2406,7 @@ h3,
     list-style: disc;
     font-size: 0.9375rem;
     line-height: 1.5;
-    color: #78350f;
+    color: var(--color-notice-ink);
   }
 }
 

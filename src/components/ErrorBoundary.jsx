@@ -35,7 +35,7 @@ class ErrorBoundary extends React.Component {
           <h1 className="card-title mb-4">
             Something went wrong
           </h1>
-          <p className="text-gray-600 mb-6">
+          <p className="text-soft mb-6">
             An unexpected error occurred. Try going back to the homepage.
           </p>
           <button onClick={this.handleReload} className="btn-primary">

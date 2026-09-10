@@ -76,7 +76,7 @@ const Ingredients = () => {
       <Breadcrumbs items={[{ label: "Home", to: "/" }, { label: "Ingredients" }]} />
 
       <h1 className="page-title mb-2">Browse by ingredient</h1>
-      <p className="text-gray-600 mb-6 max-w-2xl">
+      <p className="text-soft mb-6 max-w-2xl">
         Find something you already have, and see what you can make with it.
       </p>
 
@@ -102,21 +102,21 @@ const Ingredients = () => {
       )}
 
       {status === "error" && (
-        <p className="text-gray-600">
+        <p className="text-soft">
           The ingredient list could not be loaded just now. Try again in a moment.
         </p>
       )}
 
       {status === "ready" && (
         <>
-          <p className="text-sm text-gray-500 mb-4" role="status">
+          <p className="text-sm text-muted mb-4" role="status">
             {matches.length === all.length
               ? `${all.length} ingredients`
               : `${matches.length} of ${all.length} ingredients match "${query.trim()}"`}
           </p>
 
           {matches.length === 0 ? (
-            <p className="text-gray-600">Nothing matches that. Try a shorter word.</p>
+            <p className="text-soft">Nothing matches that. Try a shorter word.</p>
           ) : (
             <>
               <ul className="ingredient-grid">

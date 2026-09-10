@@ -57,11 +57,11 @@ const TagPage = () => {
       />
       <h1 className="page-title mb-6">#{tag}</h1>
       {loading ? (
-        <p className="text-center text-gray-600">Loading...</p>
+        <p className="text-center text-soft">Loading...</p>
       ) : error ? (
-        <p className="text-center text-red-600">{error}</p>
+        <p className="text-center text-danger">{error}</p>
       ) : recipes.length === 0 ? (
-        <p className="text-center text-gray-600">No recipes tagged #{tag} yet.</p>
+        <p className="text-center text-soft">No recipes tagged #{tag} yet.</p>
       ) : (
         <>
           <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">

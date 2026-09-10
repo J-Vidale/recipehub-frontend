@@ -62,7 +62,7 @@ const EditRecipe = () => {
   if (error) {
     return (
       <div className="page-container max-w-lg text-center">
-        <p className="text-red-600 mb-4">{error}</p>
+        <p className="text-danger mb-4">{error}</p>
         <button type="button" onClick={() => navigate("/your-recipes")} className="btn-secondary">
           Back to Your Recipes
         </button>
@@ -70,7 +70,7 @@ const EditRecipe = () => {
     );
   }
 
-  if (!recipe) return <div className="page-container text-center text-gray-600">Loading...</div>;
+  if (!recipe) return <div className="page-container text-center text-soft">Loading...</div>;
 
   return (
     <div className="page-container max-w-lg">
@@ -81,7 +81,7 @@ const EditRecipe = () => {
       />
       <div className="card">
         <h1 className="page-title mb-6">Edit Recipe</h1>
-        {submitError && <p className="text-red-600 text-sm mb-4">{submitError}</p>}
+        {submitError && <p className="text-danger text-sm mb-4">{submitError}</p>}
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             name="title"
@@ -92,7 +92,7 @@ const EditRecipe = () => {
             required
           />
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Category (optional)</label>
+            <label className="block text-sm font-medium text-strong mb-1">Category (optional)</label>
             <CategoryAutocomplete
               value={form.category}
               onChange={(category) => setForm((prev) => ({ ...prev, category }))}

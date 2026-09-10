@@ -14,12 +14,12 @@ const NotFound = () => {
         noindex
       />
 
-      <UtensilsIcon size="3.5rem" className="text-green-700 mb-4" />
+      <UtensilsIcon size="3.5rem" className="text-brand mb-4" />
       <h1 className="card-title mb-3">
         This page isn't on the menu
       </h1>
-      <p className="text-gray-600 mb-8 max-w-md">
-        We couldn't find anything at <code className="text-gray-800">{pathname}</code>. It may
+      <p className="text-soft mb-8 max-w-md">
+        We couldn't find anything at <code className="text-strong">{pathname}</code>. It may
         have been removed, or the link might be wrong.
       </p>
       <div className="flex items-center justify-center gap-3 flex-wrap">

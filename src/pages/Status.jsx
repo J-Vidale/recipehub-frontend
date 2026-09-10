@@ -129,7 +129,7 @@ const Status = () => {
       />
 
       <h1 className="page-title mb-2">Connection status</h1>
-      <p className="text-gray-600 mb-8">
+      <p className="text-soft mb-8">
         Whether this site can reach its API, and what to change if it cannot.
       </p>
 
@@ -178,7 +178,7 @@ const Status = () => {
               <li key={hint}>{hint}</li>
             ))}
           </ul>
-          <p className="text-sm text-gray-600 mt-3">
+          <p className="text-sm text-soft mt-3">
             The later checks depend on this one, so fix it first and run them again.
           </p>
         </section>

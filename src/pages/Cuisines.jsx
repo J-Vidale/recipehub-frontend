@@ -46,7 +46,7 @@ const Cuisines = () => {
       <Breadcrumbs items={[{ label: "Home", to: "/" }, { label: "Cuisines" }]} />
 
       <h1 className="page-title mb-2">Browse by cuisine</h1>
-      <p className="text-gray-600 mb-8 max-w-2xl">
+      <p className="text-soft mb-8 max-w-2xl">
         Pick a country or region to see the dishes filed under it.
       </p>
 
@@ -59,12 +59,12 @@ const Cuisines = () => {
       )}
 
       {status === "error" && (
-        <p className="text-gray-600">
+        <p className="text-soft">
           The cuisine list could not be loaded just now. Try again in a moment.
         </p>
       )}
 
-      {status === "empty" && <p className="text-gray-600">No cuisines were returned.</p>}
+      {status === "empty" && <p className="text-soft">No cuisines were returned.</p>}
 
       {status === "ready" && (
         <ul className="tile-grid">

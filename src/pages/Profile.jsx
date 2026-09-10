@@ -114,7 +114,7 @@ const Profile = () => {
     }
   };
 
-  if (!user) return <div className="page-container text-center text-gray-600">Loading profile...</div>;
+  if (!user) return <div className="page-container text-center text-soft">Loading profile...</div>;
 
   return (
     <div className="page-container max-w-4xl">
@@ -152,17 +152,17 @@ const Profile = () => {
           </button>
           <div className="flex-1">
             <h2 className="content-title mb-1">{user.username}</h2>
-            <p className="text-gray-600 text-sm mb-3">{user.email}</p>
+            <p className="text-soft text-sm mb-3">{user.email}</p>
             {user.avatarUrl && (
               <button
                 onClick={handleAvatarRemove}
                 disabled={uploadingAvatar}
-                className="text-sm text-red-600 hover:underline disabled:opacity-60"
+                className="text-sm text-danger hover:underline disabled:opacity-60"
               >
                 Remove photo
               </button>
             )}
-            {avatarError && <p className="text-red-600 text-sm mt-2">{avatarError}</p>}
+            {avatarError && <p className="text-danger text-sm mt-2">{avatarError}</p>}
           </div>
         </div>
       </div>
@@ -171,7 +171,7 @@ const Profile = () => {
         Recipes by {user.username}
       </h3>
       {recipes.length === 0 ? (
-        <p className="text-gray-600">No recipes yet.</p>
+        <p className="text-soft">No recipes yet.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {(Array.isArray(recipes) ? recipes : []).map((recipe) => (

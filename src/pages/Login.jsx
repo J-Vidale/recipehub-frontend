@@ -78,9 +78,9 @@ function Login() {
             {submitting ? "Logging in..." : "Log in"}
           </button>
         </form>
-        <p className="text-sm text-gray-600 text-center mt-4">
+        <p className="text-sm text-soft text-center mt-4">
           Don't have an account?{" "}
-          <Link to="/register" className="text-green-700 hover:underline">
+          <Link to="/register" className="text-brand hover:underline">
             Register
           </Link>
         </p>

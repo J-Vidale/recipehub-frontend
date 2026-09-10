@@ -105,9 +105,9 @@ function Register() {
             {submitting ? "Creating your account..." : "Create account"}
           </button>
         </form>
-        <p className="text-sm text-gray-600 text-center mt-4">
+        <p className="text-sm text-soft text-center mt-4">
           Already have an account?{" "}
-          <Link to="/login" className="text-green-700 hover:underline">
+          <Link to="/login" className="text-brand hover:underline">
             Log in
           </Link>
         </p>

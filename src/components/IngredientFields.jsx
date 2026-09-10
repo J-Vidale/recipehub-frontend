@@ -31,7 +31,7 @@ function IngredientFields({ ingredients, setIngredients }) {
 
   return (
     <div>
-      <h3 className="text-sm font-semibold text-gray-700 mt-2 mb-2">Ingredients</h3>
+      <h3 className="text-sm font-semibold text-strong mt-2 mb-2">Ingredients</h3>
       {ingredients.map((ingredient, index) => (
         <div key={keysRef.current[index]} className="flex gap-2 mb-2">
           <input
@@ -51,7 +51,7 @@ function IngredientFields({ ingredients, setIngredients }) {
           <button
             type="button"
             onClick={() => handleRemove(index)}
-            className="text-red-500 hover:text-red-700 px-1"
+            className="text-danger hover:text-danger px-1"
             aria-label={`Remove ingredient${ingredient.name ? ` ${ingredient.name}` : ` ${index + 1}`}`}
           >
             <CloseIcon />
@@ -61,7 +61,7 @@ function IngredientFields({ ingredients, setIngredients }) {
       <button
         type="button"
         onClick={handleAdd}
-        className="text-green-700 hover:underline text-sm mt-1"
+        className="text-brand hover:underline text-sm mt-1"
       >
         + Add Ingredient
       </button>

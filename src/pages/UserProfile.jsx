@@ -84,8 +84,8 @@ const UserProfile = () => {
     }
   };
 
-  if (loading) return <div className="page-container text-center text-gray-600">Loading profile...</div>;
-  if (error) return <div className="page-container text-center text-red-600">{error}</div>;
+  if (loading) return <div className="page-container text-center text-soft">Loading profile...</div>;
+  if (error) return <div className="page-container text-center text-danger">{error}</div>;
   if (!profile) return null;
 
   const isOwnProfile = authUser && authUser._id === profile._id;
@@ -124,7 +124,7 @@ const UserProfile = () => {
             )}
             <div>
               <h1 className="content-title">{profile.username}</h1>
-              <div className="flex gap-4 text-gray-600 text-sm mt-2">
+              <div className="flex gap-4 text-soft text-sm mt-2">
                 <span><strong>{profile.recipeCount}</strong> recipes</span>
                 <span><strong>{profile.followerCount}</strong> followers</span>
                 <span><strong>{profile.followingCount}</strong> following</span>
@@ -163,7 +163,7 @@ const UserProfile = () => {
       <div>
         <h2 className="text-xl font-semibold mb-4">Recipes</h2>
         {recipes.length === 0 ? (
-          <p className="text-gray-600">No recipes yet.</p>
+          <p className="text-soft">No recipes yet.</p>
         ) : (
           <>
             <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">

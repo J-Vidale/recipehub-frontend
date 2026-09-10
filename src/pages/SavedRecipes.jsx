@@ -30,11 +30,11 @@ const SavedRecipes = () => {
       <Seo title="Saved Recipes" description="Recipes you have saved to cook later on RecipeHub." noindex />
       <h1 className="page-title mb-6">Saved Recipes</h1>
       {loading ? (
-        <p className="text-gray-600">Loading...</p>
+        <p className="text-soft">Loading...</p>
       ) : error ? (
-        <p className="text-red-600">{error}</p>
+        <p className="text-danger">{error}</p>
       ) : savedRecipes.length === 0 ? (
-        <p className="text-gray-600">You haven't saved any recipes yet.</p>
+        <p className="text-soft">You haven't saved any recipes yet.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {Array.isArray(savedRecipes)

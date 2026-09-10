@@ -105,33 +105,33 @@ const Notifications = () => {
       <div className="flex items-center justify-between mb-6">
         <h1 className="page-title">Notifications</h1>
         {notifications.some((n) => !n.read) && (
-          <button onClick={handleMarkAllAsRead} className="text-sm text-green-700 hover:underline">
+          <button onClick={handleMarkAllAsRead} className="text-sm text-brand hover:underline">
             Mark all as read
           </button>
         )}
       </div>
 
       {loading ? (
-        <p className="text-gray-600">Loading...</p>
+        <p className="text-soft">Loading...</p>
       ) : error ? (
-        <p className="text-red-600">{error}</p>
+        <p className="text-danger">{error}</p>
       ) : notifications.length === 0 ? (
-        <p className="text-gray-600">No notifications yet.</p>
+        <p className="text-soft">No notifications yet.</p>
       ) : (
         <>
           <ul className="space-y-2">
             {notifications.map((n) => {
               const link = notificationLink(n);
               const content = (
-                <div className={`card-sm flex items-start gap-3 ${n.read ? "" : "border border-green-200 bg-green-50"}`}>
+                <div className={`card-sm flex items-start gap-3 ${n.read ? "" : "border border-brand surface-brand"}`}>
                   {n.actor?.avatarUrl ? (
                     <img src={avatarImage(n.actor.avatarUrl, 72)} alt="" className="avatar avatar-sm" loading="lazy" />
                   ) : (
                     <span className="avatar avatar-sm">{n.actor?.username?.[0]?.toUpperCase() || "?"}</span>
                   )}
                   <div>
-                    <p className="text-gray-800">{describeNotification(n)}</p>
-                    <p className="text-xs text-gray-400 mt-1">
+                    <p className="text-strong">{describeNotification(n)}</p>
+                    <p className="text-xs text-muted mt-1">
                       {new Date(n.createdAt).toLocaleString()}
                     </p>
                   </div>

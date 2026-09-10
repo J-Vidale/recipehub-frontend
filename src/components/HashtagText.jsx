@@ -19,7 +19,7 @@ const HashtagText = ({ text, className }) => {
     }
     const tag = match[1].toLowerCase();
     parts.push(
-      <Link key={match.index} to={`/tag/${tag}`} className="text-green-700 hover:underline">
+      <Link key={match.index} to={`/tag/${tag}`} className="text-brand hover:underline">
         #{match[1]}
       </Link>
     );

@@ -46,8 +46,8 @@ function MealDetail() {
       .catch((err) => console.error("Failed to fetch related meals:", err));
   }, [meal?.strCategory, id]);
 
-  if (loading) return <p className="page-container text-center text-gray-600">Loading meal...</p>;
-  if (error) return <p className="page-container text-center text-red-600">{error}</p>;
+  if (loading) return <p className="page-container text-center text-soft">Loading meal...</p>;
+  if (error) return <p className="page-container text-center text-danger">{error}</p>;
 
   const ingredients = extractIngredients(meal);
   const embedUrl = youtubeEmbedUrl(meal.strYoutube);
@@ -101,7 +101,7 @@ function MealDetail() {
         )}
 
         <h3 className="font-semibold text-lg mb-2">Ingredients</h3>
-        <ul className="list-disc list-inside text-gray-700 space-y-1 mb-4">
+        <ul className="list-disc list-inside text-strong space-y-1 mb-4">
           {ingredients.map(({ ingredient, measure }, i) => (
             <li key={i}>
               {ingredient}{measure ? ` - ${measure}` : ""}
@@ -110,7 +110,7 @@ function MealDetail() {
         </ul>
 
         <h3 className="font-semibold text-lg mb-2">Instructions</h3>
-        <p className="text-gray-600 whitespace-pre-line mb-4">{meal.strInstructions}</p>
+        <p className="text-soft whitespace-pre-line mb-4">{meal.strInstructions}</p>
 
         <NutritionPanel ingredients={ingredients} />
 
