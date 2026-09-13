@@ -114,9 +114,12 @@ const Terms = () => (
 
     <h2>8. Ending your use</h2>
     <p>
-      You may stop using {SITE_NAME} at any time and delete your recipes. We may
-      suspend or terminate accounts that repeatedly or seriously breach these
-      terms.
+      You may stop using {SITE_NAME} at any time, delete individual recipes, or
+      delete your account outright from your profile page. Deleting your account
+      removes it and everything in it - recipes and their photos, comments,
+      likes, saves, follows and messages - immediately and permanently. Anyone
+      who had saved one of your recipes will lose it. We may suspend or
+      terminate accounts that repeatedly or seriously breach these terms.
     </p>
 
     <h2>9. Changes to these terms</h2>

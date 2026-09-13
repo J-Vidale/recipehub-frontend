@@ -76,10 +76,13 @@ describe("recovering", () => {
   it("still reloads when sessionStorage is unavailable", () => {
     // Private modes throw outright on access. A page that stays broken is
     // worse than one extra reload, so the guard fails open.
-    vi.spyOn(window.sessionStorage, "getItem").mockImplementation(() => {
+    // Storage.prototype, not window.sessionStorage: jsdom accepts an
+    // instance spy and then ignores it, so a test written that way never
+    // reaches the throwing path it claims to cover.
+    vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
       throw new Error("denied");
     });
-    vi.spyOn(window.sessionStorage, "setItem").mockImplementation(() => {
+    vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
       throw new Error("denied");
     });
     expect(recoverFromStaleDeploy()).toBe(true);

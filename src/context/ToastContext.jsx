@@ -2,7 +2,8 @@
    intentionally exports the useToast hook alongside its provider, the
    conventional React context pattern. The rule only affects Fast Refresh
    granularity during development. */
-import { createContext, useCallback, useContext, useMemo, useRef, useState } from "react";
+import { useEffect, createContext, useCallback, useContext, useMemo, useRef, useState } from "react";
+import { takeHandoff } from "../lib/handoff";
 import { CloseIcon } from "../components/icons";
 
 const ToastContext = createContext(null);
@@ -31,6 +32,14 @@ export const ToastProvider = ({ children }) => {
     },
     [dismiss]
   );
+
+  // A message left by the page that reloaded us - deleting an account is
+  // the one flow that ends in a reload, and its confirmation would
+  // otherwise be thrown away with the old page.
+  useEffect(() => {
+    const message = takeHandoff();
+    if (message) push(message, "success");
+  }, [push]);
 
   const value = useMemo(
     () => ({

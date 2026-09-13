@@ -107,8 +107,13 @@ const Privacy = () => (
       <li>Add or remove your profile picture at any time.</li>
       <li>Block another member to stop them following or contacting you.</li>
       <li>
-        Request a copy of your data, or deletion of your account and its content.
+        Delete your account yourself, from your profile page, at any time. It
+        takes effect immediately and needs no request and no approval: your
+        account, recipes and their photos, comments, likes, saves, follows and
+        messages are removed. Nothing is kept under a placeholder name, and it
+        cannot be undone.
       </li>
+      <li>Request a copy of your data.</li>
     </ul>
     <p>
       Depending on where you live you may also have rights to correct, restrict,
