@@ -585,6 +585,14 @@ h3,
     padding: 1rem;
   }
 
+  /* A card for something that cannot be undone. The border is the only
+     change: a full red fill would shout from the moment the page loads,
+     when nothing has been asked for yet, and a page that shouts all the
+     time is a page nobody reads. */
+  .card--danger {
+    border-color: var(--color-danger-border);
+  }
+
   /* Applied alongside .card/.card-sm on anything clickable (a recipe
      card, a conversation row) - lifts and brightens on hover/focus so a
      grid of cards reads as "these are tappable" without needing an

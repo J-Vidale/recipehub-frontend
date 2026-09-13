@@ -4,6 +4,7 @@ import API from "../services/api";
 import { useToast } from "../context/ToastContext";
 import { useAuth } from "../context/AuthContext";
 import RecipeCard from "../components/RecipeCard";
+import DeleteAccount from "../components/DeleteAccount";
 import Seo from "../components/Seo";
 import { avatarImage } from "../lib/images";
 import { CameraIcon } from "../components/icons";
@@ -197,6 +198,8 @@ const Profile = () => {
           ))}
         </div>
       )}
+
+      <DeleteAccount />
     </div>
   );
 };
