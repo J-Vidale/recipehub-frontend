@@ -6,6 +6,12 @@ import { getStored, setStored, removeStored } from "../lib/storage";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  // The token is held in state as well as storage so that replacing it is
+  // something the tree can react to. The socket reads it at handshake
+  // time and nowhere else, so a token that changes underneath a live
+  // connection has to be able to prompt a new one.
+  const [token, setToken] = useState(() => getStored("token"));
+
   const [user, setUser] = useState(() => {
     const storedUser = getStored("user");
     if (!storedUser || storedUser === "undefined") return null;
@@ -46,6 +52,7 @@ export const AuthProvider = ({ children }) => {
       const { token, ...userData } = response.data;
       setStored("user", JSON.stringify(userData));
       setStored("token", token);
+      setToken(token);
       setUser(userData);
     } catch (error) {
       // Rethrowing a bare Error used to discard the network classification,
@@ -84,9 +91,22 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
+  // Swaps the session's token without touching who is signed in - what
+  // changing a password does. The server ends every connection that
+  // predates the change, this device's included, and socket.io treats a
+  // close the server asked for as final: it will not retry on its own. So
+  // the new token has to arrive as a change the tree can see, rather than
+  // a quiet write to storage that nothing is watching.
+  const replaceToken = (next) => {
+    if (!next) return;
+    setStored("token", next);
+    setToken(next);
+  };
+
   const logout = () => {
     removeStored("user");
     removeStored("token");
+    setToken(null);
     setUser(null);
   };
 
@@ -108,7 +128,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, fetchUserData, updateUser }}>
+    <AuthContext.Provider
+      value={{ user, token, login, register, logout, fetchUserData, updateUser, replaceToken }}
+    >
       {children}
     </AuthContext.Provider>
   );

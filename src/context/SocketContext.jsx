@@ -1,7 +1,6 @@
 /* eslint-disable react-refresh/only-export-components -- this module intentionally exports useSocket alongside its provider, the conventional React context pattern. The rule only affects Fast Refresh granularity during development. */
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useAuth } from "./AuthContext";
-import { getStored } from "../lib/storage";
 import { normaliseApiBase, originOf } from "../lib/apiBase";
 
 const SocketContext = createContext(null);
@@ -16,7 +15,7 @@ const SocketContext = createContext(null);
 const SOCKET_URL = originOf(normaliseApiBase(import.meta.env.VITE_API_URL)) || undefined;
 
 export const SocketProvider = ({ children }) => {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const [socket, setSocket] = useState(null);
   const socketRef = useRef(null);
 
@@ -28,7 +27,6 @@ export const SocketProvider = ({ children }) => {
       return;
     }
 
-    const token = getStored("token");
     if (!token) return;
 
     let cancelled = false;
@@ -75,8 +73,13 @@ export const SocketProvider = ({ children }) => {
       socketRef.current?.disconnect();
       socketRef.current = null;
     };
+    // The token, not just the account: changing a password issues a new
+    // one and the server closes every connection made with the old one,
+    // this device's included. socket.io will not retry a close the server
+    // asked for, so without the token here the tab that made the change
+    // kept its session and silently lost real-time until a reload.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?._id]);
+  }, [user?._id, token]);
 
   return <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>;
 };
