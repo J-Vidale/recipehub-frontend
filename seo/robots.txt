@@ -15,5 +15,7 @@ Disallow: /saved-recipes
 Disallow: /create
 Disallow: /edit/
 Disallow: /search
+Disallow: /moderation
+Disallow: /status
 
 Sitemap: __SITE_URL__/sitemap.xml
