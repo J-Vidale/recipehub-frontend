@@ -2,10 +2,14 @@ import React, { useState } from "react";
 import API from "../services/api";
 import { useToast } from "../context/ToastContext";
 
-const BlockButton = ({ userId, onBlockedChange }) => {
+const BlockButton = ({ userId, initialBlockedByMe = false, onBlockedChange }) => {
   const toast = useToast();
   const [busy, setBusy] = useState(false);
-  const [blocked, setBlocked] = useState(false);
+  // Seeded from the profile. It used to start false whatever the truth
+  // was, so after a reload the button said "Block" about someone already
+  // blocked - and unblocking, which is this same button in its other
+  // state, could not be reached at all.
+  const [blocked, setBlocked] = useState(initialBlockedByMe);
 
   const handleToggle = async () => {
     const action = blocked
