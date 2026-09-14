@@ -59,6 +59,7 @@ with notes:
 | `CLOUDINARY_API_SECRET` | From step 2 |
 | `NODE_ENV` | `production` |
 | `CORS_ORIGINS` | The web client's origin — you will not know it until step 4, so come back for this in step 5 |
+| `ADMIN_USERNAMES` | Who can read reported content. Optional, but nothing can be moderated without it — see "Moderators" below |
 
 Once it is live, note the service URL. It will look like
 `https://recipehub-backend-xxxx.onrender.com`.
@@ -220,6 +221,31 @@ gzipped, fetched after first paint rather than blocking it.
 Session Replay is deliberately not enabled, and request bodies, cookies
 and auth headers are stripped before anything is sent. This app carries
 private messages and a login form.
+
+### Moderators
+
+Members can report a recipe, a person or a comment. Those reports go into
+a queue at `/moderation`, and `ADMIN_USERNAMES` on the **API** service
+decides who can open it — a comma-separated list of usernames, matched
+whatever case they are typed in:
+
+```
+ADMIN_USERNAMES=your_username
+```
+
+Unset means nobody. Reports are still filed and nobody can read them, so
+set this to at least your own account before you invite anyone. The
+startup log names the moderators in force, and warns when the list is
+empty in production.
+
+It is an environment variable rather than a flag on an account on
+purpose: nothing a request can do changes it, and there would be no safe
+way to grant the first one through an API that has no moderator yet. To
+add or remove someone, edit the variable and redeploy.
+
+To anyone not on the list the moderation endpoints answer 404 rather than
+403, so the page reads as not existing rather than as one they are not
+allowed into.
 
 ### Redis
 

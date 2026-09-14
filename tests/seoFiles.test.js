@@ -111,3 +111,49 @@ describe("apiHints", () => {
     expect(apiHints("https://localhost-api.example.com")).not.toBe("");
   });
 });
+
+// robots.txt and the pages' own noindex are meant to say the same thing.
+// Nothing checked that they did, and two pages drifted apart from it:
+// /moderation and /status both told a crawler not to index them and both
+// were missing from robots.txt, where the comment says these routes are
+// kept out deliberately. The meta tag is what enforces it, so this was
+// never a leak - but robots.txt is the cheap signal a crawler reads before
+// it renders anything, and a list that is only mostly right is worse than
+// no list, because it reads as complete.
+describe("robots.txt and the pages agree on what stays out of the index", () => {
+  const app = readFileSync(join(root, "src/App.jsx"), "utf8");
+  const robots = readTemplate("robots.txt");
+
+  // path="/x" element={<Page />}, including the ones wrapped in
+  // ProtectedRoute - the element sits on the following lines there.
+  const routes = [...app.matchAll(/path="(\/[^"*]*)"[\s\S]{0,120}?<(\w+)\s*\/>/g)].map(
+    ([, path, page]) => ({ path, page })
+  );
+
+  const disallowed = robots
+    .split("\n")
+    .filter((line) => line.startsWith("Disallow:"))
+    .map((line) => line.slice("Disallow:".length).trim());
+
+  it("found the routes to check", () => {
+    // Guards the regex above: an empty list would pass everything below.
+    expect(routes.length).toBeGreaterThan(20);
+    expect(routes.some((route) => route.path === "/moderation")).toBe(true);
+  });
+
+  it.each(
+    routes.filter(({ page }) => {
+      const file = join(root, "src/pages", `${page}.jsx`);
+      try {
+        return readFileSync(file, "utf8").includes("noindex");
+      } catch {
+        return false;
+      }
+    })
+  )("$path sends noindex, so robots.txt disallows it", ({ path }) => {
+    expect(
+      disallowed.some((rule) => path === rule || path.startsWith(rule)),
+      `robots.txt does not disallow ${path}`
+    ).toBe(true);
+  });
+});
