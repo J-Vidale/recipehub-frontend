@@ -5,6 +5,7 @@ import { useToast } from "../context/ToastContext";
 import { useAuth } from "../context/AuthContext";
 import { HeartIcon, PinIcon } from "./icons";
 import { likeResult } from "../lib/likeResponse";
+import { refusalMessage } from "../lib/refusalMessage";
 import { avatarImage } from "../lib/images";
 import { asArray } from "../lib/apiShape";
 
@@ -17,6 +18,7 @@ const CommentAvatar = ({ user }) =>
 
 const CommentLikeButton = ({ commentId, initialLikeCount, initialLikedByMe }) => {
   const { user } = useAuth();
+  const toast = useToast();
   const [likeCount, setLikeCount] = useState(initialLikeCount);
   const [likedByMe, setLikedByMe] = useState(initialLikedByMe);
   const [busy, setBusy] = useState(false);
@@ -40,9 +42,13 @@ const CommentLikeButton = ({ commentId, initialLikeCount, initialLikedByMe }) =>
       const settled = likeResult(res.data);
       if (settled.likedByMe !== undefined) setLikedByMe(settled.likedByMe);
       if (settled.likeCount !== undefined) setLikeCount(settled.likeCount);
-    } catch {
+    } catch (err) {
       setLikedByMe(previouslyLiked);
       setLikeCount(previousCount);
+      // Same as the recipe like: blocking refuses this with a reason, and
+      // a heart that fills and empties again says nothing.
+      const reason = refusalMessage(err);
+      if (reason) toast.error(reason);
     } finally {
       setBusy(false);
     }
