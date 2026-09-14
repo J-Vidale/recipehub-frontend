@@ -176,12 +176,12 @@ const RecipeDetail = () => {
           <LikeButton
             recipeId={recipe._id}
             initialLikeCount={recipe.likeCount || 0}
-            initialLikedByMe={false}
+            initialLikedByMe={Boolean(recipe.likedByMe)}
           />
           <ShareButton
             recipeId={recipe._id}
             initialShareCount={recipe.shareCount || 0}
-            initialSharedByMe={false}
+            initialSharedByMe={Boolean(recipe.sharedByMe)}
           />
           {user ? (
             <button
