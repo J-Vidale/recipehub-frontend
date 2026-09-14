@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import API from "../services/api";
+import { refusalMessage } from "../lib/refusalMessage";
 import { useToast } from "../context/ToastContext";
 import RecipeCard from "../components/RecipeCard";
 import Seo from "../components/Seo";
@@ -55,14 +56,16 @@ const YourRecipes = () => {
       } else {
         await API.post(`/recipes/save/${recipeId}`, {});
       }
-    } catch {
+    } catch (err) {
       // Revert on failure
       if (currentlySaved) {
         setSavedIds((prev) => [...prev, recipeId]);
       } else {
         setSavedIds((prev) => prev.filter((id) => id !== recipeId));
       }
-      toast.error("Failed to update saved recipes.");
+      // The server's wording when it gave one: "Recipe not found" says
+      // more than "failed" about a bookmark that just un-bookmarked itself.
+      toast.error(refusalMessage(err) || "Failed to update saved recipes.");
     } finally {
       setSavingId(null);
     }

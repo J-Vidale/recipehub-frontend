@@ -2,9 +2,12 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import API from "../services/api";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
+import { refusalMessage } from "../lib/refusalMessage";
 
 const FollowButton = ({ userId, initialFollowingByMe = false, onFollowerCountChange }) => {
   const { user } = useAuth();
+  const toast = useToast();
   const [followingByMe, setFollowingByMe] = useState(initialFollowingByMe);
   const [busy, setBusy] = useState(false);
 
@@ -33,9 +36,14 @@ const FollowButton = ({ userId, initialFollowingByMe = false, onFollowerCountCha
       if (Number.isFinite(res.data?.followerCount)) {
         onFollowerCountChange?.({ count: res.data.followerCount });
       }
-    } catch {
+    } catch (err) {
       setFollowingByMe(previouslyFollowing);
       onFollowerCountChange?.({ delta: previouslyFollowing ? 1 : -1 });
+      // Following someone who has blocked you is refused with a reason.
+      // Without this the button flipped back and said nothing, which reads
+      // as the button being broken.
+      const reason = refusalMessage(err);
+      if (reason) toast.error(reason);
     } finally {
       setBusy(false);
     }

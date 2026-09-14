@@ -4,7 +4,7 @@ import API from "../services/api";
 import { useToast } from "../context/ToastContext";
 import IngredientFields from "../components/IngredientFields";
 import RecipePhotos from "../components/RecipePhotos";
-import { uploadRecipePhotos } from "../lib/uploadPhotos";
+import { uploadRecipePhotos, describeFailedUploads } from "../lib/uploadPhotos";
 import CategoryAutocomplete from "../components/CategoryAutocomplete";
 import Seo from "../components/Seo";
 import { asArray } from "../lib/apiShape";
@@ -79,7 +79,7 @@ const EditRecipe = () => {
       const failed = await uploadRecipePhotos(id, photos);
       toast[failed.length ? "error" : "success"](
         failed.length
-          ? `Changes saved, but ${failed.length} photo${failed.length === 1 ? "" : "s"} did not upload.`
+          ? describeFailedUploads(failed, "Changes saved, but")
           : "Changes saved."
       );
       navigate("/profile");
