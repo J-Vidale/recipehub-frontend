@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import API from "../services/api";
 import { useToast } from "../context/ToastContext";
-import { setStored } from "../lib/storage";
+import { useAuth } from "../context/AuthContext";
 import { MIN_PASSWORD_LENGTH } from "../lib/credentials";
 
 // Changing your password, for the case that matters: you think someone
@@ -9,6 +9,7 @@ import { MIN_PASSWORD_LENGTH } from "../lib/credentials";
 // point - so the copy says so rather than leaving it to be discovered.
 const ChangePassword = () => {
   const toast = useToast();
+  const { replaceToken } = useAuth();
   const [open, setOpen] = useState(false);
   const [current, setCurrent] = useState("");
   const [next, setNext] = useState("");
@@ -33,9 +34,11 @@ const ChangePassword = () => {
         newPassword: next,
       });
       // The server ends every session minted before the change, this one
-      // included. It hands back a replacement so the person who made the
-      // change is not signed out by it.
-      if (data?.token) setStored("token", data.token);
+      // included, and hands back a replacement so the person who made the
+      // change is not signed out by it. Through the context rather than
+      // straight to storage: it also closed this tab's socket, and only a
+      // token the tree can see will prompt a new one.
+      if (data?.token) replaceToken(data.token);
       toast.success(data?.message || "Password changed.");
       close();
     } catch (err) {
