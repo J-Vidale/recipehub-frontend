@@ -49,14 +49,14 @@ const RecipeDetail = () => {
       .catch((err) => console.error("Failed to fetch more recipes from this user:", err));
   }, [recipe]);
 
+  // The recipe itself says whether this reader has saved it. This used to
+  // fetch the whole saved list - every saved recipe, fully populated, with
+  // no limit - and search it for one id, which on a well-used account
+  // meant downloading hundreds of recipes to decide whether one button
+  // said "Save" or "Unsave".
   useEffect(() => {
-    if (!recipe || !user) return; // Only logged-in users have a saved list to check
-    API.get("/recipes/saved").then((res) => {
-      setIsSaved(asArray(res.data).some((r) => r._id === recipe._id));
-    }).catch((err) => {
-      console.error("Failed to check saved status:", err);
-    });
-  }, [recipe, user]);
+    setIsSaved(Boolean(recipe?.savedByMe));
+  }, [recipe]);
 
   const handleSave = async () => {
     const previouslySaved = isSaved;

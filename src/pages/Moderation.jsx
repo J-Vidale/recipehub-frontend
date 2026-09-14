@@ -56,12 +56,10 @@ const Moderation = () => {
       setCursor(asCursor(res.data?.nextCursor));
       setHasMore(Boolean(res.data?.hasMore));
     } catch (err) {
-      // A non-moderator gets 404 from the gate, which is deliberate - the
-      // endpoints read as absent rather than forbidden.
-      // ApiError carries the code under response.status, not status.
       // 404 is what the gate answers someone who is not a moderator: the
       // endpoints read as absent rather than forbidden, so that a 403
-      // does not confirm they exist.
+      // does not confirm they exist. ApiError carries the code under
+      // response.status, not status.
       if (err?.response?.status === 404) {
         setNotForYou(true);
         return;
