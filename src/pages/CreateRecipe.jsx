@@ -4,7 +4,7 @@ import API from "../services/api";
 import { useToast } from "../context/ToastContext";
 import IngredientFields from "../components/IngredientFields";
 import RecipePhotos from "../components/RecipePhotos";
-import { uploadRecipePhotos } from "../lib/uploadPhotos";
+import { uploadRecipePhotos, describeFailedUploads } from "../lib/uploadPhotos";
 import CategoryAutocomplete from "../components/CategoryAutocomplete";
 import Seo from "../components/Seo";
 import Field from "../components/Field";
@@ -43,7 +43,7 @@ const CreateRecipe = () => {
       const failed = await uploadRecipePhotos(recipe?._id, photos);
       if (failed.length) {
         toast.error(
-          `Recipe published, but ${failed.length} photo${failed.length === 1 ? "" : "s"} did not upload. You can add them by editing the recipe.`
+          `${describeFailedUploads(failed, "Recipe published, but")} You can add them by editing the recipe.`
         );
       } else {
         toast.success("Recipe published.");

@@ -1,4 +1,5 @@
 import API from "../services/api";
+import { refusalMessage } from "./refusalMessage";
 
 /**
  * Send chosen photos to a recipe that already exists.
@@ -13,7 +14,12 @@ import API from "../services/api";
  *
  * @param {string} recipeId
  * @param {File[]} photos
- * @returns {Promise<string[]>} the names of the photos that did not upload.
+ * @returns {Promise<{ name: string, reason: string | null }[]>} what did
+ *   not upload, and why where the server said. The reason used to be
+ *   thrown away, so someone whose photo was one over the recipe's limit,
+ *   or whose upload hit Cloudinary while it was down, was told only that
+ *   it "did not upload" - and had nothing to go on but trying the same
+ *   file again.
  */
 export const uploadRecipePhotos = async (recipeId, photos) => {
   if (!recipeId || !photos?.length) return [];
@@ -25,9 +31,24 @@ export const uploadRecipePhotos = async (recipeId, photos) => {
     body.append("file", photo);
     try {
       await API.post(`/recipes/${recipeId}/media`, body);
-    } catch {
-      failed.push(photo.name);
+    } catch (err) {
+      failed.push({ name: photo.name, reason: refusalMessage(err) });
     }
   }
   return failed;
+};
+
+/**
+ * What to tell someone about photos that did not upload.
+ *
+ * The reasons are the server's own sentences, and the same one usually
+ * applies to every photo in a batch ("Recipes can have at most 5 photos"),
+ * so they are deduplicated rather than repeated per file.
+ */
+export const describeFailedUploads = (failed, prefix) => {
+  const count = failed.length;
+  const plural = count === 1 ? "photo" : "photos";
+  const reasons = [...new Set(failed.map((item) => item.reason).filter(Boolean))];
+  const because = reasons.length ? ` ${reasons.join(" ")}` : "";
+  return `${prefix} ${count} ${plural} did not upload.${because}`;
 };

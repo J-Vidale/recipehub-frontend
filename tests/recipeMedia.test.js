@@ -146,7 +146,7 @@ describe("sending them", () => {
       .mockResolvedValueOnce({ data: {} })
       .mockRejectedValueOnce(new Error("502"));
     const failed = await uploadRecipePhotos("r1", [photo("a.png"), photo("b.png")]);
-    expect(failed).toEqual(["b.png"]);
+    expect(failed.map((item) => item.name)).toEqual(["b.png"]);
   });
 
   it("keeps going after one fails", async () => {
@@ -155,7 +155,7 @@ describe("sending them", () => {
       .mockResolvedValue({ data: {} });
     const failed = await uploadRecipePhotos("r1", [photo("a.png"), photo("b.png")]);
     expect(post).toHaveBeenCalledTimes(2);
-    expect(failed).toEqual(["a.png"]);
+    expect(failed.map((item) => item.name)).toEqual(["a.png"]);
   });
 
   it("does nothing without a recipe or without photos", async () => {
@@ -163,5 +163,74 @@ describe("sending them", () => {
     expect(await uploadRecipePhotos(null, [photo("a.png")])).toEqual([]);
     expect(await uploadRecipePhotos("r1", [])).toEqual([]);
     expect(post).not.toHaveBeenCalled();
+  });
+});
+
+// "2 photos did not upload" and nothing else leaves someone with one
+// option: try the same files again. The server says why - the recipe is
+// already at its five, the file is over the limit, Cloudinary was down -
+// and that sentence used to be discarded in the catch.
+describe("what to tell someone about photos that did not upload", () => {
+  let uploadRecipePhotos;
+  let describeFailedUploads;
+  let API;
+
+  beforeEach(async () => {
+    vi.resetModules();
+    API = (await import("../src/services/api")).default;
+    ({ uploadRecipePhotos, describeFailedUploads } = await import("../src/lib/uploadPhotos"));
+  });
+  afterEach(() => vi.restoreAllMocks());
+
+  const photo = (name) => new File(["bytes"], name, { type: "image/png" });
+
+  const refused = (message) => {
+    const err = new Error("no");
+    err.response = { status: 400, data: { message } };
+    return err;
+  };
+
+  it("keeps the server's reason alongside the file name", async () => {
+    vi.spyOn(API, "post").mockRejectedValue(refused("Recipes can have at most 5 photos"));
+    const failed = await uploadRecipePhotos("r1", [photo("a.png")]);
+    expect(failed).toEqual([{ name: "a.png", reason: "Recipes can have at most 5 photos" }]);
+  });
+
+  it("says the reason once, not once per photo", () => {
+    const failed = [
+      { name: "a.png", reason: "Recipes can have at most 5 photos" },
+      { name: "b.png", reason: "Recipes can have at most 5 photos" },
+    ];
+    expect(describeFailedUploads(failed, "Recipe published, but")).toBe(
+      "Recipe published, but 2 photos did not upload. Recipes can have at most 5 photos"
+    );
+  });
+
+  it("counts one photo as a photo", () => {
+    expect(describeFailedUploads([{ name: "a.png", reason: null }], "Changes saved, but")).toBe(
+      "Changes saved, but 1 photo did not upload."
+    );
+  });
+
+  it("gives every distinct reason when they differ", () => {
+    const failed = [
+      { name: "a.png", reason: "Image exceeds 8MB limit" },
+      { name: "b.png", reason: "Media upload failed" },
+    ];
+    const message = describeFailedUploads(failed, "Changes saved, but");
+    expect(message).toContain("Image exceeds 8MB limit");
+    expect(message).toContain("Media upload failed");
+  });
+
+  it("falls back to the plain count when the server said nothing", async () => {
+    // A request that never reached a server has no sentence to pass on,
+    // and inventing one would be worse than the count on its own.
+    const err = new Error("offline");
+    err.kind = "network";
+    vi.spyOn(API, "post").mockRejectedValue(err);
+    const failed = await uploadRecipePhotos("r1", [photo("a.png"), photo("b.png")]);
+    expect(describeFailedUploads(failed, "Recipe published, but")).toBe(
+      "Recipe published, but 2 photos did not upload."
+    );
   });
 });

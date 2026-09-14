@@ -17,6 +17,10 @@ vi.mock("../src/services/api", () => ({
 vi.mock("../src/context/AuthContext", () => ({
   useAuth: () => ({ user: { _id: "me", username: "marta" } }),
 }));
+const toastError = vi.fn();
+vi.mock("../src/context/ToastContext", () => ({
+  useToast: () => ({ error: (...args) => toastError(...args), success: vi.fn() }),
+}));
 
 const API = (await import("../src/services/api")).default;
 const FollowButton = (await import("../src/components/FollowButton")).default;
@@ -37,6 +41,7 @@ const renderButton = (props = {}) => {
 };
 
 beforeEach(() => {
+  toastError.mockReset();
   API.post.mockReset();
   API.delete.mockReset();
 });
@@ -87,5 +92,34 @@ describe("unfollowing someone", () => {
     await userEvent.click(screen.getByRole("button"));
     await waitFor(() => expect(changes).toHaveLength(2));
     expect(changes[1]).toEqual({ delta: 1 });
+  });
+});
+
+// Following someone who has blocked you is refused with a sentence. The
+// button flipped back and said nothing, which reads as the button being
+// broken rather than the action being turned down.
+describe("a follow the server refuses", () => {
+  it("says why", async () => {
+    const err = new Error("no");
+    err.response = { status: 403, data: { message: "You cannot follow this user" } };
+    API.post.mockRejectedValue(err);
+    renderButton();
+
+    await userEvent.click(screen.getByRole("button", { name: /follow/i }));
+
+    await waitFor(() => expect(toastError).toHaveBeenCalledWith("You cannot follow this user"));
+    expect(screen.getByRole("button", { name: /^follow$/i })).toBeTruthy();
+  });
+
+  it("stays quiet when the request never reached a server", async () => {
+    const err = new Error("offline");
+    err.kind = "network";
+    API.post.mockRejectedValue(err);
+    renderButton();
+
+    await userEvent.click(screen.getByRole("button", { name: /follow/i }));
+
+    await waitFor(() => expect(screen.getByRole("button", { name: /^follow$/i })).toBeTruthy());
+    expect(toastError).not.toHaveBeenCalled();
   });
 });

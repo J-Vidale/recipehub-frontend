@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import API from "../services/api";
+import { refusalMessage } from "../lib/refusalMessage";
 import { useToast } from "../context/ToastContext";
 import { useAuth } from "../context/AuthContext";
 import LikeButton from "../components/LikeButton";
@@ -70,9 +71,9 @@ const RecipeDetail = () => {
         await API.post(`/recipes/save/${recipe._id}`, {});
       }
       toast.success(previouslySaved ? "Removed from saved recipes." : "Saved to your recipes.");
-    } catch {
+    } catch (err) {
       setIsSaved(previouslySaved);
-      toast.error("Failed to update saved recipes.");
+      toast.error(refusalMessage(err) || "Failed to update saved recipes.");
     } finally {
       setSaving(false);
     }
