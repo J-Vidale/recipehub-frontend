@@ -4,6 +4,7 @@ import API from "../services/api";
 import { useToast } from "../context/ToastContext";
 import { useAuth } from "../context/AuthContext";
 import RecipeCard from "../components/RecipeCard";
+import BlockedList from "../components/BlockedList";
 import ChangePassword from "../components/ChangePassword";
 import DeleteAccount from "../components/DeleteAccount";
 import Seo from "../components/Seo";
@@ -200,6 +201,7 @@ const Profile = () => {
         </div>
       )}
 
+      <BlockedList />
       <ChangePassword />
       <DeleteAccount />
     </div>
