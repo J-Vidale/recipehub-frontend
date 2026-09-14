@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components -- this module intentionally exports AuthContext, useAuth alongside its provider, the conventional React context pattern. The rule only affects Fast Refresh granularity during development. */
-import { createContext, useState, useContext } from "react";
+import { createContext, useEffect, useState, useContext } from "react";
 import API from "../services/api";
 import { getStored, setStored, removeStored } from "../lib/storage";
 
@@ -15,6 +15,29 @@ export const AuthProvider = ({ children }) => {
       return null;
     }
   });
+
+  // The stored user is a snapshot taken at login and never revisited, so
+  // anything the server derives per request - whether this account
+  // moderates, chiefly - never arrived, and anything that changed since
+  // stayed stale until the next login. Refreshed once on mount.
+  //
+  // Deliberately not destructive on failure: a sleeping server or a
+  // dropped connection must not look like being signed out. Only a 401
+  // ends the session, and the API client already handles that.
+  useEffect(() => {
+    if (!getStored("token")) return;
+    let cancelled = false;
+    API.get("/users/me")
+      .then((response) => {
+        if (cancelled || !response?.data?._id) return;
+        setUser(response.data);
+        setStored("user", JSON.stringify(response.data));
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const login = async (username, password) => {
     try {

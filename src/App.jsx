@@ -15,6 +15,7 @@ import Home from "./pages/Home";
 const Explore = lazy(() => import("./pages/Explore"));
 const Feed = lazy(() => import("./pages/Feed"));
 const Notifications = lazy(() => import("./pages/Notifications"));
+const Moderation = lazy(() => import("./pages/Moderation"));
 const SearchResults = lazy(() => import("./pages/SearchResults"));
 const TagPage = lazy(() => import("./pages/TagPage"));
 const Messages = lazy(() => import("./pages/Messages"));
@@ -99,6 +100,17 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Notifications />
+                </ProtectedRoute>
+              }
+            />
+            {/* Behind ProtectedRoute like any signed-in page. The page
+                itself checks isAdmin, and the API answers 404 to everyone
+                else whatever the client chooses to render. */}
+            <Route
+              path="/moderation"
+              element={
+                <ProtectedRoute>
+                  <Moderation />
                 </ProtectedRoute>
               }
             />
