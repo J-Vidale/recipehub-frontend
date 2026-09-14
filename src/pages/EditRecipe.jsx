@@ -3,6 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import API from "../services/api";
 import { useToast } from "../context/ToastContext";
 import IngredientFields from "../components/IngredientFields";
+import RecipePhotos from "../components/RecipePhotos";
+import { uploadRecipePhotos } from "../lib/uploadPhotos";
 import CategoryAutocomplete from "../components/CategoryAutocomplete";
 import Seo from "../components/Seo";
 import { asArray } from "../lib/apiShape";
@@ -17,6 +19,8 @@ const EditRecipe = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [submitError, setSubmitError] = useState(null);
+  const [media, setMedia] = useState([]);
+  const [photos, setPhotos] = useState([]);
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -31,6 +35,7 @@ const EditRecipe = () => {
           category: res.data.category || "",
         });
         setIngredients(asArray(res.data?.ingredients));
+        setMedia(asArray(res.data?.media));
       } catch (err) {
         console.error("Failed to fetch recipe:", err);
         setError("Couldn't load this recipe. It may have been deleted.");
@@ -43,6 +48,21 @@ const EditRecipe = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // Deleting is immediate rather than staged with the rest of the form.
+  // The recipe already exists, the endpoint removes the asset from
+  // Cloudinary as well as the row, and a delete held until Save would
+  // leave the two out of step if the reader navigated away.
+  const handleRemovePhoto = async (mediaId) => {
+    const previous = media;
+    setMedia((current) => current.filter((item) => item._id !== mediaId));
+    try {
+      await API.delete(`/recipes/${id}/media/${mediaId}`);
+    } catch (err) {
+      setMedia(previous);
+      toast.error(err?.message || "Could not remove that photo.");
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitError(null);
@@ -52,7 +72,16 @@ const EditRecipe = () => {
         ...form,
         ingredients: ingredients.filter((i) => i.name.trim() && i.amount.trim()),
       });
-      toast.success("Changes saved.");
+
+      // As on the create form: the text is saved by this point, so a photo
+      // that fails to upload is reported as a photo failing, not as the
+      // edit failing.
+      const failed = await uploadRecipePhotos(id, photos);
+      toast[failed.length ? "error" : "success"](
+        failed.length
+          ? `Changes saved, but ${failed.length} photo${failed.length === 1 ? "" : "s"} did not upload.`
+          : "Changes saved."
+      );
       navigate("/profile");
     } catch (err) {
       console.error("Failed to update recipe:", err);
@@ -109,6 +138,13 @@ const EditRecipe = () => {
             hint="Write #hashtags anywhere in here to tag the recipe."
           />
           <IngredientFields ingredients={ingredients} setIngredients={setIngredients} />
+          <RecipePhotos
+            existing={media}
+            pending={photos}
+            onPendingChange={setPhotos}
+            onRemoveExisting={handleRemovePhoto}
+            busy={submitting}
+          />
           <button type="submit" disabled={submitting} className="btn-primary w-full">
             {submitting ? "Saving..." : "Save Changes"}
           </button>

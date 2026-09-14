@@ -120,16 +120,22 @@ const RecipeDetail = () => {
           )}
         </div>
         {media.length > 1 && (
-          <div className="detail-hero-strip">
+          /* Buttons, not images with an onClick. An <img onClick> has no
+             role, no tab stop and no keyboard handler, so choosing a photo
+             was mouse-only and a screen reader had nothing to announce.
+             The image inside is decorative once the button is named. */
+          <div className="detail-hero-strip" role="group" aria-label="Photos">
             {media.map((item, i) => (
-              <img
+              <button
                 key={item.publicId || i}
-                src={recipeThumbImage(item.url)}
-                alt={`${recipe.title}, photo ${i + 1} of ${media.length}`}
-                loading="lazy"
+                type="button"
+                aria-label={`Show photo ${i + 1} of ${media.length}`}
+                aria-pressed={i === activeMediaIndex}
                 className={i === activeMediaIndex ? "is-active" : ""}
                 onClick={() => setActiveMediaIndex(i)}
-              />
+              >
+                <img src={recipeThumbImage(item.url)} alt="" loading="lazy" />
+              </button>
             ))}
           </div>
         )}
