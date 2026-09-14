@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import API from "../services/api";
+import { refusalMessage } from "../lib/refusalMessage";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
 import { ShareIcon } from "./icons";
 
 const ShareButton = ({ recipeId, initialShareCount, initialSharedByMe = false }) => {
   const { user } = useAuth();
+  const toast = useToast();
   const [shareCount, setShareCount] = useState(initialShareCount);
   const [sharedByMe, setSharedByMe] = useState(initialSharedByMe);
   const [busy, setBusy] = useState(false);
@@ -23,9 +26,11 @@ const ShareButton = ({ recipeId, initialShareCount, initialSharedByMe = false })
         : await API.post(`/recipes/${recipeId}/share`, {});
       setSharedByMe(res.data.sharedByMe);
       setShareCount(res.data.shareCount);
-    } catch {
+    } catch (err) {
       setSharedByMe(previouslyShared);
       setShareCount(previousCount);
+      const reason = refusalMessage(err);
+      if (reason) toast.error(reason);
     } finally {
       setBusy(false);
     }

@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import API from "../services/api";
+import { refusalMessage } from "../lib/refusalMessage";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
 import { HeartIcon } from "./icons";
 import { likeResult } from "../lib/likeResponse";
 
 const LikeButton = ({ recipeId, initialLikeCount, initialLikedByMe = false }) => {
   const { user } = useAuth();
+  const toast = useToast();
   const [likeCount, setLikeCount] = useState(initialLikeCount);
   const [likedByMe, setLikedByMe] = useState(initialLikedByMe);
   const [busy, setBusy] = useState(false);
@@ -27,9 +30,14 @@ const LikeButton = ({ recipeId, initialLikeCount, initialLikedByMe = false }) =>
       const settled = likeResult(res.data);
       if (settled.likedByMe !== undefined) setLikedByMe(settled.likedByMe);
       if (settled.likeCount !== undefined) setLikeCount(settled.likeCount);
-    } catch {
+    } catch (err) {
       setLikedByMe(previouslyLiked);
       setLikeCount(previousCount);
+      // Blocking answers 403 here with a reason. Without this the heart
+      // just filled and emptied again, which reads as the button being
+      // broken rather than the action being refused.
+      const reason = refusalMessage(err);
+      if (reason) toast.error(reason);
     } finally {
       setBusy(false);
     }
