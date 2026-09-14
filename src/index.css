@@ -315,6 +315,17 @@ h3,
     border-radius: var(--radius-control);
   }
 
+  /* A file input styled by hiding it and dressing its <label> as a button.
+     The rule above cannot help there: focus lands on the input, which is
+     off-screen by design, so a sighted keyboard user tabbing onto "Add
+     photos" saw the ring disappear entirely. Put it on the label they can
+     actually see. */
+  .sr-only:focus-visible + label {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+    border-radius: var(--radius-control);
+  }
+
   /* RouteTransition focuses the main landmark after each navigation so
      screen readers announce the new page. That is a container, not a
      control, and outlining the full width of the page reads as a

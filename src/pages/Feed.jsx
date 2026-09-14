@@ -104,7 +104,7 @@ const Feed = () => {
                     <LikeButton
                       recipeId={recipe._id}
                       initialLikeCount={recipe.likeCount || 0}
-                      initialLikedByMe={false}
+                      initialLikedByMe={Boolean(recipe.likedByMe)}
                     />
                   </div>
                 </div>

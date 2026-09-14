@@ -177,7 +177,7 @@ const CommentSection = ({ recipeId, recipeOwnerId, pinnedCommentId }) => {
         <CommentLikeButton
           commentId={comment._id}
           initialLikeCount={comment.likeCount || 0}
-          initialLikedByMe={false}
+          initialLikedByMe={Boolean(comment.likedByMe)}
         />
         {!comment.parentComment && user && (
           <button
