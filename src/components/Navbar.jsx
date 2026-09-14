@@ -51,6 +51,9 @@ function Navbar() {
         { to: "/your-recipes", label: "Your Recipes" },
         { to: "/create", label: "Create" },
         { to: "/saved-recipes", label: "Saved" },
+        // Only for moderators, and only as a convenience: the API answers
+        // 404 to everyone else whatever the navigation offers.
+        ...(user.isAdmin ? [{ to: "/moderation", label: "Moderation" }] : []),
       ]
     : [];
 
