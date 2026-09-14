@@ -3,7 +3,12 @@ import API from "../services/api";
 import { useToast } from "../context/ToastContext";
 import { useAuth } from "../context/AuthContext";
 
-const ReportButton = ({ targetType, targetId }) => {
+// `ownerId` is who the reported thing belongs to. The server refuses a
+// report of your own content, so without it the button was offered on
+// your own recipe and the only way to find out was to write a reason and
+// be told no. The profile page had always hidden it behind its own
+// "is this me" check; this puts that in one place for every caller.
+const ReportButton = ({ targetType, targetId, ownerId }) => {
   const { user } = useAuth();
   const toast = useToast();
   const [open, setOpen] = useState(false);
@@ -12,16 +17,28 @@ const ReportButton = ({ targetType, targetId }) => {
   const [submitted, setSubmitted] = useState(false);
 
   if (!user) return null;
+  if (ownerId && String(ownerId) === String(user._id)) return null;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!reason.trim()) return;
     setSubmitting(true);
     try {
-      await API.post("/reports", { targetType, targetId, reason: reason.trim() });
+      const response = await API.post("/reports", {
+        targetType,
+        targetId,
+        reason: reason.trim(),
+      });
       setSubmitted(true);
       setOpen(false);
-      toast.success("Report submitted. Thanks for letting us know.");
+      // The server's own wording, because a second report of the same
+      // thing succeeds with "You have already reported this" rather than
+      // failing - and saying "Report submitted" to that is a small lie.
+      toast.success(
+        response?.data?.message
+          ? `${response.data.message}. Thanks for letting us know.`
+          : "Report submitted. Thanks for letting us know."
+      );
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to submit report.");
     } finally {

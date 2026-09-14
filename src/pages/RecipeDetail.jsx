@@ -199,7 +199,7 @@ const RecipeDetail = () => {
         </div>
 
         <div className="mt-3">
-          <ReportButton targetType="recipe" targetId={recipe._id} />
+          <ReportButton targetType="recipe" targetId={recipe._id} ownerId={recipe.user?._id} />
         </div>
 
         <CommentSection
