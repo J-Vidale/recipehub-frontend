@@ -165,7 +165,7 @@ const UserProfile = () => {
               </div>
               <div className="flex gap-3">
                 <BlockButton userId={profile._id} initialBlockedByMe={profile.blockedByMe} />
-                <ReportButton targetType="user" targetId={profile._id} />
+                <ReportButton targetType="user" targetId={profile._id} ownerId={profile._id} />
               </div>
             </div>
           )}
