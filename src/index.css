@@ -45,6 +45,13 @@
   --color-on-brand: #ffffff;
   --color-on-danger: #ffffff;
 
+  /* White that must stay white in both themes, because it sits on a
+     photograph or a fixed-colour fill rather than on a surface the theme
+     controls. Flipping it with the theme would put white text on a pale
+     tile, or dark text on a photo. Deliberately not redefined in the dark
+     block below - that is the whole point of it. */
+  --color-on-photo: #ffffff;
+
   /* Neutrals carry a little warmth so a photograph of food does not sit on
      a screen that looks like a spreadsheet. Warmth only - not a cream
      background, which would tint every dish on the page. */
@@ -786,19 +793,93 @@ h3,
     margin-bottom: 1.5rem;
     padding-bottom: 0.25rem;
   }
-  .detail-hero-strip img {
+  /* The thumbnail is a button with an image inside, so the border and the
+     focus ring belong to the control rather than to the picture. */
+  .detail-hero-strip button {
     width: 4.5rem;
     height: 4.5rem;
-    object-fit: cover;
-    border-radius: var(--radius-control);
     flex-shrink: 0;
+    padding: 0;
     cursor: pointer;
+    background: none;
     border: 2px solid transparent;
+    border-radius: var(--radius-control);
+    overflow: hidden;
     transition: border-color 0.15s ease;
   }
-  .detail-hero-strip img:hover,
-  .detail-hero-strip img.is-active {
+  .detail-hero-strip button:hover,
+  .detail-hero-strip button.is-active {
     border-color: var(--color-brand);
+  }
+  .detail-hero-strip img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .detail-hero-strip button { transition: none; }
+  }
+
+  /* Chosen photos on the recipe form. A grid rather than a row so five
+     of them wrap on a phone instead of scrolling sideways. */
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr));
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0.75rem;
+  }
+  .photo-grid__item {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: var(--radius-control);
+    overflow: hidden;
+    background: var(--gradient-placeholder);
+  }
+  .photo-grid__item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .photo-grid__remove {
+    position: absolute;
+    top: 0.25rem;
+    right: 0.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* 24px, the same minimum every other control on the site meets. */
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--color-ink) 72%, transparent);
+    color: var(--color-on-photo);
+    border: none;
+    cursor: pointer;
+  }
+  .photo-grid__remove:hover:not(:disabled) {
+    background: var(--color-danger);
+  }
+  .photo-grid__remove:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+
+  /* A label standing in for a file input, which cannot be styled and is
+     hidden behind it. Disabled is a class here because a label has no
+     disabled state of its own. */
+  label.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+  }
+  label.btn-secondary.is-disabled {
+    opacity: 0.6;
+    pointer-events: none;
   }
 
   /* Toast notifications: non-blocking feedback for actions that used to
@@ -1442,7 +1523,7 @@ h3,
     gap: 0.15rem;
     border-radius: 9999px;
     background: rgba(15, 23, 42, 0.55);
-    color: #ffffff; /* fixed ground, not the brand fill: white in both modes */
+    color: var(--color-on-photo);
     font-size: 0.65rem;
     font-weight: 600;
     opacity: 0;
@@ -1591,7 +1672,7 @@ h3,
     padding: 0.875rem;
     border-radius: var(--radius-card);
     overflow: hidden;
-    color: #ffffff; /* fixed ground, not the brand fill: white in both modes */
+    color: var(--color-on-photo);
     font-weight: 700;
     text-decoration: none;
     background-image: linear-gradient(
@@ -1605,7 +1686,7 @@ h3,
 
   .tile:hover,
   .tile:focus-visible {
-    color: #ffffff; /* fixed ground, not the brand fill: white in both modes */
+    color: var(--color-on-photo);
     transform: translateY(-3px);
     box-shadow: 0 12px 24px -12px rgb(0 0 0 / 0.45);
   }

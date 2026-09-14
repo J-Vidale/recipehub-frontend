@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import API from "../services/api";
 import { useToast } from "../context/ToastContext";
 import IngredientFields from "../components/IngredientFields";
+import RecipePhotos from "../components/RecipePhotos";
+import { uploadRecipePhotos } from "../lib/uploadPhotos";
 import CategoryAutocomplete from "../components/CategoryAutocomplete";
 import Seo from "../components/Seo";
 import Field from "../components/Field";
@@ -16,6 +18,7 @@ const CreateRecipe = () => {
   });
   const [ingredients, setIngredients] = useState([]);
   const [submitting, setSubmitting] = useState(false);
+  const [photos, setPhotos] = useState([]);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const toast = useToast();
@@ -28,12 +31,25 @@ const CreateRecipe = () => {
     setError(null);
     setSubmitting(true);
     try {
-      await API.post("/recipes", {
+      const { data: recipe } = await API.post("/recipes", {
         ...formData,
         ingredients: ingredients.filter((i) => i.name.trim() && i.amount.trim()),
       });
-      toast.success("Recipe published.");
+
+      // The photos wait for the recipe, because the endpoint that takes
+      // them needs its id. A photo that fails to upload must not read as a
+      // recipe that failed to publish - it is already published - so the
+      // failures are reported and the recipe still counts.
+      const failed = await uploadRecipePhotos(recipe?._id, photos);
+      if (failed.length) {
+        toast.error(
+          `Recipe published, but ${failed.length} photo${failed.length === 1 ? "" : "s"} did not upload. You can add them by editing the recipe.`
+        );
+      } else {
+        toast.success("Recipe published.");
+      }
       navigate("/your-recipes");
+      return;
     } catch (err) {
       console.error("Create recipe error:", err.message);
       setError(err.response?.data?.message || "Failed to create recipe.");
@@ -78,8 +94,9 @@ const CreateRecipe = () => {
             hint="Write #hashtags anywhere in here to tag the recipe."
           />
           <IngredientFields ingredients={ingredients} setIngredients={setIngredients} />
+          <RecipePhotos pending={photos} onPendingChange={setPhotos} busy={submitting} />
           <button type="submit" disabled={submitting} className="btn-primary w-full">
-            {submitting ? "Publishing..." : "Publish recipe"}
+            {submitting ? (photos.length ? "Publishing and uploading..." : "Publishing...") : "Publish recipe"}
           </button>
         </form>
       </div>

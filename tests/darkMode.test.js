@@ -37,13 +37,31 @@ describe("the dark palette", () => {
     expect(css).toMatch(/color-scheme:\s*light dark/);
   });
 
+  // One token is deliberately the same in both themes. White on a
+  // photograph or on a fixed-colour fill has to stay white: flipping it
+  // would put white text on a pale tile, or dark text on a photo. Naming
+  // the exception here rather than loosening the rule, so a token that
+  // forgets its dark value by accident is still caught.
+  const SAME_IN_BOTH_THEMES = ["--color-on-photo"];
+
   it("gives every colour token a dark value", () => {
     const light = tokensIn(blockOf(css, ":root {"));
     const dark = tokensIn(blockOf(css, "@media (prefers-color-scheme: dark)"));
 
     expect(light.size).toBeGreaterThan(15);
-    const missing = [...light].filter((token) => !dark.has(token));
+    const missing = [...light].filter(
+      (token) => !dark.has(token) && !SAME_IN_BOTH_THEMES.includes(token)
+    );
     expect(missing, `no dark value for: ${missing.join(", ")}`).toEqual([]);
+  });
+
+  it("keeps the fixed token actually fixed", () => {
+    // If it ever gains a dark value the exception above is a lie, and the
+    // places relying on it stop meaning what they say.
+    const dark = tokensIn(blockOf(css, "@media (prefers-color-scheme: dark)"));
+    for (const token of SAME_IN_BOTH_THEMES) {
+      expect(dark.has(token), `${token} now has a dark value`).toBe(false);
+    }
   });
 
   it("defines no dark token that does not exist in light", () => {
